@@ -18,27 +18,69 @@ class ProductsManagement extends StatelessWidget {
       appBar: AppBar(
         title: Text('Quản lý sản phẩm'),
       ),
-      body: Obx(() {
-        if (productController.products.isEmpty) {
-          return Center(child: CircularProgressIndicator());
-        }
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListView.builder(
-              itemCount: productController.products.length,
-              itemBuilder: (context, index) {
-                final Product product = productController.products[index];
-                return GestureDetector(
-                    onTap: () {
-                      productController.setSelectedProduct(product);
-                      Get.to(() => ProductDetailScreen());
-                    },
-                    child: ItemCard(product: product)
-                );
-              }
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                TextField(
+                  onChanged: productController.searchProduct,
+                  decoration: InputDecoration(
+                    hintText: "Tìm kiếm sản phẩm...",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+
+                // 🔹 Show search suggestions
+                Obx(() => productController.searchSuggestions.isEmpty
+                    ? SizedBox.shrink()
+                    : Container(
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: productController.searchSuggestions
+                        .map((suggestion) => ListTile(
+                      title: Text(suggestion),
+                      onTap: () => productController.selectSuggestion(suggestion),
+                    ))
+                        .toList(),
+                  ),
+                )),
+              ],
+            ),
           ),
-        );
-      }),
+          Expanded(
+            child: Obx(() {
+              List<Product> products = productController.filteredProducts;
+              if (products.isEmpty) {
+                return Center(child: Text('Không tìm thấy sản phẩm phù hợp'));
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+                child: ListView.builder(
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final Product product = products[index];
+                      return GestureDetector(
+                          onTap: () {
+                            productController.setSelectedProduct(product);
+                            Get.to(() => ProductDetailScreen());
+                          },
+                          child: ItemCard(product: product)
+                      );
+                    }
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.toNamed('/add-product');

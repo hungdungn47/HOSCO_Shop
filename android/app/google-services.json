@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943429255285",
+    "project_id": "hoscoshop",
+    "storage_bucket": "hoscoshop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943429255285:android:735d5af2f337672b27b83c",
+        "android_client_info": {
+          "package_name": "com.example.hosco_shop_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEAXXTOy1Jb0d2zdiRwc0tEeA0Q7aiYwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

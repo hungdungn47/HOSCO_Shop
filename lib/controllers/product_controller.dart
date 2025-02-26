@@ -3,17 +3,21 @@ import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import '../models/product.dart';
 
 class ProductController extends GetxController {
-  var products = <Product>[].obs; // Observable list of products
+  var allProducts = <Product>[].obs; // Observable list of products
   var selectedProduct = Rxn<Product>();
+  var filteredProducts = <Product>[].obs;
+  var searchQuery = ''.obs;
+  var searchSuggestions = <String>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     loadProducts(); // Load mock data when the controller initializes
+    filteredProducts.assignAll(allProducts);
   }
 
   void loadProducts() {
-    products.assignAll(mockProducts); // Assign mock data to observable list
+    allProducts.assignAll(mockProducts); // Assign mock data to observable list
   }
 
   void setSelectedProduct(Product product) {
@@ -21,19 +25,47 @@ class ProductController extends GetxController {
   }
 
   void addProduct(Product product) {
-    products.add(product);
+    allProducts.add(product);
   }
 
   void updateProduct(Product updatedProduct) {
-    int index = products.indexWhere((p) => p.id == updatedProduct.id);
+    int index = allProducts.indexWhere((p) => p.id == updatedProduct.id);
     if (index != -1) {
-      products[index] = updatedProduct;
+      allProducts[index] = updatedProduct;
       selectedProduct.value = updatedProduct;
     }
   }
 
   void deleteProduct() {
-    products.removeWhere((p) => p.id == selectedProduct.value?.id);
+    allProducts.removeWhere((p) => p.id == selectedProduct.value?.id);
     selectedProduct.value = null;
+  }
+
+  void searchProduct(String query) {
+    searchQuery.value = query.toLowerCase();
+
+    // Generate suggestions based on input
+    if (query.isNotEmpty) {
+      searchSuggestions.value = allProducts
+          .where((p) => p.name.toLowerCase().contains(searchQuery.value))
+          .map((p) => p.name)
+          .toSet()
+          .toList();
+    } else {
+      searchSuggestions.clear();
+    }
+
+    _applyFilters();
+  }
+
+  void selectSuggestion(String suggestion) {
+    searchQuery.value = suggestion;
+    searchProduct(suggestion); // Perform search with the selected suggestion
+    searchSuggestions.clear(); // Hide suggestions
+  }
+
+  void _applyFilters() {
+    var filtered = allProducts.where((p) => p.name.toLowerCase().contains(searchQuery.value)).toList();
+    filteredProducts.assignAll(filtered);
   }
 }

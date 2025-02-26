@@ -9,13 +9,25 @@ import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
 import 'package:hosco_shop_2/utils/sl.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await setup();
   runApp(const MyApp());
 }
 
 Future<void> setup() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await FirebaseAppCheck.instance.activate(
+    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    androidProvider: AndroidProvider.playIntegrity,
+  );
   Get.put(ProductController());
   sl.registerSingleton<ApiService>(ApiServiceImpl.instance);
 }
