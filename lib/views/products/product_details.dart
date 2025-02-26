@@ -1,108 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import '../../models/product.dart';
 import 'edit_product.dart';
 import 'package:intl/intl.dart';
 
-class ProductDetailScreen extends StatefulWidget {
-  final Product product;
-  final Function(Product) onUpdate;
-  final Function(String) onDelete;
+class ProductDetailScreen extends StatelessWidget {
 
-  const ProductDetailScreen({
-    Key? key,
-    required this.product,
-    required this.onUpdate,
-    required this.onDelete,
+  ProductDetailScreen({
+    Key? key
   }) : super(key: key);
 
-  @override
-  _ProductDetailScreenState createState() => _ProductDetailScreenState();
-}
+  final ProductController productController = Get.find<ProductController>();
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.product.name)),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            Center(
-              child: Image.network(
-                widget.product.imageUrl,
-                height: size.height * 0.35,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+      appBar: AppBar(title: Obx(() {
+        final product = productController.selectedProduct.value;
+        return Text(product?.name ?? "Product Details");
+      })),
+      body: Obx(() {
+        final product = productController.selectedProduct.value;
+        if (product == null) return Center(child: Text("No product selected."));
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Product Image
+              Center(
+                child: Image.network(
+                  product.imageUrl,
+                  height: size.height * 0.35,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                ),
               ),
-            ),
-            SizedBox(height: 16.0),
+              SizedBox(height: 16.0),
 
-            // Product Name
-            Text(widget.product.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8.0),
+              // Product Name
+              Text(product.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              SizedBox(height: 8.0),
 
-            // Product Price
-            Text(
-              "${NumberFormat.decimalPattern().format(widget.product.price)} VND",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
-            ),
-            SizedBox(height: 8.0),
+              // Product Price
+              Text(
+                "${NumberFormat.decimalPattern().format(product.price)} VND",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
+              SizedBox(height: 8.0),
 
-            // Stock Quantity
-            RichText(
-              text: TextSpan(
-                text: "Số lượng có sẵn: ",
-                style: TextStyle(fontSize: 22, color: Colors.black54),
+              // Stock Quantity
+              RichText(
+                text: TextSpan(
+                  text: "Số lượng có sẵn: ",
+                  style: TextStyle(fontSize: 22, color: Colors.black54),
+                  children: [
+                    TextSpan(
+                      text: "${product.stockQuantity}",
+                      style: TextStyle(fontSize: 22, color: primaryColor, fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.0),
+
+              // Description
+              Text("Mô tả", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 4.0),
+              Text(
+                product.description.isNotEmpty ? product.description : "No description available.",
+                style: TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+              SizedBox(height: 16.0),
+
+              // Supplier Info
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextSpan(
-                    text: "${widget.product.stockQuantity}",
-                    style: TextStyle(fontSize: 22, color: primaryColor, fontWeight: FontWeight.w600),
-                  )
+                  Text("Nhà cung cấp:", style: TextStyle(fontSize: 18, color: Colors.black54)),
+                  Text(product.supplier, style: TextStyle(fontSize: 18, color: Colors.black54)),
                 ],
               ),
-            ),
-            SizedBox(height: 16.0),
+              SizedBox(height: 8.0),
 
-            // Description
-            Text("Mô tả", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SizedBox(height: 4.0),
-            Text(
-              widget.product.description.isNotEmpty ? widget.product.description : "No description available.",
-              style: TextStyle(fontSize: 18, color: Colors.black87),
-            ),
-            SizedBox(height: 16.0),
-
-            // Supplier Info
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Nhà cung cấp:", style: TextStyle(fontSize: 18, color: Colors.black54)),
-                Text(widget.product.supplier, style: TextStyle(fontSize: 18, color: Colors.black54)),
-              ],
-            ),
-            SizedBox(height: 8.0),
-
-            // Receiving Date
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Ngày nhập hàng:", style: TextStyle(fontSize: 18, color: Colors.black54)),
-                Text(
-                  widget.product.receivingDate.toLocal().toString().split(' ')[0],
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              // Receiving Date
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Ngày nhập hàng:", style: TextStyle(fontSize: 18, color: Colors.black54)),
+                  Text(
+                    product.receivingDate.toLocal().toString().split(' ')[0],
+                    style: TextStyle(fontSize: 18, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }),
 
       // Edit & Delete Buttons at Bottom
       bottomNavigationBar: Padding(
@@ -125,12 +125,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   final updatedProduct = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditProductScreen(product: widget.product),
+                      builder: (context) => EditProductScreen(),
                     ),
                   );
                   if (updatedProduct != null) {
-                    widget.onUpdate(updatedProduct);
-                    setState(() {});
+                    productController.updateProduct(updatedProduct);
                   }
                 },
               ),
@@ -149,7 +148,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 icon: Icon(Icons.delete, color: Colors.white),
                 label: Text("Xóa", style: TextStyle(fontSize: 18, color: Colors.white)),
-                onPressed: _confirmDelete,
+                onPressed: () => _confirmDelete(context),
               ),
             ),
           ],
@@ -158,7 +157,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  void _confirmDelete() {
+  void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -186,7 +185,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             onPressed: () {
-              widget.onDelete(widget.product.id);
+              // widget.onDelete(widget.product.id);
+              productController.deleteProduct();
               Navigator.pop(context);
               Navigator.pop(context);
             },

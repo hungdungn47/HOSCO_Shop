@@ -1,33 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:hosco_shop_2/views/common_widgets/item_card.dart';
 import 'package:hosco_shop_2/views/products/product_details.dart';
 
-class ProductsManagement extends StatefulWidget {
-  const ProductsManagement({super.key});
+class ProductsManagement extends StatelessWidget {
+  ProductsManagement({super.key});
+  final ProductController productController = Get.find<ProductController>();
 
-  @override
-  State<ProductsManagement> createState() => _ProductsManagementState();
-}
-
-class _ProductsManagementState extends State<ProductsManagement> {
-  void _updateProduct(Product updatedProduct) {
-    setState(() {
-      int index = mockProducts.indexWhere((p) => p.id == updatedProduct.id);
-      if (index != -1) {
-        mockProducts[index] = updatedProduct;
-      }
-    });
-  }
-
-  void _deleteProduct(String productId) {
-    setState(() {
-      mockProducts.removeWhere((p) => p.id == productId);
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,22 +18,27 @@ class _ProductsManagementState extends State<ProductsManagement> {
       appBar: AppBar(
         title: Text('Quản lý sản phẩm'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-          itemCount: mockProducts.length,
-          itemBuilder: (context, index) {
-            final Product product = mockProducts[index];
-            return GestureDetector(
-              onTap: () {
-                Get.to(() => ProductDetailScreen(product: product, onUpdate: _updateProduct,
-                  onDelete: _deleteProduct,));
-              },
-              child: ItemCard(product: product)
-            );
-          }
-        ),
-      ),
+      body: Obx(() {
+        if (productController.products.isEmpty) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: ListView.builder(
+              itemCount: productController.products.length,
+              itemBuilder: (context, index) {
+                final Product product = productController.products[index];
+                return GestureDetector(
+                    onTap: () {
+                      productController.setSelectedProduct(product);
+                      Get.to(() => ProductDetailScreen());
+                    },
+                    child: ItemCard(product: product)
+                );
+              }
+          ),
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.toNamed('/add-product');

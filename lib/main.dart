@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/networking/api/api_service.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
@@ -15,6 +16,7 @@ void main() async {
 }
 
 Future<void> setup() async {
+  Get.put(ProductController());
   sl.registerSingleton<ApiService>(ApiServiceImpl.instance);
 }
 
