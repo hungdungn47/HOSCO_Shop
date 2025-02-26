@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/networking/api/api_service.dart';
+import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
 import 'package:hosco_shop_2/views/history/transaction_history.dart';
 import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
+import 'package:hosco_shop_2/utils/sl.dart';
 
-void main() {
+void main() async {
+  await setup();
   runApp(const MyApp());
+}
+
+Future<void> setup() async {
+  sl.registerSingleton<ApiService>(ApiServiceImpl.instance);
 }
 
 class MyApp extends StatelessWidget {

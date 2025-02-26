@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 
+import '../../models/product.dart';
+
 class ItemCard extends StatelessWidget {
-  ItemCard({super.key, required this.imageUrl, required this.name, required this.price, required this.quantity});
-  final String imageUrl;
-  final String name;
-  final int price;
-  final int quantity;
-  final String category = 'Unknown';
+  ItemCard({super.key, required this.product});
+  final Product product;
 
   final TextStyle fieldNameTextStyle = TextStyle(
     fontSize: 16,
@@ -58,7 +56,7 @@ class ItemCard extends StatelessWidget {
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               child: Image.asset(
-                imageUrl,
+                product.imageUrl,
               ),
             ),
             Expanded(
@@ -73,7 +71,7 @@ class ItemCard extends StatelessWidget {
                         Text("Sản phẩm", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                          child: Text( product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                         )
                       ],
                     ),
@@ -83,7 +81,7 @@ class ItemCard extends StatelessWidget {
                         Text("Giá", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( '$price', maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                          child: Text( '${product.price}', maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                         )
                       ],
                     ),
@@ -93,7 +91,7 @@ class ItemCard extends StatelessWidget {
                         Text("Số lượng", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( '$quantity', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,),
+                          child: Text( '${product.stockQuantity}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,),
                         )
                       ],
                     ),
@@ -103,7 +101,7 @@ class ItemCard extends StatelessWidget {
                         Text("Phân loại", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( category, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
+                          child: Text( product.category, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
                         )
                       ],
                     ),
