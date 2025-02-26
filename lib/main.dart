@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/products',
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
-        GetPage(name: '/add-product', page: () => AddProduct()),
+        GetPage(name: '/add-product', page: () => CreateProductScreen()),
         GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistory()),
         GetPage(name: '/report', page: () => SalesReport())

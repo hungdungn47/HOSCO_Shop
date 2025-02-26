@@ -20,6 +20,10 @@ class ProductController extends GetxController {
     selectedProduct.value = product; // Update selected product
   }
 
+  void addProduct(Product product) {
+    products.add(product);
+  }
+
   void updateProduct(Product updatedProduct) {
     int index = products.indexWhere((p) => p.id == updatedProduct.id);
     if (index != -1) {

@@ -36,7 +36,7 @@ class ProductDetailScreen extends StatelessWidget {
                   product.imageUrl,
                   height: size.height * 0.35,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) =>
                       Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
                 ),

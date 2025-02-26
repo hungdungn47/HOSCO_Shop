@@ -40,47 +40,71 @@ class EditProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(title: Text("Cập nhật sản phẩm")),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Center(
-              child: Obx(() {
-                final product = productController.selectedProduct.value!;
-                return Image.network(
-                  product.imageUrl,
-                  height: size.height * 0.4,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
-                );
-              }),
-            ),
-            SizedBox(height: 20),
-            TextField(style: TextStyle(fontSize: 18), controller: nameController, decoration: InputDecoration(labelText: "Product Name", labelStyle: TextStyle(fontSize: 18))),
-            TextField(style: TextStyle(fontSize: 18), controller: priceController, decoration: InputDecoration(labelText: "Price", labelStyle: TextStyle(fontSize: 18)), keyboardType: TextInputType.number),
-            TextField(style: TextStyle(fontSize: 18), controller: stockController, decoration: InputDecoration(labelText: "Stock Quantity", labelStyle: TextStyle(fontSize: 18)), keyboardType: TextInputType.number),
-            TextField(style: TextStyle(fontSize: 18), controller: descriptionController, decoration: InputDecoration(labelText: "Description", labelStyle: TextStyle(fontSize: 18))),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveChanges,
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: primaryColor, width: 1.5),
-                  borderRadius: BorderRadius.circular(6)
+      resizeToAvoidBottomInset: true, // ✅ Prevents keyboard overflow
+      body: SingleChildScrollView( // ✅ Makes the UI scrollable when keyboard appears
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Obx(() {
+                  final product = productController.selectedProduct.value!;
+                  return Image.network(
+                    product.imageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                  );
+                }),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: "Tên sản phẩm"),
+              ),
+              TextField(
+                controller: priceController,
+                decoration: InputDecoration(labelText: "Giá"),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: stockController,
+                decoration: InputDecoration(labelText: "Số lượng"),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: "Mô tả",
+                  border: OutlineInputBorder(), // ✅ Adds a border to look more like a text area
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                maxLines: 3, // ✅ Allows multiple lines
+                keyboardType: TextInputType.multiline, // ✅ Enables multiline input
               ),
-              child: Text(
-                'Lưu thay đổi',
-                style: TextStyle(fontSize: 18, color: primaryColor, fontWeight: FontWeight.w600),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveChanges,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: primaryColor, width: 1.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+                child: Text(
+                  'Lưu thay đổi',
+                  style: TextStyle(fontSize: 18, color: primaryColor, fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 20), // ✅ Adds extra space to prevent bottom overflow
+            ],
+          ),
         ),
       ),
     );
