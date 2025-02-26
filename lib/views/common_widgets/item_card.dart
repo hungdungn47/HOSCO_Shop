@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/product.dart';
 
@@ -51,13 +53,22 @@ class ItemCard extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(2.0),
+              width: 150,
               decoration: BoxDecoration(
                 border: Border(right: BorderSide(color: primaryColor, width: 1)),
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              child: Image.asset(
-                product.imageUrl,
-              ),
+              child: CachedNetworkImage(
+                imageUrl: product.imageUrl,
+                placeholder: (context, url) => Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              )
             ),
             Expanded(
               child: Padding(
@@ -65,15 +76,8 @@ class ItemCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Sản phẩm", style: fieldNameTextStyle,),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text( product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
-                        )
-                      ],
+                    Flexible(
+                      child: Text( product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,7 +85,7 @@ class ItemCard extends StatelessWidget {
                         Text("Giá", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( '${product.price}', maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                          child: Text( NumberFormat.decimalPattern().format(product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                         )
                       ],
                     ),
