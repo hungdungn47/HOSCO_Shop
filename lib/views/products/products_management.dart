@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:hosco_shop_2/views/common_widgets/item_card.dart';
 
@@ -19,6 +20,18 @@ class ProductsManagement extends StatelessWidget {
           itemBuilder: (context, index) {
             return ItemCard(imageUrl: 'assets/product_images/iphone_15_pro.png', name: 'Iphone 15', price: 16000000, quantity: 20);
           }
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.toNamed('/add-product');
+        },
+        backgroundColor: Color(0xff2F98F5),
+        shape: CircleBorder(), // Custom FAB color
+        child: Icon(
+          Icons.add, // Plus icon
+          size: 30, // Big icon size
+          color: Colors.white, // White color for the icon
         ),
       ),
     );

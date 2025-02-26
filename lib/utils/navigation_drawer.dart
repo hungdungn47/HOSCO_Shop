@@ -50,6 +50,14 @@ class MyNavigationDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Image.asset('assets/icons/add_product_icon.png', height: iconSize, width: iconSize,),
+            title: Text('Thêm sản phẩm', style: whiteMedium,),
+            onTap: () {
+              Navigator.pop(context);
+              Get.toNamed('/add-product');
+            },
+          ),
+          ListTile(
             leading: Image.asset('assets/icons/new_cart_icon.png', height: iconSize, width: iconSize,),
             title: Text('Đơn hàng mới', style: whiteMedium,),
             onTap: () {

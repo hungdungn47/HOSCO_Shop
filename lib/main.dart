@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
 import 'package:hosco_shop_2/views/history/transaction_history.dart';
+import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
 
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/products',
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
+        GetPage(name: '/add-product', page: () => AddProduct()),
         GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistory()),
         GetPage(name: '/report', page: () => SalesReport())
