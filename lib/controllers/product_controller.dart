@@ -25,7 +25,9 @@ class ProductController extends GetxController {
   }
 
   void addProduct(Product product) {
+    print('Adding product ${product.name} with image ${product.imageUrl}');
     allProducts.add(product);
+    _applyFilters();
   }
 
   void updateProduct(Product updatedProduct) {
@@ -34,11 +36,13 @@ class ProductController extends GetxController {
       allProducts[index] = updatedProduct;
       selectedProduct.value = updatedProduct;
     }
+    _applyFilters();
   }
 
   void deleteProduct() {
     allProducts.removeWhere((p) => p.id == selectedProduct.value?.id);
     selectedProduct.value = null;
+    _applyFilters();
   }
 
   void searchProduct(String query) {

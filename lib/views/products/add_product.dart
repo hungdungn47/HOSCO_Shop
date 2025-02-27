@@ -19,9 +19,16 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController stockController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
   File? _selectedImage;
   String? _imageUrl;
   bool _isUploading = false;
+
+  String? _selectedCategory;
+  String? _selectedSupplier;
+
+  final List<String> categories = ["Electronics", "Fashion", "Home", "Beauty", "Sports"];
+  final List<String> suppliers = ["Supplier A", "Supplier B", "Supplier C"];
 
   // Function to select and upload an image
   Future<void> _selectAndUploadImage() async {
@@ -34,7 +41,6 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     });
 
     String? downloadUrl = await _imageService.uploadImage(image);
-    // String downloadUrl = 'hehehe';
     if (downloadUrl != null) {
       setState(() {
         _imageUrl = downloadUrl;
@@ -53,7 +59,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
         stockController.text.isEmpty ||
-        _imageUrl == null) {
+        _imageUrl == null ||
+        _selectedCategory == null ||
+        _selectedSupplier == null) {
       Get.snackbar("Error", "Please fill all fields and upload an image", snackPosition: SnackPosition.BOTTOM);
       return;
     }
@@ -61,10 +69,10 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     final newProduct = Product(
       id: DateTime.now().millisecondsSinceEpoch.toString(), // Unique ID
       name: nameController.text,
-      category: "Default", // Modify to allow category selection
+      category: _selectedCategory!,
       price: double.tryParse(priceController.text) ?? 0.0,
       stockQuantity: int.tryParse(stockController.text) ?? 0,
-      supplier: "Unknown", // Modify to allow supplier selection
+      supplier: _selectedSupplier!,
       receivingDate: DateTime.now(),
       imageUrl: _imageUrl!,
       description: descriptionController.text,
@@ -84,6 +92,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Product Image Upload Section
             Center(
               child: _selectedImage != null
                   ? Image.file(_selectedImage!, height: 150, width: 150, fit: BoxFit.cover)
@@ -105,55 +114,78 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             _isUploading
                 ? Center(child: CircularProgressIndicator())
                 : ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: primaryColor, width: 1.5),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
               onPressed: _selectAndUploadImage,
-              icon: Icon(Icons.upload),
+              icon: Icon(Icons.upload, color: Colors.white),
               label: Text("Chọn ảnh"),
             ),
 
             SizedBox(height: 20),
 
+            // Product Name
             TextField(
               controller: nameController,
               decoration: InputDecoration(labelText: "Tên sản phẩm"),
             ),
+
+            SizedBox(height: 10),
+
+            // Category Selection
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              onChanged: (value) => setState(() => _selectedCategory = value),
+              items: categories.map((category) {
+                return DropdownMenuItem(value: category, child: Text(category));
+              }).toList(),
+              decoration: InputDecoration(labelText: "Chọn danh mục"),
+            ),
+
+            SizedBox(height: 10),
+
+            // Price
             TextField(
               controller: priceController,
               decoration: InputDecoration(labelText: "Giá sản phẩm"),
               keyboardType: TextInputType.number,
             ),
+
+            SizedBox(height: 10),
+
+            // Stock Quantity
             TextField(
               controller: stockController,
               decoration: InputDecoration(labelText: "Số lượng tồn kho"),
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 15),
+
+            SizedBox(height: 10),
+
+            // Supplier Selection
+            DropdownButtonFormField<String>(
+              value: _selectedSupplier,
+              onChanged: (value) => setState(() => _selectedSupplier = value),
+              items: suppliers.map((supplier) {
+                return DropdownMenuItem(value: supplier, child: Text(supplier));
+              }).toList(),
+              decoration: InputDecoration(labelText: "Chọn nhà cung cấp"),
+            ),
+
+            SizedBox(height: 10),
+
+            // Product Description
             TextField(
               controller: descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
-                labelText: "Mô tả",
-                border: OutlineInputBorder(), // ✅ Looks more like a text area
+                labelText: "Mô tả sản phẩm",
+                border: OutlineInputBorder(),
               ),
             ),
 
             SizedBox(height: 20),
 
+            // Save Product Button
             ElevatedButton(
               onPressed: _saveProduct,
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: primaryColor, width: 1.5),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
               child: Text("Lưu sản phẩm"),
             ),
           ],

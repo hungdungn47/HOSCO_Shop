@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/networking/api/api_service.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
+import 'package:hosco_shop_2/utils/theme.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
 import 'package:hosco_shop_2/views/history/transaction_history.dart';
 import 'package:hosco_shop_2/views/products/add_product.dart';
@@ -40,19 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff2F98F5)),
-        useMaterial3: true,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xff2F98F5),
-          foregroundColor: Colors.white,
-          titleTextStyle: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 21
-          ),
-          centerTitle: true
-        )
-      ),
+      theme: AppTheme.lightTheme,
       initialRoute: '/products',
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
