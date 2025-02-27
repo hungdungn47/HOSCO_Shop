@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
+import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:hosco_shop_2/views/common_widgets/item_card.dart';
 import 'package:hosco_shop_2/views/products/product_details.dart';
@@ -18,8 +19,71 @@ class ProductsManagement extends StatelessWidget {
       appBar: AppBar(
         title: Text('Quản lý sản phẩm'),
       ),
-      body: Column(
+      body: Stack(
         children: [
+          Column(
+            children: [
+              const SizedBox(height: 75),
+        Container(
+          margin: const EdgeInsets.only(top: 8, left: 12),
+          width: double.infinity,
+          height: 35,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: productTypes.length,
+            itemBuilder: (context, index) {
+              // Lấy biến selectedCategory từ controller
+              // final selectedCategory = productController.selectedCategory.value;
+              //
+              // bool isSelected = selectedCategory == productTypes[index];
+
+              return Obx(() => GestureDetector(
+                onTap: () {
+                  productController.addSelectedCategory(productTypes[index]); // Cập nhật trạng thái
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 6),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: productController.isSelectedCategory(productTypes[index]) ? primaryColor : Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    productTypes[index],
+                    style: TextStyle(color: productController.isSelectedCategory(productTypes[index]) ? primaryColor : Colors.black),
+                  ),
+                ),
+              )) ;
+            },
+          ),
+        ),
+
+        Expanded(
+                child: Obx(() {
+                  List<Product> products = productController.filteredProducts;
+                  if (products.isEmpty) {
+                    return Center(child: Text('Không tìm thấy sản phẩm phù hợp'));
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+                    child: ListView.builder(
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final Product product = products[index];
+                          return GestureDetector(
+                              onTap: () {
+                                productController.setSelectedProduct(product);
+                                Get.to(() => ProductDetailScreen());
+                              },
+                              child: ItemCard(product: product)
+                          );
+                        }
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
           Padding(
             padding: EdgeInsets.all(12.0),
             child: Column(
@@ -31,6 +95,7 @@ class ProductsManagement extends StatelessWidget {
                     hintText: "Tìm kiếm sản phẩm...",
                     prefixIcon: Icon(Icons.search),
                     suffixIcon: IconButton(onPressed: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
                       searchQueryController.clear();
                       productController.searchProduct('');
                     }, icon: Icon(Icons.clear)),
@@ -62,30 +127,6 @@ class ProductsManagement extends StatelessWidget {
                 )),
               ],
             ),
-          ),
-          Expanded(
-            child: Obx(() {
-              List<Product> products = productController.filteredProducts;
-              if (products.isEmpty) {
-                return Center(child: Text('Không tìm thấy sản phẩm phù hợp'));
-              }
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
-                child: ListView.builder(
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final Product product = products[index];
-                      return GestureDetector(
-                          onTap: () {
-                            productController.setSelectedProduct(product);
-                            Get.to(() => ProductDetailScreen());
-                          },
-                          child: ItemCard(product: product)
-                      );
-                    }
-                ),
-              );
-            }),
           ),
         ],
       ),

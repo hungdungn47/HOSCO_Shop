@@ -175,7 +175,7 @@ class ProductDetailScreen extends StatelessWidget {
               ),
             ),
             onPressed: () => Navigator.pop(context),
-            child: Text("Hủy", style: TextStyle(color: primaryColor)),
+            child: Text("Hủy", style: TextStyle(color: Colors.white)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

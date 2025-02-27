@@ -4,6 +4,7 @@ import 'package:hosco_shop_2/utils/constants.dart';
 class AppTheme {
   AppTheme._();
   static ThemeData lightTheme = ThemeData(
+    scaffoldBackgroundColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff2F98F5)),
     useMaterial3: true,
     appBarTheme: AppBarTheme(

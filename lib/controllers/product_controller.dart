@@ -8,12 +8,27 @@ class ProductController extends GetxController {
   var filteredProducts = <Product>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
+  var selectedCategories = <String>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     loadProducts();
     filteredProducts.assignAll(allProducts);
+  }
+
+  bool isSelectedCategory(String category) {
+    return selectedCategories.contains(category);
+  }
+
+  void addSelectedCategory(String newSelectedCategory) {
+    if(selectedCategories.contains(newSelectedCategory)) {
+      selectedCategories.remove(newSelectedCategory);
+      _applyFilters();
+      return;
+    }
+    selectedCategories.add(newSelectedCategory);
+    _applyFilters();
   }
 
   void loadProducts() {
@@ -25,7 +40,6 @@ class ProductController extends GetxController {
   }
 
   void addProduct(Product product) {
-    print('Adding product ${product.name} with image ${product.imageUrl}');
     allProducts.add(product);
     _applyFilters();
   }
@@ -69,7 +83,11 @@ class ProductController extends GetxController {
   }
 
   void _applyFilters() {
-    var filtered = allProducts.where((p) => p.name.toLowerCase().contains(searchQuery.value)).toList();
+    var filtered = allProducts.where((p) {
+      bool matchesSearch = p.name.toLowerCase().contains(searchQuery.value);
+      bool matchesCategory = selectedCategories.isEmpty || selectedCategories.contains(p.category);
+      return matchesSearch && matchesCategory;
+    }).toList();
     filteredProducts.assignAll(filtered);
   }
 }

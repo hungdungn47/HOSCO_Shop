@@ -19,7 +19,13 @@ class TransactionHistoryScreen extends StatelessWidget {
         margin: const EdgeInsets.all(16),
         child: Obx(() {
           if (cartController.transactions.isEmpty) {
-            return Center(child: Text('Chưa có giao dịch nào!'));
+            return Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/icons/empty_icon.png', height: 80),
+                Text('Chưa có giao dịch nào!', style: TextStyle(fontSize: 18))
+              ],
+            ));
           }
 
           return ListView.builder(
