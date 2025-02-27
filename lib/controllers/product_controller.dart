@@ -3,7 +3,7 @@ import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import '../models/product.dart';
 
 class ProductController extends GetxController {
-  var allProducts = <Product>[].obs; // Observable list of products
+  var allProducts = <Product>[].obs;
   var selectedProduct = Rxn<Product>();
   var filteredProducts = <Product>[].obs;
   var searchQuery = ''.obs;
@@ -12,16 +12,16 @@ class ProductController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadProducts(); // Load mock data when the controller initializes
+    loadProducts();
     filteredProducts.assignAll(allProducts);
   }
 
   void loadProducts() {
-    allProducts.assignAll(mockProducts); // Assign mock data to observable list
+    allProducts.assignAll(mockProducts);
   }
 
   void setSelectedProduct(Product product) {
-    selectedProduct.value = product; // Update selected product
+    selectedProduct.value = product;
   }
 
   void addProduct(Product product) {

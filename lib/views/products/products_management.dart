@@ -10,7 +10,7 @@ import 'package:hosco_shop_2/views/products/product_details.dart';
 class ProductsManagement extends StatelessWidget {
   ProductsManagement({super.key});
   final ProductController productController = Get.find<ProductController>();
-
+  final TextEditingController searchQueryController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,10 +25,15 @@ class ProductsManagement extends StatelessWidget {
             child: Column(
               children: [
                 TextField(
+                  controller: searchQueryController,
                   onChanged: productController.searchProduct,
                   decoration: InputDecoration(
                     hintText: "Tìm kiếm sản phẩm...",
                     prefixIcon: Icon(Icons.search),
+                    suffixIcon: IconButton(onPressed: () {
+                      searchQueryController.clear();
+                      productController.searchProduct('');
+                    }, icon: Icon(Icons.clear)),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
@@ -47,7 +52,10 @@ class ProductsManagement extends StatelessWidget {
                     children: productController.searchSuggestions
                         .map((suggestion) => ListTile(
                       title: Text(suggestion),
-                      onTap: () => productController.selectSuggestion(suggestion),
+                      onTap: () {
+                        searchQueryController.text = suggestion;
+                        productController.selectSuggestion(suggestion);
+                      },
                     ))
                         .toList(),
                   ),

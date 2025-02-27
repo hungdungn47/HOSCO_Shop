@@ -36,16 +36,12 @@ class ItemCard extends StatelessWidget {
         height: 140,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(
-            width: 3,
-            color: primaryColor,
-          ),
           borderRadius: BorderRadius.all(Radius.circular(12)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
+              color: primaryColor,
               blurRadius: 3,
-              spreadRadius: 2
+              spreadRadius: 1
             )
           ]
         ),
