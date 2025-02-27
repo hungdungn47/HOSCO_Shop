@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloudinary_url_gen/transformation/extract/extract.dart';
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
@@ -72,7 +73,14 @@ class Cart extends StatelessWidget {
             child: Obx(() {
               List<CartItem> cartItems = cartController.cartItems;
               if (cartItems.isEmpty) {
-                return Center(child: Text('Giỏ hàng đang rỗng!'));
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/icons/cart_empty_icon.png', height: 80, width: 80),
+                    const SizedBox(height: 30),
+                    Text('Giỏ hàng đang rỗng!', style: TextStyle(fontSize: 18)),
+                  ]
+                );
               }
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
@@ -169,23 +177,32 @@ class Cart extends StatelessWidget {
                 ),
                 label: Text("Thanh toán", style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
-                  cartController.completeTransaction();
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text("Thanh toán thành công!"),
-                        content: Text("Bạn đã thanh toán thành công!"),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('OK'),
-                          )
-                        ],
-                      );
-                    });
+                  if(cartController.cartItems.isEmpty) {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.rightSlide,
+                      title: "Lỗi",
+                      desc: 'Giỏ hàng đang rỗng',
+                      btnCancelOnPress: () {},
+                      btnOkOnPress: () {
+                      },
+                    ).show();
+                  } else {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.info,
+                      animType: AnimType.rightSlide,
+                      title: "Thanh toán",
+                      desc: 'Xác nhận thanh toán',
+                      btnCancelOnPress: () {
+
+                      },
+                      btnOkOnPress: () {
+                        cartController.completeTransaction();
+                      },
+                    ).show();
+                  }
                 },
               ),
             ),

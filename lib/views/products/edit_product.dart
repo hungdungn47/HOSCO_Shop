@@ -40,6 +40,7 @@ class EditProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(title: Text("Cập nhật sản phẩm")),
       resizeToAvoidBottomInset: true, // ✅ Prevents keyboard overflow
@@ -54,7 +55,7 @@ class EditProductScreen extends StatelessWidget {
                   final product = productController.selectedProduct.value!;
                   return Image.network(
                     product.imageUrl,
-                    height: 200,
+                    height: size.height * 0.35,
                     width: double.infinity,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) =>
@@ -63,10 +64,16 @@ class EditProductScreen extends StatelessWidget {
                 }),
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: "Tên sản phẩm"),
+              Text(productController.selectedProduct.value!.name,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+                )
               ),
+              // TextField(
+              //   controller: nameController,
+              //   decoration: InputDecoration(labelText: "Tên sản phẩm"),
+              // ),
               TextField(
                 controller: priceController,
                 decoration: InputDecoration(labelText: "Giá"),

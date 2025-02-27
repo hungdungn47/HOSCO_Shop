@@ -1,3 +1,5 @@
+
+
 import './cartItem.dart';
 import './product.dart';
 
@@ -6,12 +8,14 @@ class Transaction {
   final List<CartItem> items;
   final double totalAmount;
   final DateTime date;
+  final String type;
 
   Transaction({
     required this.id,
     required this.items,
     required this.totalAmount,
     required this.date,
+    this.type = "sale"
   });
 
   // Convert Transaction to JSON (for storage)
@@ -20,6 +24,7 @@ class Transaction {
     "items": items.map((item) => item.toJson()).toList(),
     "totalAmount": totalAmount,
     "date": date.toIso8601String(),
+    "type": type
   };
 
   // Convert JSON to Transaction
@@ -29,6 +34,7 @@ class Transaction {
       items: (json['items'] as List).map((item) => CartItem.fromJson(item)).toList(),
       totalAmount: json['totalAmount'],
       date: DateTime.parse(json['date']),
+      type: json['type']
     );
   }
 }

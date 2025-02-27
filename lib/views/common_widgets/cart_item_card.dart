@@ -75,24 +75,28 @@ class CartItemCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    cartItem.product.name,
-                    style: boldText,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Sản phẩm", style: fieldNameTextStyle,),
+                      Flexible(
+                        child: Text( cartItem.product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Giá", style: fieldNameTextStyle,),
-                        Flexible(
-                          child: Text( NumberFormat.decimalPattern().format(cartItem.product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Đơn giá", style: fieldNameTextStyle,),
+                      Flexible(
+                        child: Text( NumberFormat.decimalPattern().format(cartItem.product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -101,20 +105,28 @@ class CartItemCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Remove 1 button
-                          IconButton(
-                            onPressed: () {
+                          GestureDetector(
+                            onTap: () {
                               cartController.removeFromCart(cartItem.product);
                             },
-                            icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                            child: Image.asset(
+                              'assets/icons/red_minus_icon.png',
+                              height: 25
+                            ),
                           ),
+                          const SizedBox(width: 8),
                           Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
                           // Add 1 button
-                          IconButton(
-                            onPressed: () {
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
                               cartController.addToCart(cartItem.product);
                             },
-                            icon: Icon(Icons.add_circle_outline, color: Colors.green),
-                          ),
+                            child: Image.asset(
+                              'assets/icons/blue_add_icon.png',
+                              height: 25
+                            ),
+                          )
                         ],
                       )
                     ],

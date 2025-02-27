@@ -22,8 +22,13 @@ class TransactionDetailsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text("Thời gian: ${transaction.date.toLocal()}",
-                style: TextStyle(fontSize: 16)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Thời gian:", style: TextStyle(fontSize: 16)),
+                Text(DateFormat('dd/MM/yyyy HH:mm:ss').format(transaction.date), style: TextStyle(fontSize: 16))
+              ],
+            ),
             SizedBox(height: 16),
             Text("Danh sách sản phẩm:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Divider(),
@@ -62,7 +67,7 @@ class TransactionDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(),
+      // bottomNavigationBar: BottomAppBar(),
     );
   }
 }
