@@ -49,6 +49,7 @@ dependencies:
   shared_preferences: ^2.5.2
   uuid: ^4.5.1
   awesome_dialog: ^3.2.1
+  simple_barcode_scanner: ^0.3.0
 
 dev_dependencies:
   flutter_test:

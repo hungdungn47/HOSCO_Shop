@@ -5,6 +5,7 @@ import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
+import 'package:hosco_shop_2/views/cart/barcode_scanner.dart';
 import 'package:hosco_shop_2/views/common_widgets/item_card.dart';
 import 'package:hosco_shop_2/views/products/product_details.dart';
 
@@ -18,6 +19,11 @@ class ProductsManagement extends StatelessWidget {
       drawer: MyNavigationDrawer(),
       appBar: AppBar(
         title: Text('Quản lý sản phẩm'),
+        actions: [
+          IconButton(onPressed: () {
+            Get.to(BarcodeScanner());
+          }, icon: Icon(Icons.barcode_reader))
+        ],
       ),
       body: Stack(
         children: [
@@ -62,7 +68,16 @@ class ProductsManagement extends StatelessWidget {
                 child: Obx(() {
                   List<Product> products = productController.filteredProducts;
                   if (products.isEmpty) {
-                    return Center(child: Text('Không tìm thấy sản phẩm phù hợp'));
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/icons/not_found_icon.png', height: 80),
+                          const SizedBox(height: 30),
+                          Text('Không tìm thấy sản phẩm phù hợp', style: TextStyle(fontSize: 18),)
+                        ],
+                      ),
+                    );
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),

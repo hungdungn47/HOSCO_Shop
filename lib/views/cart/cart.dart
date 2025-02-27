@@ -115,6 +115,7 @@ class Cart extends StatelessWidget {
                               .map((suggestion) => ListTile(
                             title: Text(suggestion),
                             onTap: () {
+                              FocusScope.of(context).requestFocus(new FocusNode());
                               searchQueryController.clear();
                               cartController.clearSearchQuery();
                               cartController.selectSuggestion(suggestion);
@@ -160,6 +161,12 @@ class Cart extends StatelessWidget {
                     btnOkText: 'Xóa',
                     btnOkOnPress: () {
                       cartController.clearCartItems();
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.success,
+                        title: "Thành công",
+                        desc: "Xóa giỏ hàng thành công!",
+                      ).show();
                     },
                   ).show();
                 },
@@ -199,14 +206,27 @@ class Cart extends StatelessWidget {
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
                       btnCancelOnPress: () {
-
+                        cartController.completeTransaction();
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          title: "Thành công",
+                          desc: "Xác nhận thanh toán thành công!",
+                        ).show();
                       },
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',
                       btnOkOnPress: () {
                         cartController.completeTransaction();
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          title: "Thành công",
+                          desc: "Xác nhận thanh toán thành công!",
+                        ).show();
                       },
                     ).show();
+
                   }
                 },
               ),
