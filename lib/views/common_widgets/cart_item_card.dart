@@ -81,21 +81,24 @@ class CartItemCard extends StatelessWidget {
                     cartItem.product.name,
                     style: boldText,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Giá", style: fieldNameTextStyle,),
-                      Flexible(
-                        child: Text( NumberFormat.decimalPattern().format(cartItem.product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Giá", style: fieldNameTextStyle,),
+                        Flexible(
+                          child: Text( NumberFormat.decimalPattern().format(cartItem.product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                        ),
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Số lượng", style: fieldNameTextStyle,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Remove 1 button
                           IconButton(
@@ -113,7 +116,7 @@ class CartItemCard extends StatelessWidget {
                             icon: Icon(Icons.add_circle_outline, color: Colors.green),
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ],

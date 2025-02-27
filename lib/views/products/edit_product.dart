@@ -99,7 +99,6 @@ class EditProductScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'Lưu thay đổi',
-                  style: TextStyle(fontSize: 18, color: primaryColor, fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(height: 20), // ✅ Adds extra space to prevent bottom overflow

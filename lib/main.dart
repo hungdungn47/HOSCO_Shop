@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
         GetPage(name: '/cart', page: () => Cart()),
-        GetPage(name: '/history', page: () => TransactionHistory()),
+        GetPage(name: '/history', page: () => TransactionHistoryScreen()),
         GetPage(name: '/report', page: () => SalesReport())
       ],
     );

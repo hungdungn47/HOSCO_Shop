@@ -1,13 +1,16 @@
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/cartItem.dart';
 import 'package:hosco_shop_2/models/product.dart';
+import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
+import 'package:uuid/uuid.dart';
 
 class CartController extends GetxController {
   var allProducts = <Product>[].obs;
   var cartItems = <CartItem>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
+  var transactions = <Transaction>[].obs;
 
   @override
   void onInit() {
@@ -80,5 +83,23 @@ class CartController extends GetxController {
   int getQuantity(Product product) {
     int index = cartItems.indexWhere((item) => item.product.id == product.id);
     return index != -1 ? cartItems[index].quantity : 0;
+  }
+
+  void completeTransaction() {
+    if (cartItems.isEmpty) return;
+
+    // Create a new transaction
+    var newTransaction = Transaction(
+      id: Uuid().v4(), // Generate unique ID
+      items: List.from(cartItems),
+      totalAmount: totalPrice,
+      date: DateTime.now(),
+    );
+
+    // Add to transaction history
+    transactions.insert(0, newTransaction);
+
+    // Clear cart after payment
+    cartItems.clear();
   }
 }

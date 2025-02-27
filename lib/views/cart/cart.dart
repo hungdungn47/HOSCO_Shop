@@ -125,7 +125,34 @@ class Cart extends StatelessWidget {
                 icon: Icon(Icons.delete, color: Colors.white),
                 label: Text("Xóa tất cả", style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
-                  cartController.clearCartItems();
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Xóa tất cả"),
+                          content: Text("Bạn muốn xóa tất cả sản phẩm trong giỏ hàng?"),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Hủy'),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                  backgroundColor: Colors.red
+                              ),
+                              onPressed: () {
+                                cartController.clearCartItems();
+                                Navigator.pop(context);
+                              },
+                              child: Text('Xóa'),
+                            )
+                          ],
+                        );
+                      });
+
                 },
               ),
             ),
@@ -141,7 +168,24 @@ class Cart extends StatelessWidget {
                   ),
                 ),
                 label: Text("Thanh toán", style: TextStyle(fontSize: 18, color: Colors.white)),
-                onPressed: () async {
+                onPressed: () {
+                  cartController.completeTransaction();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Thanh toán thành công!"),
+                        content: Text("Bạn đã thanh toán thành công!"),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('OK'),
+                          )
+                        ],
+                      );
+                    });
                 },
               ),
             ),
