@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
+import 'package:hosco_shop_2/utils/constants.dart';
+import 'package:intl/intl.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
   final Transaction transaction;
@@ -20,7 +22,7 @@ class TransactionDetailsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text("Ngày: ${transaction.date.toLocal()}",
+            Text("Thời gian: ${transaction.date.toLocal()}",
                 style: TextStyle(fontSize: 16)),
             SizedBox(height: 16),
             Text("Danh sách sản phẩm:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -30,17 +32,31 @@ class TransactionDetailsScreen extends StatelessWidget {
                 itemCount: transaction.items.length,
                 itemBuilder: (context, index) {
                   final item = transaction.items[index];
-                  return ListTile(
-                    title: Text(item.product.name, style: TextStyle(fontSize: 16)),
-                    subtitle: Text("Số lượng: ${item.quantity}"),
-                    trailing: Text("${(item.product.price * item.quantity).toStringAsFixed(2)} đ"),
+                  // return ListTile(
+                  //   title: Text(item.product.name, style: TextStyle(fontSize: 16)),
+                  //   subtitle: Text("Số lượng: ${item.quantity}"),
+                  //   trailing: Text("${(item.product.price * item.quantity).toStringAsFixed(2)} đ"),
+                  // );
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                          Text("Số lượng: ${item.quantity}", style: TextStyle(fontSize: 16)),
+                          Text("Đơn giá: ${NumberFormat.decimalPattern().format(item.product.price)}", style: TextStyle(fontSize: 16))
+                        ],
+                      ),
+                      Text(NumberFormat.decimalPattern().format(item.product.price * item.quantity), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),)
+                    ],
                   );
                 },
               ),
             ),
             Divider(),
             Text(
-              "Tổng tiền: ${transaction.totalAmount.toStringAsFixed(2)} đ",
+              "Tổng tiền: ${NumberFormat.decimalPattern().format(transaction.totalAmount)} đ",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
