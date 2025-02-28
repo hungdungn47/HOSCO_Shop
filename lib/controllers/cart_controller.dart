@@ -5,18 +5,23 @@ import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:uuid/uuid.dart';
 
+import '../networking/api/api_service.dart';
+import '../utils/sl.dart';
+
 class CartController extends GetxController {
+  final apiService = sl.get<ApiService>();
   var allProducts = <Product>[].obs;
   var cartItems = <CartItem>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var transactions = <Transaction>[].obs;
-  Set<String> productIdSet = <String>{}.obs;
+  Set<int> productIdSet = <int>{}.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    allProducts.assignAll(mockProducts);
+    final productList = await apiService.getAllProducts();
+    allProducts.assignAll(productList);
   }
 
   void addToCart(Product product) {

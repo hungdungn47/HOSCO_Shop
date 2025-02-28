@@ -194,7 +194,6 @@ class BarcodeScanner extends StatelessWidget {
                         ).show();
                       },
                     ).show();
-
                   }
                 },
               ),

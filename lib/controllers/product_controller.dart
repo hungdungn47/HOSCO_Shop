@@ -1,8 +1,13 @@
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import '../models/product.dart';
+import '../networking/api/api_service.dart';
+import '../utils/sl.dart';
 
 class ProductController extends GetxController {
+  final apiService = sl.get<ApiService>();
   var allProducts = <Product>[].obs;
   var selectedProduct = Rxn<Product>();
   var filteredProducts = <Product>[].obs;
@@ -11,16 +16,14 @@ class ProductController extends GetxController {
   var selectedCategories = <String>[].obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    loadProducts();
+    await loadProducts();
     filteredProducts.assignAll(allProducts);
   }
 
   Future<Product> getProductById(String productId) async {
-    print('Looking for product with id: ${productId}');
-    Product product = allProducts.firstWhere((p) => p.id == productId);
-    print('product found: ${product.name}');
+    final product = await apiService.getProductById(productId);
     return product;
   }
 
@@ -38,25 +41,28 @@ class ProductController extends GetxController {
     _applyFilters();
   }
 
-  void loadProducts() {
-    allProducts.assignAll(mockProducts);
+  Future<void> loadProducts() async {
+    final productList = await apiService.getAllProducts();
+    allProducts.assignAll(productList);
   }
 
   void setSelectedProduct(Product product) {
     selectedProduct.value = product;
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
+    await apiService.createProduct(product);
     allProducts.add(product);
     _applyFilters();
   }
 
-  void updateProduct(Product updatedProduct) {
+  Future<void> updateProduct(Product updatedProduct) async {
     int index = allProducts.indexWhere((p) => p.id == updatedProduct.id);
     if (index != -1) {
       allProducts[index] = updatedProduct;
       selectedProduct.value = updatedProduct;
     }
+    await apiService.updateProduct(updatedProduct);
     _applyFilters();
   }
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
@@ -32,13 +33,27 @@ class ProductDetailScreen extends StatelessWidget {
             children: [
               // Product Image
               Center(
-                child: Image.network(
-                  product.imageUrl,
+                // child: Image.network(
+                //   product.imageUrl,
+                //   height: size.height * 0.35,
+                //   width: double.infinity,
+                //   fit: BoxFit.contain,
+                //   errorBuilder: (context, error, stackTrace) =>
+                //       Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                // ),
+                child: CachedNetworkImage(
                   height: size.height * 0.35,
                   width: double.infinity,
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                  imageUrl: product.imageUrl,
+                  placeholder: (context, url) => Center(
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
               SizedBox(height: 16.0),

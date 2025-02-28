@@ -1,5 +1,5 @@
 class Product {
-  String id; // Unique product ID
+  int id; // Unique product ID
   String name;
   String category;
   double price;
@@ -12,7 +12,7 @@ class Product {
   double discount; // Extra: Discount percentage (if any)
 
   Product({
-    required this.id,
+    this.id = 1,
     required this.name,
     required this.category,
     required this.price,
@@ -37,7 +37,7 @@ class Product {
       "receivingDate": receivingDate.toIso8601String(),
       "imageUrl": imageUrl,
       "description": description,
-      "isAvailable": isAvailable,
+      "isAvailable": isAvailable ? 1 : 0,
       "discount": discount,
     };
   }
@@ -54,7 +54,7 @@ class Product {
       receivingDate: DateTime.parse(json["receivingDate"]),
       imageUrl: json["imageUrl"],
       description: json["description"] ?? "",
-      isAvailable: json["isAvailable"] ?? true,
+      isAvailable: json["isAvailable"] == 1 ? true : false,
       discount: json["discount"]?.toDouble() ?? 0.0,
     );
   }

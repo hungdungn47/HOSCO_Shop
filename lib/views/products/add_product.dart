@@ -66,8 +66,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
       return;
     }
 
-    final newProduct = Product(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // Unique ID
+    final newProduct = Product( // Unique ID
       name: nameController.text,
       category: _selectedCategory!,
       price: double.tryParse(priceController.text) ?? 0.0,

@@ -2,7 +2,7 @@ import '../../models/product.dart';
 
 List<Product> mockProducts = [
   Product(
-    id: "P001",
+    id: 1,
     name: "Wireless Mouse",
     category: "Electronics",
     price: 259900,
@@ -15,7 +15,7 @@ List<Product> mockProducts = [
     discount: 10.0,
   ),
   Product(
-    id: "P002",
+    id: 2,
     name: "Gaming Keyboard",
     category: "Electronics",
     price: 499000,
@@ -28,7 +28,7 @@ List<Product> mockProducts = [
     discount: 5.0,
   ),
   Product(
-    id: "P003",
+    id: 3,
     name: "Bluetooth Speaker",
     category: "Audio",
     price: 3990000,
@@ -40,7 +40,7 @@ List<Product> mockProducts = [
     isAvailable: true,
   ),
   Product(
-    id: "P004",
+    id: 4,
     name: "Smartphone Stand",
     category: "Accessories",
     price: 59000,
@@ -52,7 +52,7 @@ List<Product> mockProducts = [
     isAvailable: true,
   ),
   Product(
-    id: "P005",
+    id: 5,
     name: "USB-C Charger",
     category: "Accessories",
     price: 499000,
