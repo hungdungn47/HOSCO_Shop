@@ -7,6 +7,7 @@ import 'package:hosco_shop_2/models/cartItem.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/views/cart/barcode_scanner.dart';
 import 'package:hosco_shop_2/views/common_widgets/cart_item_card.dart';
 import 'package:intl/intl.dart';
 import '../../models/product.dart';
@@ -21,6 +22,11 @@ class Cart extends StatelessWidget {
       drawer: MyNavigationDrawer(),
       appBar: AppBar(
         title: Text('Đơn hàng mới'),
+        actions: [
+          IconButton(onPressed: () {
+            Get.to(BarcodeScanner());
+          }, icon: Icon(Icons.barcode_reader))
+        ],
       ),
       body: GestureDetector(
         onTap: (){

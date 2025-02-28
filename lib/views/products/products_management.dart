@@ -19,11 +19,6 @@ class ProductsManagement extends StatelessWidget {
       drawer: MyNavigationDrawer(),
       appBar: AppBar(
         title: Text('Quản lý sản phẩm'),
-        actions: [
-          IconButton(onPressed: () {
-            Get.to(BarcodeScanner());
-          }, icon: Icon(Icons.barcode_reader))
-        ],
       ),
       body: Stack(
         children: [

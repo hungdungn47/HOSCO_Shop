@@ -17,6 +17,13 @@ class ProductController extends GetxController {
     filteredProducts.assignAll(allProducts);
   }
 
+  Future<Product> getProductById(String productId) async {
+    print('Looking for product with id: ${productId}');
+    Product product = allProducts.firstWhere((p) => p.id == productId);
+    print('product found: ${product.name}');
+    return product;
+  }
+
   bool isSelectedCategory(String category) {
     return selectedCategories.contains(category);
   }
