@@ -12,18 +12,13 @@ import '../../models/cartItem.dart';
 import '../../utils/constants.dart';
 import '../common_widgets/cart_item_card.dart';
 
-class BarcodeScanner extends StatefulWidget {
-  const BarcodeScanner({super.key});
-  @override
-  State<BarcodeScanner> createState() => _BarcodeScannerState();
-}
+class BarcodeScanner extends StatelessWidget {
+  BarcodeScanner({super.key});
 
-class _BarcodeScannerState extends State<BarcodeScanner> {
-  String result = "Result";
-  Set<String> barcodeList = {};
-  // List<Product> productList = [];
   final ProductController productController = Get.find<ProductController>();
+
   final CartController cartController = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,20 +40,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               child: SimpleBarcodeScanner(
                 scaleHeight: 200,
                 scaleWidth: 400,
-                onScanned: (code) {
+                onScanned: (code) async {
+                  if(cartController.productIdSet.contains(code)) return;
                   print(code);
-                  if(!barcodeList.contains(code)) {
-                    setState(() {
-                      barcodeList.add(code);
-
-                    });
-                    setState(() async {
-                      Product newProduct = await productController.getProductById(code);
-                      print('Added new product: ${newProduct.name}');
-                      cartController.addToCart(newProduct);
-                      // productList.add(newProduct);
-                    });
-                  }
+                  Product newProduct = await productController.getProductById(code);
+                  print('Added new product: ${newProduct.name}');
+                  cartController.addToCart(newProduct);
                 },
                 continuous: true,
                 onBarcodeViewCreated: (BarcodeViewController controller) {

@@ -11,6 +11,7 @@ class CartController extends GetxController {
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var transactions = <Transaction>[].obs;
+  Set<String> productIdSet = <String>{}.obs;
 
   @override
   void onInit() {
@@ -26,6 +27,7 @@ class CartController extends GetxController {
         quantity: cartItems[index].quantity + 1,
       );
     } else {
+      productIdSet.add(product.id);
       cartItems.add(CartItem(product: product, quantity: 1));
     }
     cartItems.refresh(); // ✅ Notify GetX of the change
@@ -41,6 +43,7 @@ class CartController extends GetxController {
         );
       } else {
         cartItems.removeAt(index);
+        productIdSet.remove(product.id);
       }
     }
     cartItems.refresh(); // ✅ Notify GetX of the change
@@ -101,5 +104,6 @@ class CartController extends GetxController {
 
     // Clear cart after payment
     cartItems.clear();
+    productIdSet.clear();
   }
 }
