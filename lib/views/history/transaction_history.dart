@@ -31,7 +31,7 @@ class TransactionHistoryScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: cartController.transactions.length,
             itemBuilder: (context, index) {
-              Transaction transaction = cartController.transactions[index];
+              CustomTransaction transaction = cartController.transactions[index];
               return GestureDetector(
                 onTap: () => Get.to(TransactionDetailsScreen(transaction: transaction)),
                 child: transactionInfoCard(transaction),
@@ -43,7 +43,7 @@ class TransactionHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget transactionInfoCard(Transaction transaction) {
+  Widget transactionInfoCard(CustomTransaction transaction) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),

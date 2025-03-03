@@ -19,10 +19,13 @@ class ProductController extends GetxController {
   void onInit() async {
     super.onInit();
     await loadProducts();
+    allProducts.forEach((product) {
+      print('Id: ${product.id} - Name: ${product.name} \n');
+    });
     filteredProducts.assignAll(allProducts);
   }
 
-  Future<Product> getProductById(String productId) async {
+  Future<Product?> getProductById(String productId) async {
     final product = await apiService.getProductById(productId);
     return product;
   }

@@ -14,7 +14,7 @@ class CartController extends GetxController {
   var cartItems = <CartItem>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
-  var transactions = <Transaction>[].obs;
+  var transactions = <CustomTransaction>[].obs;
   Set<int> productIdSet = <int>{}.obs;
 
   @override
@@ -93,15 +93,15 @@ class CartController extends GetxController {
     return index != -1 ? cartItems[index].quantity : 0;
   }
 
-  void completeTransaction() {
+  void completeTransaction(String paymentMethod) {
     if (cartItems.isEmpty) return;
 
     // Create a new transaction
-    var newTransaction = Transaction(
-      id: Uuid().v4(), // Generate unique ID
+    var newTransaction = CustomTransaction(
       items: List.from(cartItems),
       totalAmount: totalPrice,
       date: DateTime.now(),
+      paymentMethod: paymentMethod
     );
 
     // Add to transaction history

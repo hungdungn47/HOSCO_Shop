@@ -41,13 +41,27 @@ class BarcodeScanner extends StatelessWidget {
                 scaleHeight: 200,
                 scaleWidth: 400,
                 onScanned: (code) async {
-                  if(cartController.productIdSet.contains(code)) return;
+                  if(cartController.productIdSet.contains(int.parse(code))) return;
                   print(code);
-                  Product newProduct = await productController.getProductById(code);
-                  print('Added new product: ${newProduct.name}');
-                  cartController.addToCart(newProduct);
+                  Product? newProduct = await productController.getProductById(code);
+                  if(newProduct == null) {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.rightSlide,
+                      title: "Lỗi",
+                      desc: 'Không tồn tại sản phẩm với mã này!',
+                      btnCancelOnPress: () {},
+                      btnOkOnPress: () {
+                      },
+                    ).show();
+                  } else {
+                    print('Added new product: ${newProduct.name}');
+                    cartController.addToCart(newProduct);
+                  }
+
                 },
-                continuous: true,
+                continuous: false,
                 onBarcodeViewCreated: (BarcodeViewController controller) {
                   controller = controller;
                 },
@@ -174,7 +188,7 @@ class BarcodeScanner extends StatelessWidget {
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
                       btnCancelOnPress: () {
-                        cartController.completeTransaction();
+                        cartController.completeTransaction("cash");
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,
@@ -185,7 +199,7 @@ class BarcodeScanner extends StatelessWidget {
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',
                       btnOkOnPress: () {
-                        cartController.completeTransaction();
+                        cartController.completeTransaction("bank-transfer");
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,

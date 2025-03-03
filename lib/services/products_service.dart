@@ -75,4 +75,15 @@ class DatabaseService {
       whereArgs: [product.id], // Use product id as argument
     );
   }
+
+  Future<Product?> getProductById(int id) async {
+    final db = await database;
+    List<Map<String, dynamic>> result =
+    await db.query('products', where: "id = ?", whereArgs: [id]);
+
+    if (result.isNotEmpty) {
+      return Product.fromJson(result.first);
+    }
+    return null; // Return null if no product found
+  }
 }

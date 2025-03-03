@@ -212,7 +212,7 @@ class Cart extends StatelessWidget {
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
                       btnCancelOnPress: () {
-                        cartController.completeTransaction();
+                        cartController.completeTransaction("cash");
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,
@@ -223,7 +223,7 @@ class Cart extends StatelessWidget {
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',
                       btnOkOnPress: () {
-                        cartController.completeTransaction();
+                        cartController.completeTransaction("bank-transfer");
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,

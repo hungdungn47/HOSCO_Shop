@@ -3,19 +3,21 @@
 import './cartItem.dart';
 import './product.dart';
 
-class Transaction {
+class CustomTransaction {
   final String id;
   final List<CartItem> items;
   final double totalAmount;
   final DateTime date;
   final String type;
+  final String paymentMethod;
 
-  Transaction({
-    required this.id,
+  CustomTransaction({
+    this.id = "1",
     required this.items,
     required this.totalAmount,
     required this.date,
-    this.type = "sale"
+    this.type = "sale",
+    this.paymentMethod = "cash"
   });
 
   // Convert Transaction to JSON (for storage)
@@ -24,17 +26,19 @@ class Transaction {
     "items": items.map((item) => item.toJson()).toList(),
     "totalAmount": totalAmount,
     "date": date.toIso8601String(),
-    "type": type
+    "type": type,
+    "paymentMethod": paymentMethod
   };
 
   // Convert JSON to Transaction
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
+  factory CustomTransaction.fromJson(Map<String, dynamic> json) {
+    return CustomTransaction(
       id: json['id'],
       items: (json['items'] as List).map((item) => CartItem.fromJson(item)).toList(),
       totalAmount: json['totalAmount'],
       date: DateTime.parse(json['date']),
-      type: json['type']
+      type: json['type'],
+      paymentMethod: json['paymentMethod']
     );
   }
 }

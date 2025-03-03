@@ -1,7 +1,7 @@
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/api/api_service.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
-import 'package:hosco_shop_2/services/database_service.dart';
+import 'package:hosco_shop_2/services/products_service.dart';
 
 class ApiServiceImpl implements ApiService {
   static final ApiServiceImpl _instance = ApiServiceImpl._internal();
@@ -11,36 +11,36 @@ class ApiServiceImpl implements ApiService {
 
   ApiServiceImpl();
 
-  final DatabaseService _databaseService = DatabaseService.instance;
+  final DatabaseService _productService = DatabaseService.instance;
 
   @override
   Future<List<Product>> getAllProducts() async {
-    final productList = await _databaseService.getAllProducts();
+    final productList = await _productService.getAllProducts();
     return productList;
   }
 
   @override
   Future<void> createProduct(Product productData) async {
     // TODO: implement createProduct
-    await _databaseService.createProduct(productData);
+    await _productService.createProduct(productData);
   }
 
   @override
   Future<void> deleteProduct(String productId) async {
     // TODO: implement deleteProduct
-    await _databaseService.deleteProduct(int.parse(productId));
+    await _productService.deleteProduct(int.parse(productId));
   }
 
   @override
   Future<void> updateProduct(Product productData) async {
     // TODO: implement updateProduct
-    await _databaseService.updateProduct(productData);
+    await _productService.updateProduct(productData);
   }
 
   @override
-  Future<Product> getProductById(String productId) async {
+  Future<Product?> getProductById(String productId) async {
     // TODO: implement getProductById
-    Product product = mockProducts.firstWhere((p) => p.id == productId);
+    final product = await _productService.getProductById(int.parse(productId));
     return product;
   }
 

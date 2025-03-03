@@ -4,7 +4,7 @@ import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
-  final Transaction transaction;
+  final CustomTransaction transaction;
 
   const TransactionDetailsScreen({super.key, required this.transaction});
 
