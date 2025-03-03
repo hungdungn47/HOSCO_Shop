@@ -17,6 +17,7 @@ class CartController extends GetxController {
   var transactions = <CustomTransaction>[].obs;
   var discountUnitPercentage = false.obs;
   var discountAmount = 0.0.obs;
+  var isBarcodeOn = true.obs;
   Set<int> productIdSet = <int>{}.obs;
 
   @override
@@ -120,5 +121,9 @@ class CartController extends GetxController {
     cartItems.clear();
     productIdSet.clear();
     discountAmount.value = 0.0;
+  }
+
+  void toggleBarcode() {
+    isBarcodeOn.value = !isBarcodeOn.value;
   }
 }

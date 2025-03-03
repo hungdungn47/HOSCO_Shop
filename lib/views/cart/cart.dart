@@ -27,9 +27,22 @@ class Cart extends StatelessWidget {
       appBar: AppBar(
         title: Text('Đơn hàng mới'),
         actions: [
-          IconButton(onPressed: () {
-            // Get.to(BarcodeScanner());
-          }, icon: Icon(Icons.barcode_reader))
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: GestureDetector(
+              onTap: () {
+                cartController.toggleBarcode();
+              },
+              child: Obx(() {
+                return Image(
+                  color: Colors.white,
+                  height: 25,
+                  width: 25,
+                  image: AssetImage( cartController.isBarcodeOn.value ? 'assets/icons/barcode_off_icon.png' : 'assets/icons/barcode_icon.png' ),
+                );
+              })
+            ),
+          ),
         ],
       ),
       body: GestureDetector(
@@ -43,43 +56,45 @@ class Cart extends StatelessWidget {
               children: [
                 // Sized Box để lấy khoảng trống cho ô tìm kiếm
                 const SizedBox(height: 80),
-                Container(
-                    width: 300,
-                    height: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1)
-                    ),
+                Obx(() {
+                  return cartController.isBarcodeOn.value ? Container(
+                      width: 300,
+                      height: 150,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 1)
+                      ),
 
-                    child: SimpleBarcodeScanner(
-                      scaleHeight: 200,
-                      scaleWidth: 400,
-                      onScanned: (code) async {
-                        if(cartController.productIdSet.contains(int.parse(code))) return;
-                        print(code);
-                        Product? newProduct = await productController.getProductById(code);
-                        if(newProduct == null) {
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.error,
-                            animType: AnimType.rightSlide,
-                            title: "Lỗi",
-                            desc: 'Không tồn tại sản phẩm với mã này!',
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                            },
-                          ).show();
-                        } else {
-                          print('Added new product: ${newProduct.name}');
-                          cartController.addToCart(newProduct);
-                        }
+                      child: SimpleBarcodeScanner(
+                        scaleHeight: 200,
+                        scaleWidth: 400,
+                        onScanned: (code) async {
+                          if(cartController.productIdSet.contains(int.parse(code))) return;
+                          print(code);
+                          Product? newProduct = await productController.getProductById(code);
+                          if(newProduct == null) {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.error,
+                              animType: AnimType.rightSlide,
+                              title: "Lỗi",
+                              desc: 'Không tồn tại sản phẩm với mã này!',
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                              },
+                            ).show();
+                          } else {
+                            print('Added new product: ${newProduct.name}');
+                            cartController.addToCart(newProduct);
+                          }
 
-                      },
-                      continuous: false,
-                      onBarcodeViewCreated: (BarcodeViewController controller) {
-                        controller = controller;
-                      },
-                    )
-                ),
+                        },
+                        continuous: false,
+                        onBarcodeViewCreated: (BarcodeViewController controller) {
+                          controller = controller;
+                        },
+                      )
+                  ) : SizedBox(height: 0);
+                }) ,
                 Expanded(
                   child: Obx(() {
                     List<CartItem> cartItems = cartController.cartItems;
