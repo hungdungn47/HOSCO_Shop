@@ -8,14 +8,18 @@ import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/views/cart/barcode_scanner.dart';
+import 'package:hosco_shop_2/views/cart/checkout_screen.dart';
 import 'package:hosco_shop_2/views/common_widgets/cart_item_card.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../models/product.dart';
 
 class Cart extends StatelessWidget {
   Cart({super.key});
   final TextEditingController searchQueryController = TextEditingController();
   final CartController cartController = Get.find<CartController>();
+  final ProductController productController = Get.find<ProductController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +28,7 @@ class Cart extends StatelessWidget {
         title: Text('Đơn hàng mới'),
         actions: [
           IconButton(onPressed: () {
-            Get.to(BarcodeScanner());
+            // Get.to(BarcodeScanner());
           }, icon: Icon(Icons.barcode_reader))
         ],
       ),
@@ -34,10 +38,48 @@ class Cart extends StatelessWidget {
         },
         child: Stack(
           children: [
-
+            // Danh sách sản phẩm trong giỏ và tổng tiền cần thanh toán, nằm bên dưới của stack
             Column(
               children: [
+                // Sized Box để lấy khoảng trống cho ô tìm kiếm
                 const SizedBox(height: 80),
+                Container(
+                    width: 300,
+                    height: 150,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1)
+                    ),
+
+                    child: SimpleBarcodeScanner(
+                      scaleHeight: 200,
+                      scaleWidth: 400,
+                      onScanned: (code) async {
+                        if(cartController.productIdSet.contains(int.parse(code))) return;
+                        print(code);
+                        Product? newProduct = await productController.getProductById(code);
+                        if(newProduct == null) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.rightSlide,
+                            title: "Lỗi",
+                            desc: 'Không tồn tại sản phẩm với mã này!',
+                            btnCancelOnPress: () {},
+                            btnOkOnPress: () {
+                            },
+                          ).show();
+                        } else {
+                          print('Added new product: ${newProduct.name}');
+                          cartController.addToCart(newProduct);
+                        }
+
+                      },
+                      continuous: false,
+                      onBarcodeViewCreated: (BarcodeViewController controller) {
+                        controller = controller;
+                      },
+                    )
+                ),
                 Expanded(
                   child: Obx(() {
                     List<CartItem> cartItems = cartController.cartItems;
@@ -58,7 +100,7 @@ class Cart extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final CartItem cartItem = cartItems[index];
 
-                            return CartItemCard(cartItem: cartItem);
+                            return CartItemCard(cartItem: cartItem, inCheckout: false,);
                           }
                       ),
                     );
@@ -86,6 +128,7 @@ class Cart extends StatelessWidget {
                 ),
               ],
             ),
+            // Phần tìm kiếm
             Column(
               children: [
                 Padding(
@@ -191,6 +234,7 @@ class Cart extends StatelessWidget {
                 ),
                 label: Text("Thanh toán", style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
+
                   if(cartController.cartItems.isEmpty) {
                     AwesomeDialog(
                       context: context,
@@ -203,36 +247,7 @@ class Cart extends StatelessWidget {
                       },
                     ).show();
                   } else {
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.info,
-                      animType: AnimType.rightSlide,
-                      title: "Thanh toán",
-                      desc: 'Hãy chọn phương thức thanh toán',
-                      btnCancelColor: Colors.green,
-                      btnCancelText: 'Tiền mặt',
-                      btnCancelOnPress: () {
-                        cartController.completeTransaction("cash");
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          title: "Thành công",
-                          desc: "Xác nhận thanh toán thành công!",
-                        ).show();
-                      },
-                      btnOkColor: primaryColor,
-                      btnOkText: 'Chuyển khoản',
-                      btnOkOnPress: () {
-                        cartController.completeTransaction("bank-transfer");
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          title: "Thành công",
-                          desc: "Xác nhận thanh toán thành công!",
-                        ).show();
-                      },
-                    ).show();
-
+                    Get.off(() => CheckoutScreen());
                   }
                 },
               ),

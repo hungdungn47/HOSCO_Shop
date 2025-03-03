@@ -15,6 +15,8 @@ class CartController extends GetxController {
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var transactions = <CustomTransaction>[].obs;
+  var discountUnitPercentage = false.obs;
+  var discountAmount = 0.0.obs;
   Set<int> productIdSet = <int>{}.obs;
 
   @override
@@ -87,7 +89,14 @@ class CartController extends GetxController {
 
   double get totalPrice =>
       cartItems.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
-
+  double finalPrice() {
+    if(!discountUnitPercentage.value) {
+      return totalPrice - discountAmount.value;
+    } else {
+      return totalPrice  - totalPrice * discountAmount.value / 100;
+    }
+    return totalPrice;
+  }
   int getQuantity(Product product) {
     int index = cartItems.indexWhere((item) => item.product.id == product.id);
     return index != -1 ? cartItems[index].quantity : 0;
@@ -110,5 +119,6 @@ class CartController extends GetxController {
     // Clear cart after payment
     cartItems.clear();
     productIdSet.clear();
+    discountAmount.value = 0.0;
   }
 }
