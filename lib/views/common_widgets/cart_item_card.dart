@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 class CartItemCard extends StatelessWidget {
   final CartItem cartItem;
   final CartController cartController = Get.find<CartController>();
+  final bool inCheckout;
+
+  final TextEditingController discountController = TextEditingController();
 
   final TextStyle fieldNameTextStyle = TextStyle(
       fontSize: 16,
@@ -29,7 +32,9 @@ class CartItemCard extends StatelessWidget {
       fontStyle: FontStyle.italic
   );
 
-  CartItemCard({required this.cartItem});
+  CartItemCard({required this.cartItem, this.inCheckout = true}) {
+    discountController.text = "50000";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,40 +102,7 @@ class CartItemCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Số lượng", style: fieldNameTextStyle,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Remove 1 button
-                          GestureDetector(
-                            onTap: () {
-                              cartController.removeFromCart(cartItem.product);
-                            },
-                            child: Image.asset(
-                              'assets/icons/red_minus_icon.png',
-                              height: 25
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
-                          // Add 1 button
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () {
-                              cartController.addToCart(cartItem.product);
-                            },
-                            child: Image.asset(
-                              'assets/icons/blue_add_icon.png',
-                              height: 25
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                  inCheckout ? _unchangableAmountWidget() : _changableAmountWidget()
                 ],
               ),
             ),
@@ -140,6 +112,53 @@ class CartItemCard extends StatelessWidget {
 
         ],
       ),
+    );
+  }
+
+  Widget _unchangableAmountWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Số lượng", style: fieldNameTextStyle,),
+        Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
+      ],
+    );
+  }
+
+  Widget _changableAmountWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Số lượng", style: fieldNameTextStyle,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Remove 1 button
+            GestureDetector(
+              onTap: () {
+                cartController.removeFromCart(cartItem.product);
+              },
+              child: Image.asset(
+                  'assets/icons/red_minus_icon.png',
+                  height: 25
+              ),
+            ),
+            const SizedBox(width: 8),
+            Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
+            // Add 1 button
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                cartController.addToCart(cartItem.product);
+              },
+              child: Image.asset(
+                  'assets/icons/blue_add_icon.png',
+                  height: 25
+              ),
+            )
+          ],
+        )
+      ],
     );
   }
 }
