@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
@@ -11,20 +14,32 @@ class ProductController extends GetxController {
   final apiService = sl.get<ApiService>();
   var allProducts = <Product>[].obs;
   var selectedProduct = Rxn<Product>();
-  var filteredProducts = <Product>[].obs;
+  var displayedProducts = <Product>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
   final ProductService productService = ProductService.instance;
+  Timer? debouncer;
+
+  // Pagination variables
+  var isLoading = false.obs;
+  var page = 1.obs;
+  final int pageSize = 5; // Items per page
+  var hasMoreData = true.obs; // Check if more data is available
 
   @override
   void onInit() async {
     super.onInit();
-    await loadProducts();
-    allProducts.forEach((product) {
-      print('Id: ${product.id} - Name: ${product.name} \n');
-    });
-    filteredProducts.assignAll(allProducts);
+    searchProduct('');
+    // displayedProducts.assignAll(allProducts);
+  }
+
+  void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
+    if(debouncer != null) {
+      debouncer!.cancel();
+    }
+
+    debouncer = Timer(duration, callback);
   }
 
   Future<Product?> getProductById(String productId) async {
@@ -44,11 +59,6 @@ class ProductController extends GetxController {
     }
     selectedCategories.add(newSelectedCategory);
     _applyFilters();
-  }
-
-  Future<void> loadProducts() async {
-    final productList = await apiService.getAllProducts();
-    allProducts.assignAll(productList);
   }
 
   void setSelectedProduct(Product product) {
@@ -77,37 +87,78 @@ class ProductController extends GetxController {
     _applyFilters();
   }
 
-  Future<void> searchProduct(String query) async {
-    searchQuery.value = query;
-    final searchResult = await productService.searchProducts(query);
+  // Future<void> searchProduct(String query) async {
+  //   debounce(() async {
+  //     searchQuery.value = query;
+  //     final searchResult = await productService.searchProductsPaginated(query: query, page: 1, limit: 4);
+  //     print('result length: ${searchResult.length}');
+  //
+  //     // Generate suggestions based on input
+  //     // if (query.isNotEmpty) {
+  //     //   searchSuggestions.value = searchResult
+  //     //       .map((p) => p.name)
+  //     //       .toSet()
+  //     //       .toList();
+  //     // } else {
+  //     //   searchSuggestions.clear();
+  //     // }
+  //
+  //     allProducts.assignAll(searchResult);
+  //     _applyFilters();
+  //   });
+  // }
 
-    // Generate suggestions based on input
-    if (query.isNotEmpty) {
-      searchSuggestions.value = searchResult
-          .map((p) => p.name)
-          .toSet()
-          .toList();
-    } else {
-      searchSuggestions.clear();
+  Future<void> searchProduct(String query, {bool resetPage = true}) async {
+    debounce(() async {
+      if (resetPage) {
+        page.value = 1; // Reset to first page
+        hasMoreData.value = true; // Reset data flag
+        allProducts.clear();
+      }
+
+      if (!hasMoreData.value || isLoading.value) return;
+
+      isLoading.value = true;
+      searchQuery.value = query;
+
+      final searchResult = await productService.searchProductsPaginated(
+        query: query,
+        page: page.value,
+        limit: pageSize,
+      );
+
+      if (searchResult.length < pageSize && page.value >= 1) {
+        hasMoreData.value = false;
+      }
+
+      if (page.value == 1) {
+        allProducts.assignAll(searchResult);
+      } else {
+        allProducts.addAll(searchResult);
+      }
+
+      _applyFilters();
+      isLoading.value = false;
+    });
+  }
+
+  void loadNextPage() {
+    if (hasMoreData.value && !isLoading.value) {
+      page.value++;
+      searchProduct(searchQuery.value, resetPage: false);
     }
-
-    final filtered = searchResult.where((p) => selectedCategories.isEmpty || selectedCategories.contains(p.category));
-    filteredProducts.assignAll(filtered);
-    // _applyFilters();
   }
 
-  void selectSuggestion(String suggestion) {
-    searchQuery.value = suggestion;
-    searchProduct(suggestion); // Perform search with the selected suggestion
-    searchSuggestions.clear(); // Hide suggestions
-  }
+  // void selectSuggestion(String suggestion) {
+  //   searchQuery.value = suggestion;
+  //   searchProduct(suggestion); // Perform search with the selected suggestion
+  //   searchSuggestions.clear(); // Hide suggestions
+  // }
 
   void _applyFilters() {
     var filtered = allProducts.where((p) {
-      bool matchesSearch = p.name.toLowerCase().contains(searchQuery.value);
-      bool matchesCategory = selectedCategories.isEmpty || selectedCategories.contains(p.category);
-      return matchesSearch && matchesCategory;
+      return selectedCategories.isEmpty || selectedCategories.contains(p.category);
     }).toList();
-    filteredProducts.assignAll(filtered);
+    displayedProducts.assignAll(filtered);
   }
 }

@@ -10,9 +10,17 @@ import 'package:hosco_shop_2/views/common_widgets/item_card.dart';
 import 'package:hosco_shop_2/views/products/product_details.dart';
 
 class ProductsManagement extends StatelessWidget {
-  ProductsManagement({super.key});
+
   final ProductController productController = Get.find<ProductController>();
   final TextEditingController searchQueryController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  ProductsManagement({super.key}) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        productController.loadNextPage(); // Load more data when reaching bottom
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +69,7 @@ class ProductsManagement extends StatelessWidget {
 
         Expanded(
                 child: Obx(() {
-                  List<Product> products = productController.filteredProducts;
+                  List<Product> products = productController.displayedProducts;
                   if (products.isEmpty) {
                     return Center(
                       child: Column(
@@ -77,16 +85,26 @@ class ProductsManagement extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
                     child: ListView.builder(
-                        itemCount: products.length,
+                        controller: scrollController,
+                        itemCount: products.length + 1,
                         itemBuilder: (context, index) {
-                          final Product product = products[index];
-                          return GestureDetector(
-                              onTap: () {
-                                productController.setSelectedProduct(product);
-                                Get.to(() => ProductDetailScreen());
-                              },
-                              child: ItemCard(product: product)
-                          );
+                          if(index < products.length) {
+                            final Product product = products[index];
+                            return GestureDetector(
+                                onTap: () {
+                                  productController.setSelectedProduct(product);
+                                  Get.to(() => ProductDetailScreen());
+                                },
+                                child: ItemCard(product: product)
+                            );
+                          } else if (productController.hasMoreData.value) {
+                            return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ));
+                          }
+
                         }
                     ),
                   );

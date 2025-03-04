@@ -98,4 +98,17 @@ class ProductService {
     // print('Search result: ${res[0]}');
     return res;
   }
+
+  Future<List<Product>> searchProductsPaginated({required String query, required int page, int limit = 5}) async {
+    final db = await database;
+    int offset = (page - 1) * limit;
+    // print('Search query in model: ${query}');
+    List<Map<String, Object?>> searchResult = await db.rawQuery('''
+      SELECT * FROM products WHERE id LIKE ? or name LIKE ? LIMIT ? OFFSET ?
+    ''', ["%$query%", "%$query%", limit, offset]);
+
+    final res = searchResult.map((e) => Product.fromJson(e)).toList();
+    // print('Search result: ${res[0]}');
+    return res;
+  }
 }
