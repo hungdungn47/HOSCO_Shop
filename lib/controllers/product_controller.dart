@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
+import 'package:hosco_shop_2/services/products_service.dart';
 import '../models/product.dart';
 import '../networking/api/api_service.dart';
 import '../utils/sl.dart';
@@ -14,6 +15,7 @@ class ProductController extends GetxController {
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
+  final ProductService productService = ProductService.instance;
 
   @override
   void onInit() async {
@@ -75,13 +77,13 @@ class ProductController extends GetxController {
     _applyFilters();
   }
 
-  void searchProduct(String query) {
-    searchQuery.value = query.toLowerCase();
+  Future<void> searchProduct(String query) async {
+    searchQuery.value = query;
+    final searchResult = await productService.searchProducts(query);
 
     // Generate suggestions based on input
     if (query.isNotEmpty) {
-      searchSuggestions.value = allProducts
-          .where((p) => p.name.toLowerCase().contains(searchQuery.value))
+      searchSuggestions.value = searchResult
           .map((p) => p.name)
           .toSet()
           .toList();
@@ -89,7 +91,9 @@ class ProductController extends GetxController {
       searchSuggestions.clear();
     }
 
-    _applyFilters();
+    final filtered = searchResult.where((p) => selectedCategories.isEmpty || selectedCategories.contains(p.category));
+    filteredProducts.assignAll(filtered);
+    // _applyFilters();
   }
 
   void selectSuggestion(String suggestion) {

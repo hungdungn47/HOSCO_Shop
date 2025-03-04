@@ -114,27 +114,27 @@ class ProductsManagement extends StatelessWidget {
                 ),
 
                 // 🔹 Show search suggestions
-                Obx(() => productController.searchSuggestions.isEmpty
-                    ? SizedBox.shrink()
-                    : Container(
-                  margin: EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: productController.searchSuggestions
-                        .map((suggestion) => ListTile(
-                      title: Text(suggestion),
-                      onTap: () {
-                        searchQueryController.text = suggestion;
-                        productController.selectSuggestion(suggestion);
-                      },
-                    ))
-                        .toList(),
-                  ),
-                )),
+                // Obx(() => productController.searchSuggestions.isEmpty
+                //     ? SizedBox.shrink()
+                //     : Container(
+                //   margin: EdgeInsets.symmetric(vertical: 4),
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     border: Border.all(color: Colors.grey),
+                //     borderRadius: BorderRadius.circular(8),
+                //   ),
+                //   child: Column(
+                //     children: productController.searchSuggestions
+                //         .map((suggestion) => ListTile(
+                //       title: Text(suggestion),
+                //       onTap: () {
+                //         searchQueryController.text = suggestion;
+                //         productController.selectSuggestion(suggestion);
+                //       },
+                //     ))
+                //         .toList(),
+                //   ),
+                // )),
               ],
             ),
           ),

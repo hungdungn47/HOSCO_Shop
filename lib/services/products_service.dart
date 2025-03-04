@@ -2,10 +2,10 @@ import 'package:hosco_shop_2/models/product.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseService {
+class ProductService {
   static Database? _db;
-  static final DatabaseService instance = DatabaseService._constructor();
-  DatabaseService._constructor();
+  static final ProductService instance = ProductService._constructor();
+  ProductService._constructor();
 
   Future<Database> get database async {
     if(_db != null) return _db!;
@@ -85,5 +85,17 @@ class DatabaseService {
       return Product.fromJson(result.first);
     }
     return null; // Return null if no product found
+  }
+
+  Future<List<Product>> searchProducts(String query) async {
+    final db = await database;
+    // print('Search query in model: ${query}');
+    List<Map<String, Object?>> searchResult = await db.rawQuery('''
+      SELECT * FROM products WHERE id LIKE ? or name LIKE ?
+    ''', ["%$query%", "%$query%"]);
+
+    final res = searchResult.map((e) => Product.fromJson(e)).toList();
+    // print('Search result: ${res[0]}');
+    return res;
   }
 }
