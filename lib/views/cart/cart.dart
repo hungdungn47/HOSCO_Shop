@@ -50,6 +50,7 @@ class Cart extends StatelessWidget {
         onTap: (){
           // print('hehe');
           FocusScope.of(context).requestFocus(new FocusNode());
+          cartController.isShowSuggestion.value = false;
         },
         child: Stack(
           children: [
