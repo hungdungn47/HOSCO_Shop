@@ -19,6 +19,7 @@ class Cart extends StatelessWidget {
   final TextEditingController searchQueryController = TextEditingController();
   final CartController cartController = Get.find<CartController>();
   final ProductController productController = Get.find<ProductController>();
+  // final FocusNode searchFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +48,7 @@ class Cart extends StatelessWidget {
       ),
       body: GestureDetector(
         onTap: (){
+          // print('hehe');
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Stack(
@@ -66,9 +68,11 @@ class Cart extends StatelessWidget {
 
                       child: SimpleBarcodeScanner(
                         scaleHeight: 200,
+                        // delayMillis: ,
                         scaleWidth: 400,
                         onScanned: (code) async {
                           if(cartController.productIdSet.contains(int.parse(code))) return;
+                          cartController.productIdSet.add(int.parse(code));
                           print(code);
                           Product? newProduct = await productController.getProductById(code);
                           if(newProduct == null) {
@@ -82,11 +86,13 @@ class Cart extends StatelessWidget {
                               btnOkOnPress: () {
                               },
                             ).show();
+                            print('hohoho');
                           } else {
                             print('Added new product: ${newProduct.name}');
                             cartController.addToCart(newProduct);
                           }
 
+                          await Future.delayed(Duration(milliseconds: 1000));
                         },
                         continuous: false,
                         onBarcodeViewCreated: (BarcodeViewController controller) {
@@ -151,12 +157,17 @@ class Cart extends StatelessWidget {
                   child: Column(
                     children: [
                       TextField(
+                        onTap: () {
+                          cartController.isShowSuggestion.value = true;
+                        },
                         controller: searchQueryController,
                         onChanged: cartController.searchProduct,
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm sản phẩm...",
                           prefixIcon: Icon(Icons.search),
                           suffixIcon: IconButton(onPressed: () {
+                            FocusScope.of(context).requestFocus(new FocusNode());
+                            cartController.isShowSuggestion.value = false;
                             searchQueryController.clear();
                             cartController.clearSearchQuery();
                           }, icon: Icon(Icons.clear)),
@@ -165,7 +176,7 @@ class Cart extends StatelessWidget {
                       ),
 
                       // 🔹 Show search suggestions
-                      Obx(() => cartController.searchQuery == "" ?
+                      Obx(() => !cartController.isShowSuggestion.value ?
                       SizedBox.shrink():
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 4),
@@ -177,9 +188,11 @@ class Cart extends StatelessWidget {
                         child: Column(
                           children: cartController.searchSuggestions
                               .map((suggestion) => ListTile(
-                            title: Text(suggestion),
+                            title: Text(suggestion['name']),
+                            trailing: Text("${suggestion['id']}"),
                             onTap: () {
                               FocusScope.of(context).requestFocus(new FocusNode());
+                              cartController.isShowSuggestion.value = false;
                               searchQueryController.clear();
                               cartController.clearSearchQuery();
                               cartController.selectSuggestion(suggestion);
@@ -187,6 +200,25 @@ class Cart extends StatelessWidget {
                           ))
                               .toList(),
                         ),
+                        // child: SizedBox(
+                        //   height: 350,
+                        //   child: ListView.builder(
+                        //     itemCount: cartController.searchSuggestions.length,
+                        //     itemBuilder: (context, index) {
+                        //       final suggestion = cartController.searchSuggestions[index];
+                        //       return ListTile(
+                        //         title: Text(suggestion['name']),
+                        //         trailing: Text("${suggestion['id']}"),
+                        //         onTap: () {
+                        //           FocusScope.of(context).requestFocus(new FocusNode());
+                        //           searchQueryController.clear();
+                        //           cartController.clearSearchQuery();
+                        //           cartController.selectSuggestion(suggestion);
+                        //         },
+                        //       );
+                        //     },
+                        //   ),
+                        // )
                       )
                       ),
                     ],

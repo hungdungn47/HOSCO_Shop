@@ -185,7 +185,7 @@ class CheckoutScreen extends StatelessWidget {
                       desc: 'Hãy chọn phương thức thanh toán',
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
-                      btnCancelOnPress: () {
+                      btnCancelOnPress: () async {
                         cartController.completeTransaction("cash");
                         discountController.text = "0";
                         AwesomeDialog(
@@ -194,6 +194,8 @@ class CheckoutScreen extends StatelessWidget {
                           title: "Thành công",
                           desc: "Xác nhận thanh toán thành công!",
                         ).show();
+                        await Future.delayed(const Duration(seconds: 2));
+                        Get.offAndToNamed('/cart');
                       },
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',

@@ -1,30 +1,45 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hosco_shop_2/models/cartItem.dart';
+import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:uuid/uuid.dart';
 
 import '../networking/api/api_service.dart';
+import '../services/products_service.dart';
 import '../utils/sl.dart';
 
 class CartController extends GetxController {
   final apiService = sl.get<ApiService>();
-  var allProducts = <Product>[].obs;
   var cartItems = <CartItem>[].obs;
   var searchQuery = ''.obs;
-  var searchSuggestions = <String>[].obs;
+  var searchSuggestions = <Map<String, dynamic>>[].obs;
   var transactions = <CustomTransaction>[].obs;
   var discountUnitPercentage = false.obs;
   var discountAmount = 0.0.obs;
   var isBarcodeOn = true.obs;
+  var isShowSuggestion = false.obs;
   Set<int> productIdSet = <int>{}.obs;
+  final ProductService productService = ProductService.instance;
+  Timer? debouncer;
+  final int pageSize = 6; // Items per page
+
 
   @override
   void onInit() async {
     super.onInit();
-    final productList = await apiService.getAllProducts();
-    allProducts.assignAll(productList);
+    await searchProduct('');
+  }
+  void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
+    if(debouncer != null) {
+      debouncer!.cancel();
+    }
+
+    debouncer = Timer(duration, callback);
   }
 
   void addToCart(Product product) {
@@ -61,27 +76,46 @@ class CartController extends GetxController {
     cartItems.clear();
   }
 
-  void selectSuggestion(String suggestion) {
-    var filteredProducts = allProducts.where((p) => p.name == suggestion).toList();
-    if (filteredProducts.isNotEmpty) {
-      addToCart(filteredProducts[0]);
-    } else {
-      print("No product found with the name: $suggestion");
-    }
+  Future<void> selectSuggestion(Map<String, dynamic> suggestion) async {
+    var product = await productService.getProductById(suggestion['id']);
+    if(product != null) addToCart(product);
   }
 
-  void searchProduct(String query) {
-    searchQuery.value = query.toLowerCase();
-    if (query.isNotEmpty) {
-      searchSuggestions.value = allProducts
-          .where((p) => p.name.toLowerCase().contains(searchQuery.value))
-          .map((p) => p.name)
-          .toSet()
-          .toList();
-    } else {
-      searchSuggestions.clear();
-    }
+  // void searchProduct(String query) {
+  //   searchQuery.value = query.toLowerCase();
+  //   if (query.isNotEmpty) {
+  //     searchSuggestions.value = allProducts
+  //         .where((p) => p.name.toLowerCase().contains(searchQuery.value))
+  //         .map((p) => p.name)
+  //         .toSet()
+  //         .toList();
+  //   } else {
+  //     searchSuggestions.clear();
+  //   }
+  // }
+
+  Future<void> searchProduct(String query, {bool resetPage = true}) async {
+    debounce(() async {
+      searchQuery.value = query;
+
+      final searchResult = await productService.searchProductsPaginated(
+        query: query,
+        page: 1,
+        limit: pageSize,
+      );
+      searchSuggestions.assignAll(searchResult.map((p) => {
+        "name": p.name,
+        "id": p.id
+      }).toList());
+    });
   }
+
+  // void loadNextPage() {
+  //   if (hasMoreData.value && !isLoading.value) {
+  //     page.value++;
+  //     searchProduct(searchQuery.value, resetPage: false);
+  //   }
+  // }
 
   void clearSearchQuery() {
     searchQuery.value = '';
@@ -96,7 +130,6 @@ class CartController extends GetxController {
     } else {
       return totalPrice  - totalPrice * discountAmount.value / 100;
     }
-    return totalPrice;
   }
   int getQuantity(Product product) {
     int index = cartItems.indexWhere((item) => item.product.id == product.id);

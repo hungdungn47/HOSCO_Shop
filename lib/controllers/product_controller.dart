@@ -9,6 +9,7 @@ import 'package:hosco_shop_2/services/products_service.dart';
 import '../models/product.dart';
 import '../networking/api/api_service.dart';
 import '../utils/sl.dart';
+import 'package:logging/logging.dart';
 
 class ProductController extends GetxController {
   final apiService = sl.get<ApiService>();
@@ -20,6 +21,7 @@ class ProductController extends GetxController {
   var selectedCategories = <String>[].obs;
   final ProductService productService = ProductService.instance;
   Timer? debouncer;
+  // final log = Logger('ProductControllerLogger');
 
   // Pagination variables
   var isLoading = false.obs;
@@ -30,7 +32,8 @@ class ProductController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    searchProduct('');
+    await searchProduct('');
+
     // displayedProducts.assignAll(allProducts);
   }
 
@@ -81,11 +84,20 @@ class ProductController extends GetxController {
     _applyFilters();
   }
 
-  void deleteProduct() {
-    allProducts.removeWhere((p) => p.id == selectedProduct.value?.id);
-    selectedProduct.value = null;
-    _applyFilters();
+  void deleteProduct() async {
+    final product = selectedProduct.value;
+    if (product == null || product.id == null) return;
+
+    try {
+      await productService.deleteProduct(product.id); // Ensure product is deleted first
+      allProducts.removeWhere((p) => p.id == product.id);
+      _applyFilters();
+      selectedProduct.value = null;
+    } catch (e) {
+      print("Error deleting product: $e");
+    }
   }
+
 
   // Future<void> searchProduct(String query) async {
   //   debounce(() async {
@@ -139,6 +151,9 @@ class ProductController extends GetxController {
 
       _applyFilters();
       isLoading.value = false;
+      // for (var p in allProducts) {
+      //   log.info('Name: ${p.name} - ID: ${p.id}');
+      // }
     });
   }
 
