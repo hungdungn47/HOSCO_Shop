@@ -1,84 +1,55 @@
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
+import 'package:hosco_shop_2/services/local_db_service.dart';
+import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
 
 class SalesReportController extends GetxController {
-  var timeUnit = "Tuần này".obs;
+  var timeRange = TimeRange.thisWeek.obs;
+  var transactions = <CustomTransaction>[].obs;
+  final DatabaseService databaseService = DatabaseService.instance;
 
-  // Map<String, double> calculateWeeklyRevenue(List<CustomTransaction> transactions) {
-  //   Map<String, double> weeklyRevenue = {};
-  //
-  //   for (var transaction in transactions) {
-  //     DateTime date = transaction.date;
-  //     String weekKey = "${date.year}-W${(date.day / 7).ceil()}"; // Example: "2024-W5"
-  //
-  //     if (!weeklyRevenue.containsKey(weekKey)) {
-  //       weeklyRevenue[weekKey] = 0.0;
-  //     }
-  //     weeklyRevenue[weekKey] = (weeklyRevenue[weekKey]! + transaction.totalAmount);
-  //   }
-  //
-  //   return weeklyRevenue;
-  // }
-
-  Map<String, double> getRevenueData(List<CustomTransaction> transactions) {
-    switch(timeUnit.value) {
-      case "Tuần này":
-        return getLastWeekRevenue(transactions);
-        break;
-      case "Tháng này":
-        return getLastMonthRevenue(transactions);
-        break;
-      case "Tháng":
-        return getLastWeekRevenue(transactions);
-        break;
-      default:
-        return getLastWeekRevenue(transactions);
-        break;
-    }
+  @override
+  void onInit() {
+    databaseService.getTransactions().then((res) => transactions.assignAll(res));
+    super.onInit();
   }
 
-  // Map<String, double> calculateLast8WeeksRevenue(List<CustomTransaction> transactions) {
-  //   Map<String, double> weeklyRevenue = {};
-  //   DateTime now = DateTime.now();
-  //   DateTime eightWeeksAgo = now.subtract(Duration(days: 56));
-  //
-  //   for (var transaction in transactions) {
-  //     if (transaction.date.isAfter(eightWeeksAgo)) {
-  //       // String weekNumber = DateFormat('w').format(transaction.date); // Week as string
-  //       // String year = DateFormat('y').format(transaction.date); // Year as string
-  //
-  //       String weekKey = "hehe"; // Example: "2024-W05"
-  //
-  //       weeklyRevenue[weekKey] = (weeklyRevenue[weekKey] ?? 0) + transaction.totalAmount;
-  //     }
-  //   }
-  //
-  //   return weeklyRevenue;
-  // }
+  Map<String, double> getRevenueData() {
+    switch(timeRange.value) {
+      case TimeRange.lastHour:
+        return getLastHourRevenue();
+      case TimeRange.today:
+        return getTodayRevenue();
+      case TimeRange.thisWeek:
+        return getLastWeekRevenue();
+      case TimeRange.thisMonth:
+        return getLastMonthRevenue();
+      }
+  }
 
-  Map<String, double> getLastWeekRevenue(List<CustomTransaction> transactions) {
+  Map<String, double> getRevenue(Duration interval, String format) {
     Map<String, double> revenue = {};
 
     DateTime now = DateTime.now();
-    DateTime oneWeekAgo = now.subtract(Duration(days: 7));
+    DateTime pastTime = now.subtract(interval);
 
-    // Generate the last 7 days starting from today (keeping the same order)
-    List<String> lastWeekDays = List.generate(7,
-            (i) => DateFormat('dd/MM').format(now.subtract(Duration(days: i)))
-    ).reversed.toList(); // Reverse to maintain correct order
+    // Generate time labels based on the interval
+    List<String> timeLabels = List.generate(
+      interval.inHours > 1 ? interval.inHours : interval.inMinutes,
+          (i) => DateFormat(format).format(now.subtract(
+          interval.inHours > 1 ? Duration(hours: i) : Duration(minutes: i))),
+    ).reversed.toList(); // Reverse to maintain order
 
-    // Initialize all days with 0 revenue
-    for (var day in lastWeekDays) {
-      revenue[day] = 0.0;
+    // Initialize with 0 revenue
+    for (var label in timeLabels) {
+      revenue[label] = 0.0;
     }
 
-
-
-    // Sum transaction amounts for each day
+    // Sum transaction amounts
     for (var transaction in transactions) {
-      if (transaction.date.isAfter(oneWeekAgo)) {
-        String dateKey = DateFormat('dd/MM').format(transaction.date);
+      if (transaction.date.isAfter(pastTime)) {
+        String dateKey = DateFormat(format).format(transaction.date);
         if (revenue.containsKey(dateKey)) {
           revenue[dateKey] = (revenue[dateKey] ?? 0) + transaction.totalAmount;
         }
@@ -87,43 +58,14 @@ class SalesReportController extends GetxController {
 
     return revenue;
   }
-
-  Map<String, double> getLastMonthRevenue(List<CustomTransaction> transactions) {
-    Map<String, double> revenue = {};
-
-    DateTime now = DateTime.now();
-    DateTime oneWeekAgo = now.subtract(Duration(days: 30));
-
-    // Generate the last 7 days starting from today (keeping the same order)
-    List<String> lastWeekDays = List.generate(30,
-            (i) => DateFormat('dd/MM').format(now.subtract(Duration(days: i)))
-    ).reversed.toList(); // Reverse to maintain correct order
-
-    // Initialize all days with 0 revenue
-    for (var day in lastWeekDays) {
-      revenue[day] = 0.0;
-    }
-
-
-    revenue.keys.forEach((key) => print('$key : ${revenue[key]}'));
-    // Sum transaction amounts for each day
-    for (var transaction in transactions) {
-      if (transaction.date.isAfter(oneWeekAgo)) {
-        String dateKey = DateFormat('dd/MM').format(transaction.date);
-        if (revenue.containsKey(dateKey)) {
-          revenue[dateKey] = (revenue[dateKey] ?? 0) + transaction.totalAmount;
-        }
-      }
-    }
-
-    // revenue.keys.forEach((key) => print('$key : ${revenue[key]}'));
-
-    return revenue;
-  }
+  Map<String, double> getLastWeekRevenue() => getRevenue(Duration(days: 7), 'dd/MM');
+  Map<String, double> getTodayRevenue() => getRevenue(Duration(hours: 24), 'HH\'h\'');
+  Map<String, double> getLastHourRevenue() => getRevenue(Duration(hours: 1), 'HH:mm');
+  Map<String, double> getLastMonthRevenue() => getRevenue(Duration(days: 30), 'dd/MM');
 
   // Calculate revenue distribution by payment method
-  Map<String, double> getPaymentDistribution(List<CustomTransaction> transactions) {
-    Map<String, double> paymentDistribution = {"Cash": 0, "Card": 0};
+  Map<String, double> getPaymentDistribution() {
+    Map<String, double> paymentDistribution = {"bank-transfer": 0, "cash": 0};
     for (var transaction in transactions) {
       paymentDistribution[transaction.paymentMethod] =
           (paymentDistribution[transaction.paymentMethod] ?? 0) + transaction.totalAmount;

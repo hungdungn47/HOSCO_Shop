@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/utils/constants.dart';
 
 class LineChartBuilder extends StatelessWidget {
   LineChartBuilder({super.key, required this.chartData});
@@ -41,7 +42,7 @@ class LineChartBuilder extends StatelessWidget {
             spots: spots,
             color: Color(0xff23b6e6),
             gradient: LinearGradient(colors: gradientColors),
-            isCurved: true,
+            isCurved: false,
             dotData: FlDotData(show: false),
           ),
         ],
@@ -71,7 +72,7 @@ class LineChartBuilder extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: salesReportController.timeUnit.value == "Tuần này" ? 1 : 5,
+              interval: salesReportController.timeRange.value == TimeRange.thisWeek ? 1 : 5,
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
                 if (index < 0 || index >= data.keys.length) {

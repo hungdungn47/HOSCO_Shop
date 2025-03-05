@@ -29,6 +29,14 @@ class TransactionDetailsScreen extends StatelessWidget {
                 Text(DateFormat('dd/MM/yyyy HH:mm:ss').format(transaction.date), style: TextStyle(fontSize: 16))
               ],
             ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Hình thức giao dịch:", style: TextStyle(fontSize: 16)),
+                Text(transaction.paymentMethod == 'bank-transfer' ? "Chuyển khoản" : "Tiền mặt", style: TextStyle(fontSize: 16))
+              ],
+            ),
             SizedBox(height: 16),
             Text("Danh sách sản phẩm:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Divider(),
