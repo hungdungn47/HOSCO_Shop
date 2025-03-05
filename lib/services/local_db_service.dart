@@ -1,11 +1,14 @@
 import 'package:hosco_shop_2/models/product.dart';
+import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ProductService {
+import '../models/cart_item.dart';
+
+class DatabaseService {
   static Database? _db;
-  static final ProductService instance = ProductService._constructor();
-  ProductService._constructor();
+  static final DatabaseService instance = DatabaseService._constructor();
+  DatabaseService._constructor();
 
   Future<Database> get database async {
     if(_db != null) return _db!;
@@ -15,11 +18,11 @@ class ProductService {
 
   Future<Database> getDatabase() async {
     final databaseDirPath = await getDatabasesPath();
-    final databasePath = join(databaseDirPath, 'hosco_shop_db.db');
+    final databasePath = join(databaseDirPath, 'hosco_shop_db_3.db');
     final database = await openDatabase(
       databasePath,
-      onCreate: (db, version) {
-        db.execute('''
+      onCreate: (db, version) async {
+        await db.execute('''
           CREATE TABLE products (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL,
@@ -32,7 +35,26 @@ class ProductService {
               description TEXT DEFAULT '',
               isAvailable INTEGER DEFAULT 1,
               discount REAL DEFAULT 0.0
-          )
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            totalAmount REAL,
+            date TEXT,
+            type TEXT,
+            paymentMethod TEXT
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE transaction_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            transactionId INTEGER NOT NULL,
+            productId INTEGER,
+            quantity INTEGER,
+            FOREIGN KEY (transactionId) REFERENCES transactions(id) ON DELETE CASCADE,
+            FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+          );
         ''');
       },
       version: 1
@@ -110,5 +132,53 @@ class ProductService {
     final res = searchResult.map((e) => Product.fromJson(e)).toList();
     // print('Search result: ${res[0]}');
     return res;
+  }
+
+  Future<void> insertTransaction(CustomTransaction transaction) async {
+    final db = await database;
+    int transactionId = await db.insert(
+        "transactions",
+        transaction.toJson()..remove('id'));
+    for (var item in transaction.items) {
+      await db.insert(
+        "transaction_items",
+        {
+          "transactionId": transactionId,
+          "productId": item.product.id,
+          "quantity": item.quantity
+        }
+      );
+    }
+  }
+
+  Future<List<CustomTransaction>> getTransactions() async {
+    final db = await database;
+    final List<Map<String, dynamic>> transactionsData = await db.rawQuery('''
+      SELECT * FROM transactions ORDER BY date DESC;
+    ''');
+    List<CustomTransaction> transactions = [];
+
+    for (var transaction in transactionsData) {
+      final List<Map<String, dynamic>> cartItemsData = await db.query(
+        'transaction_items',
+        where: 'transactionId = ?',
+        whereArgs: [transaction['id']],
+      );
+
+      List<CartItem> cartItems = [];
+      for (var cartItem in cartItemsData) {
+        var productData = await db.query(
+          'products',
+          where: 'id = ?',
+          whereArgs: [cartItem['productId']],
+        );
+        Product product = Product.fromJson(productData.first);
+        cartItems.add(CartItem.fromJson(cartItem, product));
+      }
+
+      transactions.add(CustomTransaction.fromJson(transaction, cartItems));
+    }
+
+    return transactions;
   }
 }

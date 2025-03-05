@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
-import 'package:hosco_shop_2/models/cartItem.dart';
+import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
 

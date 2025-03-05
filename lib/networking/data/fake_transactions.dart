@@ -1,10 +1,10 @@
-import '../../models/cartItem.dart';
+import '../../models/cart_item.dart';
 import '../../models/transaction.dart';
 import '../../models/product.dart';
 
 final List<CustomTransaction> fakeTransactions = [
   CustomTransaction(
-    id: "T001",
+    id: 1,
     items: [
       CartItem(
         product: Product(
@@ -26,7 +26,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T002",
+    id: 2,
     items: [
       CartItem(
         product: Product(
@@ -48,7 +48,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "card",
   ),
   CustomTransaction(
-    id: "T003",
+    id: 3,
     items: [
       CartItem(
         product: Product(
@@ -70,7 +70,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T004",
+    id: 4,
     items: [
       CartItem(
         product: Product(
@@ -92,7 +92,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T005",
+    id: 5,
     items: [
       CartItem(
         product: Product(
@@ -114,7 +114,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "card",
   ),
   CustomTransaction(
-    id: "T006",
+    id: 6,
     items: [
       CartItem(
         product: Product(
@@ -136,7 +136,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T007",
+    id: 7,
     items: [
       CartItem(
         product: Product(
@@ -158,7 +158,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T008",
+    id: 8,
     items: [
       CartItem(
         product: Product(
@@ -180,7 +180,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T009",
+    id: 9,
     items: [
       CartItem(
         product: Product(
@@ -202,7 +202,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "card",
   ),
   CustomTransaction(
-    id: "T010",
+    id: 10,
     items: [
       CartItem(
         product: Product(
@@ -224,7 +224,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "cash",
   ),
   CustomTransaction(
-    id: "T011",
+    id: 11,
     items: [
       CartItem(
         product: Product(
@@ -246,7 +246,7 @@ final List<CustomTransaction> fakeTransactions = [
     paymentMethod: "card",
   ),
   CustomTransaction(
-    id: "T012",
+    id: 12,
     items: [
       CartItem(
         product: Product(

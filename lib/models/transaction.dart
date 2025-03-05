@@ -1,10 +1,10 @@
 
 
-import './cartItem.dart';
+import './cart_item.dart';
 import './product.dart';
 
 class CustomTransaction {
-  final String id;
+  final int? id;
   final List<CartItem> items;
   final double totalAmount;
   final DateTime date;
@@ -12,7 +12,7 @@ class CustomTransaction {
   final String paymentMethod;
 
   CustomTransaction({
-    this.id = "1",
+    this.id,
     required this.items,
     required this.totalAmount,
     required this.date,
@@ -23,7 +23,6 @@ class CustomTransaction {
   // Convert Transaction to JSON (for storage)
   Map<String, dynamic> toJson() => {
     "id": id,
-    "items": items.map((item) => item.toJson()).toList(),
     "totalAmount": totalAmount,
     "date": date.toIso8601String(),
     "type": type,
@@ -31,10 +30,10 @@ class CustomTransaction {
   };
 
   // Convert JSON to Transaction
-  factory CustomTransaction.fromJson(Map<String, dynamic> json) {
+  factory CustomTransaction.fromJson(Map<String, dynamic> json, List<CartItem> items) {
     return CustomTransaction(
       id: json['id'],
-      items: (json['items'] as List).map((item) => CartItem.fromJson(item)).toList(),
+      items: items,
       totalAmount: json['totalAmount'],
       date: DateTime.parse(json['date']),
       type: json['type'],

@@ -5,7 +5,7 @@ import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
-import 'package:hosco_shop_2/services/products_service.dart';
+import 'package:hosco_shop_2/services/local_db_service.dart';
 import '../models/product.dart';
 import '../networking/api/api_service.dart';
 import '../utils/sl.dart';
@@ -19,7 +19,7 @@ class ProductController extends GetxController {
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
-  final ProductService productService = ProductService.instance;
+  final DatabaseService productService = DatabaseService.instance;
   Timer? debouncer;
   // final log = Logger('ProductControllerLogger');
 

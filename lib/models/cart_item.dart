@@ -3,18 +3,21 @@ class CartItem {
   final Product product;
   int quantity;
 
-  CartItem({required this.product, this.quantity = 1});
+  CartItem({
+    required this.product,
+    this.quantity = 1
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      'product': product.toJson(),
+      'productId': product.id,
       'quantity': quantity,
     };
   }
 
-  factory CartItem.fromJson(Map<String, dynamic> json) {
+  factory CartItem.fromJson(Map<String, dynamic> json, Product product) {
     return CartItem(
-      product: Product.fromJson(json['product']),
+      product: product,
       quantity: json['quantity'],
     );
   }

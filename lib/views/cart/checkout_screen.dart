@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/views/common_widgets/toggle_button.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/cartItem.dart';
+import '../../models/cart_item.dart';
 import '../../utils/constants.dart';
 import '../common_widgets/cart_item_card.dart';
 

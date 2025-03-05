@@ -1,7 +1,7 @@
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/api/api_service.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
-import 'package:hosco_shop_2/services/products_service.dart';
+import 'package:hosco_shop_2/services/local_db_service.dart';
 
 class ApiServiceImpl implements ApiService {
   static final ApiServiceImpl _instance = ApiServiceImpl._internal();
@@ -11,7 +11,7 @@ class ApiServiceImpl implements ApiService {
 
   ApiServiceImpl();
 
-  final ProductService _productService = ProductService.instance;
+  final DatabaseService _productService = DatabaseService.instance;
 
   @override
   Future<List<Product>> getAllProducts() async {

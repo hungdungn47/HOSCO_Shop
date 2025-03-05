@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
+import 'package:get/get.dart';
 
 class LineChartBuilder extends StatelessWidget {
   LineChartBuilder({super.key, required this.chartData});
@@ -8,6 +10,8 @@ class LineChartBuilder extends StatelessWidget {
     const Color(0xff23b6e6),
     const Color(0xff02d39a)
   ];
+
+  final SalesReportController salesReportController = Get.find<SalesReportController>();
 
   final Map<String, double> chartData;
 
@@ -67,7 +71,7 @@ class LineChartBuilder extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 1,
+              interval: salesReportController.timeUnit.value == "Tuần này" ? 1 : 5,
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
                 if (index < 0 || index >= data.keys.length) {

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hosco_shop_2/models/cartItem.dart';
+import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
@@ -10,7 +10,7 @@ import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:uuid/uuid.dart';
 
 import '../networking/api/api_service.dart';
-import '../services/products_service.dart';
+import '../services/local_db_service.dart';
 import '../utils/sl.dart';
 
 class CartController extends GetxController {
@@ -24,7 +24,7 @@ class CartController extends GetxController {
   var isBarcodeOn = true.obs;
   var isShowSuggestion = false.obs;
   Set<int> productIdSet = <int>{}.obs;
-  final ProductService productService = ProductService.instance;
+  final DatabaseService databaseService = DatabaseService.instance;
   Timer? debouncer;
   final int pageSize = 6; // Items per page
 
@@ -33,7 +33,7 @@ class CartController extends GetxController {
   void onInit() async {
     super.onInit();
     await searchProduct('');
-    print('Hello');
+    fetchTransactions();
   }
   void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
     if(debouncer != null) {
@@ -78,28 +78,15 @@ class CartController extends GetxController {
   }
 
   Future<void> selectSuggestion(Map<String, dynamic> suggestion) async {
-    var product = await productService.getProductById(suggestion['id']);
+    var product = await databaseService.getProductById(suggestion['id']);
     if(product != null) addToCart(product);
   }
-
-  // void searchProduct(String query) {
-  //   searchQuery.value = query.toLowerCase();
-  //   if (query.isNotEmpty) {
-  //     searchSuggestions.value = allProducts
-  //         .where((p) => p.name.toLowerCase().contains(searchQuery.value))
-  //         .map((p) => p.name)
-  //         .toSet()
-  //         .toList();
-  //   } else {
-  //     searchSuggestions.clear();
-  //   }
-  // }
 
   Future<void> searchProduct(String query, {bool resetPage = true}) async {
     debounce(() async {
       searchQuery.value = query;
 
-      final searchResult = await productService.searchProductsPaginated(
+      final searchResult = await databaseService.searchProductsPaginated(
         query: query,
         page: 1,
         limit: pageSize,
@@ -110,13 +97,6 @@ class CartController extends GetxController {
       }).toList());
     });
   }
-
-  // void loadNextPage() {
-  //   if (hasMoreData.value && !isLoading.value) {
-  //     page.value++;
-  //     searchProduct(searchQuery.value, resetPage: false);
-  //   }
-  // }
 
   void clearSearchQuery() {
     searchQuery.value = '';
@@ -137,7 +117,7 @@ class CartController extends GetxController {
     return index != -1 ? cartItems[index].quantity : 0;
   }
 
-  void completeTransaction(String paymentMethod) {
+  Future<void> completeTransaction(String paymentMethod) async {
     if (cartItems.isEmpty) return;
 
     // Create a new transaction
@@ -148,13 +128,17 @@ class CartController extends GetxController {
       paymentMethod: paymentMethod
     );
 
-    // Add to transaction history
-    transactions.insert(0, newTransaction);
+    await databaseService.insertTransaction(newTransaction);
+    fetchTransactions();
 
     // Clear cart after payment
     cartItems.clear();
     productIdSet.clear();
     discountAmount.value = 0.0;
+  }
+
+  Future<void> fetchTransactions() async {
+    transactions.assignAll(await databaseService.getTransactions());
   }
 
   void toggleBarcode() {

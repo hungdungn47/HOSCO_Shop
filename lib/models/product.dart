@@ -1,5 +1,5 @@
 class Product {
-  int id; // Unique product ID
+  int id;
   String name;
   String category;
   double price;
@@ -7,9 +7,9 @@ class Product {
   String supplier;
   DateTime receivingDate;
   String imageUrl;
-  String description; // Extra: Product description
-  bool isAvailable; // Extra: Availability status
-  double discount; // Extra: Discount percentage (if any)
+  String description;
+  bool isAvailable;
+  double discount;
 
   Product({
     this.id = 1,

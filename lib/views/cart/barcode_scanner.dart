@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../controllers/cart_controller.dart';
-import '../../models/cartItem.dart';
+import '../../models/cart_item.dart';
 import '../../utils/constants.dart';
 import '../common_widgets/cart_item_card.dart';
 
