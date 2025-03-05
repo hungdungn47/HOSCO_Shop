@@ -1,5 +1,4 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloudinary_url_gen/transformation/extract/extract.dart';
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
@@ -7,7 +6,6 @@ import 'package:hosco_shop_2/models/cartItem.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:get/get.dart';
-import 'package:hosco_shop_2/views/cart/barcode_scanner.dart';
 import 'package:hosco_shop_2/views/cart/checkout_screen.dart';
 import 'package:hosco_shop_2/views/common_widgets/cart_item_card.dart';
 import 'package:intl/intl.dart';

@@ -33,6 +33,7 @@ class CartController extends GetxController {
   void onInit() async {
     super.onInit();
     await searchProduct('');
+    print('Hello');
   }
   void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
     if(debouncer != null) {
@@ -119,7 +120,7 @@ class CartController extends GetxController {
 
   void clearSearchQuery() {
     searchQuery.value = '';
-    searchSuggestions.clear();
+    // searchSuggestions.clear();
   }
 
   double get totalPrice =>
@@ -142,7 +143,7 @@ class CartController extends GetxController {
     // Create a new transaction
     var newTransaction = CustomTransaction(
       items: List.from(cartItems),
-      totalAmount: totalPrice,
+      totalAmount: finalPrice(),
       date: DateTime.now(),
       paymentMethod: paymentMethod
     );

@@ -7,6 +7,7 @@ import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
 import 'package:hosco_shop_2/views/history/transaction_history.dart';
+import 'package:hosco_shop_2/views/pdf_page.dart';
 import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
@@ -40,7 +41,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
         GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistoryScreen()),
-        GetPage(name: '/report', page: () => SalesReport())
+        GetPage(name: '/report', page: () => SalesReport()),
+        GetPage(name: '/pdf-page', page: () => PdfPage())
       ],
     );
   }
