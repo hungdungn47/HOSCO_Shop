@@ -181,4 +181,16 @@ class DatabaseService {
 
     return transactions;
   }
+  Future<List<Map<String, dynamic>>> getBestSellingProducts({int limit = 10}) async {
+    final db = await database;
+    return await db.rawQuery('''
+      SELECT p.id, p.name, p.category, p.price, p.imageUrl, 
+             SUM(ti.quantity) AS totalSold
+      FROM transaction_items ti
+      JOIN products p ON ti.productId = p.id
+      GROUP BY p.id
+      ORDER BY totalSold DESC
+      LIMIT ?
+    ''', [limit]);
+  }
 }

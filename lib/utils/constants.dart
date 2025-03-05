@@ -15,12 +15,12 @@ final List<String> productTypes = [
   'Sports'
 ];
 
-enum TimeRange {
-  lastHour,
-  today,
-  thisWeek,
-  thisMonth,
-}
+  enum TimeRange {
+    lastHour,
+    today,
+    thisWeek,
+    thisMonth,
+  }
 
 const Map<TimeRange, String> timeRangeLabels = {
   TimeRange.lastHour: "1 giờ qua",

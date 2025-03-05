@@ -69,6 +69,9 @@ class ProductController extends GetxController {
   }
 
   Future<void> addProduct(Product product) async {
+    for(Product item in mockProducts) {
+      await apiService.createProduct(item);
+    }
     await apiService.createProduct(product);
     allProducts.add(product);
     _applyFilters();

@@ -7,11 +7,13 @@ import 'package:intl/intl.dart';
 class SalesReportController extends GetxController {
   var timeRange = TimeRange.thisWeek.obs;
   var transactions = <CustomTransaction>[].obs;
+  var bestSellingProducts = <Map<String, dynamic>>[].obs;
   final DatabaseService databaseService = DatabaseService.instance;
 
   @override
   void onInit() {
     databaseService.getTransactions().then((res) => transactions.assignAll(res));
+    loadBestSellingProducts();
     super.onInit();
   }
 
@@ -71,5 +73,35 @@ class SalesReportController extends GetxController {
           (paymentDistribution[transaction.paymentMethod] ?? 0) + transaction.totalAmount;
     }
     return paymentDistribution;
+  }
+
+  double getTotalRevenue() {
+    DateTime now = DateTime.now();
+    DateTime startTime;
+
+    switch (timeRange.value) {
+      case TimeRange.lastHour:
+        startTime = now.subtract(Duration(hours: 1));
+        break;
+      case TimeRange.today:
+        startTime = DateTime(now.year, now.month, now.day); // Start of today
+        break;
+      case TimeRange.thisWeek:
+        startTime = now.subtract(Duration(days: now.weekday - 1)); // Start of the week (Monday)
+        startTime = DateTime(startTime.year, startTime.month, startTime.day);
+        break;
+      case TimeRange.thisMonth:
+        startTime = DateTime(now.year, now.month, 1); // Start of the month
+        break;
+    }
+
+    // Sum totalAmount of transactions within the selected time range
+    return transactions
+        .where((transaction) => transaction.date.isAfter(startTime))
+        .fold(0.0, (sum, transaction) => sum + transaction.totalAmount);
+  }
+  void loadBestSellingProducts() async {
+    final products = await databaseService.getBestSellingProducts();
+    bestSellingProducts.assignAll(products);
   }
 }
