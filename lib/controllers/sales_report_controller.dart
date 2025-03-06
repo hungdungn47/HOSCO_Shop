@@ -6,15 +6,24 @@ import 'package:intl/intl.dart';
 
 class SalesReportController extends GetxController {
   var timeRange = TimeRange.thisWeek.obs;
-  var transactions = <CustomTransaction>[].obs;
+  // var transactions = <CustomTransaction>[].obs;
+  var transactionsValue = <Map<String, dynamic>>[].obs;
+  // List<Map<String, dynamic>>? transactionsValue;
   var bestSellingProducts = <Map<String, dynamic>>[].obs;
   final DatabaseService databaseService = DatabaseService.instance;
 
   @override
-  void onInit() {
-    databaseService.getTransactions().then((res) => transactions.assignAll(res));
-    loadBestSellingProducts();
+  void onInit() async {
     super.onInit();
+    // databaseService.getTransactions().then((res) => transactions.assignAll(res));
+    // databaseService.getTransactionsValue().then((res) => transactionsValue = res);
+    await loadTransactions();
+    loadBestSellingProducts();
+  }
+
+  Future<void> loadTransactions() async {
+    final transactions = await databaseService.getTransactionsValue();
+    transactionsValue.assignAll(transactions); // Assign data to reactive list
   }
 
   Map<String, double> getRevenueData() {
@@ -49,11 +58,11 @@ class SalesReportController extends GetxController {
     }
 
     // Sum transaction amounts
-    for (var transaction in transactions) {
-      if (transaction.date.isAfter(pastTime)) {
-        String dateKey = DateFormat(format).format(transaction.date);
+    for (var transaction in transactionsValue) {
+      if (DateTime.parse(transaction['date']).isAfter(pastTime)) {
+        String dateKey = DateFormat(format).format(DateTime.parse(transaction['date']));
         if (revenue.containsKey(dateKey)) {
-          revenue[dateKey] = (revenue[dateKey] ?? 0) + transaction.totalAmount;
+          revenue[dateKey] = (revenue[dateKey] ?? 0) + transaction['totalAmount'];
         }
       }
     }
@@ -68,14 +77,14 @@ class SalesReportController extends GetxController {
   // Calculate revenue distribution by payment method
   Map<String, double> getPaymentDistribution() {
     Map<String, double> paymentDistribution = {"bank-transfer": 0, "cash": 0};
-    for (var transaction in transactions) {
-      paymentDistribution[transaction.paymentMethod] =
-          (paymentDistribution[transaction.paymentMethod] ?? 0) + transaction.totalAmount;
+    for (var transaction in transactionsValue) {
+      paymentDistribution[transaction['paymentMethod']] =
+          (paymentDistribution[transaction['paymentMethod']] ?? 0) + transaction['totalAmount'];
     }
     return paymentDistribution;
   }
 
-  double getTotalRevenue() {
+  double? getTotalRevenue() {
     DateTime now = DateTime.now();
     DateTime startTime;
 
@@ -96,9 +105,7 @@ class SalesReportController extends GetxController {
     }
 
     // Sum totalAmount of transactions within the selected time range
-    return transactions
-        .where((transaction) => transaction.date.isAfter(startTime))
-        .fold(0.0, (sum, transaction) => sum + transaction.totalAmount);
+    return transactionsValue.where((transaction) => DateTime.parse(transaction['date']).isAfter(startTime)).fold(0.0, (sum, transaction) => sum! + transaction['totalAmount']);
   }
   void loadBestSellingProducts() async {
     final products = await databaseService.getBestSellingProducts();

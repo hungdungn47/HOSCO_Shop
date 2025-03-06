@@ -154,8 +154,9 @@ class DatabaseService {
   Future<List<CustomTransaction>> getTransactions() async {
     final db = await database;
     final List<Map<String, dynamic>> transactionsData = await db.rawQuery('''
-      SELECT * FROM transactions ORDER BY date DESC;
-    ''');
+    SELECT * FROM transactions ORDER BY date DESC;
+  ''');
+
     List<CustomTransaction> transactions = [];
 
     for (var transaction in transactionsData) {
@@ -172,6 +173,13 @@ class DatabaseService {
           where: 'id = ?',
           whereArgs: [cartItem['productId']],
         );
+
+        if (productData.isEmpty) {
+          // If product is deleted, skip this cart item or handle it differently
+          print("Warning: Product with ID ${cartItem['productId']} not found.");
+          continue; // Skip the item to avoid errors
+        }
+
         Product product = Product.fromJson(productData.first);
         cartItems.add(CartItem.fromJson(cartItem, product));
       }
@@ -180,6 +188,22 @@ class DatabaseService {
     }
 
     return transactions;
+  }
+
+  Future<List<Map<String, dynamic>>> getTransactionsValue() async {
+    final db = await database;
+    final List<Map<String, dynamic>> transactionsData = await db.rawQuery('''
+      SELECT date, totalAmount, paymentMethod FROM transactions ORDER BY date DESC;
+    ''');
+    return transactionsData;
+  }
+  Future<List<String>> getAllCategories() async {
+    final db = await database;
+    List<Map<String, Object?>> categoriesMap = await db.rawQuery("SELECT DISTINCT category FROM products");
+    // categoriesMap.forEach((entry) {
+    //   print(entry.entries);
+    // });
+    return categoriesMap.map((mapEntry) => mapEntry['category'] as String).toList();
   }
   Future<List<Map<String, dynamic>>> getBestSellingProducts({int limit = 10}) async {
     final db = await database;

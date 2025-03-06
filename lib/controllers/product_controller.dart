@@ -19,6 +19,7 @@ class ProductController extends GetxController {
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
+  List<String>? allCategories;
   final DatabaseService productService = DatabaseService.instance;
   Timer? debouncer;
   // final log = Logger('ProductControllerLogger');
@@ -33,7 +34,7 @@ class ProductController extends GetxController {
   void onInit() async {
     super.onInit();
     await searchProduct('');
-
+    allCategories = await productService.getAllCategories();
     // displayedProducts.assignAll(allProducts);
   }
 

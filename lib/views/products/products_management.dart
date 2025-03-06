@@ -39,27 +39,27 @@ class ProductsManagement extends StatelessWidget {
           height: 35,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: productTypes.length,
+            itemCount: productController.allCategories?.length,
             itemBuilder: (context, index) {
               // Lấy biến selectedCategory từ controller
               // final selectedCategory = productController.selectedCategory.value;
               //
               // bool isSelected = selectedCategory == productTypes[index];
-
+              final category = productController.allCategories?[index];
               return Obx(() => GestureDetector(
                 onTap: () {
-                  productController.addSelectedCategory(productTypes[index]); // Cập nhật trạng thái
+                  productController.addSelectedCategory(category); // Cập nhật trạng thái
                 },
                 child: Container(
                   margin: const EdgeInsets.only(right: 6),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    border: Border.all(color: productController.isSelectedCategory(productTypes[index]) ? primaryColor : Colors.black, width: 1),
+                    border: Border.all(color: productController.isSelectedCategory(category!) ? primaryColor : Colors.black, width: 1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    productTypes[index],
-                    style: TextStyle(color: productController.isSelectedCategory(productTypes[index]) ? primaryColor : Colors.black),
+                    category,
+                    style: TextStyle(color: productController.isSelectedCategory(category!) ? primaryColor : Colors.black),
                   ),
                 ),
               )) ;
@@ -104,6 +104,7 @@ class ProductsManagement extends StatelessWidget {
                                   child: CircularProgressIndicator(),
                                 ));
                           }
+                          return null;
 
                         }
                     ),

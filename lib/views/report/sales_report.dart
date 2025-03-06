@@ -113,14 +113,14 @@ class SalesReport extends StatelessWidget {
               //     }).toList(),
               //   );
               // }),
-              Obx(() {
-                return Column(
-                  children: salesReportController.bestSellingProducts.map((product) {
-                    return BestSellingItemCard(product: product);
-                  }).toList(),
-                );
-              }),
-              Center(child: BestSellingProductsTable(products: salesReportController.bestSellingProducts))
+              // Obx(() {
+              //   return Column(
+              //     children: salesReportController.bestSellingProducts.map((product) {
+              //       return BestSellingItemCard(product: product);
+              //     }).toList(),
+              //   );
+              // }),
+              Center(child: Obx(() => BestSellingProductsTable(products: salesReportController.bestSellingProducts.toList())))
             ],
           ),
         ),

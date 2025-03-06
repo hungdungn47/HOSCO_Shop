@@ -140,7 +140,7 @@ class Cart extends StatelessWidget {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "${NumberFormat.decimalPattern().format(cartController.totalPrice)} đ",
+                        "${NumberFormat.decimalPattern().format(cartController.getTotalPrice())} đ",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
 import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
+import 'package:hosco_shop_2/views/cart/discount_widget.dart';
 import 'package:intl/intl.dart';
 
 class CartItemCard extends StatelessWidget {
@@ -33,7 +34,7 @@ class CartItemCard extends StatelessWidget {
   );
 
   CartItemCard({required this.cartItem, this.inCheckout = true}) {
-    discountController.text = "50000";
+    // discountController.text = "50000";
   }
 
   @override
@@ -91,7 +92,7 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  // const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -101,8 +102,9 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  inCheckout ? _unchangableAmountWidget() : _changableAmountWidget()
+                  // const SizedBox(height: 8),
+                  inCheckout ? _unchangableAmountWidget() : _changableAmountWidget(),
+                  inCheckout ? DiscountWidget(cartItem: cartItem, cartController: cartController) : SizedBox.shrink()
                 ],
               ),
             ),
@@ -121,6 +123,56 @@ class CartItemCard extends StatelessWidget {
       children: [
         Text("Số lượng", style: fieldNameTextStyle,),
         Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
+      ],
+    );
+  }
+  Widget _discountWidget() {
+    CartItem item = cartController.getCartItem(cartItem.product);
+    discountController.text = item.discount.toString();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Chiết khấu", style: fieldNameTextStyle),
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: TextField(
+                onChanged: (value) {
+                  double discount = double.parse(value);
+                  cartController.updateSingleDiscount(cartItem.product, discount, item.discountType);
+                },
+                textAlign: TextAlign.right,
+                controller: discountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: "Giá trị",
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            DropdownButton<DiscountType>(
+              value: item.discountType,
+              onChanged: (newValue) {
+                if (newValue != null) {
+                  cartController.updateSingleDiscount(cartItem.product, item.discount, newValue);
+                }
+              },
+              items: [
+                DropdownMenuItem(
+                  value: DiscountType.fixed,
+                  child: Text("VND"),
+                ),
+                DropdownMenuItem(
+                  value: DiscountType.percentage,
+                  child: Text("%"),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }

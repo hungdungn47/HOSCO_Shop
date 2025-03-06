@@ -103,13 +103,11 @@ class CartController extends GetxController {
     // searchSuggestions.clear();
   }
 
-  double get totalPrice =>
-      cartItems.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
   double finalPrice() {
     if(!discountUnitPercentage.value) {
-      return totalPrice - discountAmount.value;
+      return getTotalPrice() - discountAmount.value;
     } else {
-      return totalPrice  - totalPrice * discountAmount.value / 100;
+      return getTotalPrice()  - getTotalPrice() * discountAmount.value / 100;
     }
   }
   int getQuantity(Product product) {
@@ -143,5 +141,30 @@ class CartController extends GetxController {
 
   void toggleBarcode() {
     isBarcodeOn.value = !isBarcodeOn.value;
+  }
+
+  void updateSingleDiscount(Product product, double discount, DiscountType type) {
+    int index = cartItems.indexWhere((item) => item.product.id == product.id);
+    if (index != -1) {
+      cartItems[index] = CartItem(
+        product: cartItems[index].product,
+        quantity: cartItems[index].quantity,
+        discount: discount,
+        discountType: type,
+      );
+      cartItems.refresh(); // Update UI
+    }
+  }
+
+  CartItem getCartItem(Product product) {
+    return cartItems.firstWhere((item) => item.product.id == product.id,
+        orElse: () => CartItem(product: product));
+  }
+
+  double getTotalPrice() {
+    return cartItems.fold(
+        0.0,
+            (sum, item) =>
+        sum + (item.getFinalPrice() * item.quantity));
   }
 }

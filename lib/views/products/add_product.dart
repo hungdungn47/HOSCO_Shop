@@ -30,6 +30,8 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   final List<String> categories = ["Electronics", "Fashion", "Home", "Beauty", "Sports"];
   final List<String> suppliers = ["Supplier A", "Supplier B", "Supplier C"];
 
+
+
   // Function to select and upload an image
   Future<void> _selectAndUploadImage() async {
     File? image = await _imageService.pickImage();
@@ -132,7 +134,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               onChanged: (value) => setState(() => _selectedCategory = value),
-              items: categories.map((category) {
+              items: productController.allCategories?.map((category) {
                 return DropdownMenuItem(value: category, child: Text(category));
               }).toList(),
               decoration: InputDecoration(labelText: "Chọn danh mục"),
