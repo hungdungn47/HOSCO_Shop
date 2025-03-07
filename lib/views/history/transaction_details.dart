@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hosco_shop_2/models/customer.dart';
+import 'package:hosco_shop_2/models/invoice.dart';
+import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
+
+import '../../services/pdf_invoice_api.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
   final CustomTransaction transaction;
@@ -11,7 +19,15 @@ class TransactionDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chi tiết giao dịch')),
+      appBar: AppBar(
+        title: Text('Chi tiết giao dịch'),
+        actions: [
+          IconButton(
+            onPressed: onPrintInvoice,
+            icon: Icon(Icons.print)
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -77,5 +93,35 @@ class TransactionDetailsScreen extends StatelessWidget {
       ),
       // bottomNavigationBar: BottomAppBar(),
     );
+  }
+
+  void onPrintInvoice() async {
+    final invoice = Invoice(
+      info: InvoiceInfo(
+        description: transaction.paymentMethod,
+        number: transaction.id.toString(),
+        date: transaction.date,
+        dueDate: transaction.date.add(Duration(days: 7))
+      ),
+      supplier: Supplier(
+        name: "HOSCO Vietnam",
+        address: "58 Luu Huu Phuoc, My Dinh 1, Nam Tu Liem",
+        // paymentInfo: "BIDV"
+      ),
+      customer: Customer(
+        name: "Nguyen Hung Dung", address: "KTX My Dinh"),
+      items: transaction.items.map((item) {
+        return InvoiceItem(
+          description: item.product.name,
+          date: transaction.date,
+          quantity: item.quantity,
+          vat: 0,
+          unitPrice: item.product.price);
+      }).toList()
+    );
+    final pdfDocument = await PdfInvoiceApi.generate(invoice);
+
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdfDocument.save());
   }
 }

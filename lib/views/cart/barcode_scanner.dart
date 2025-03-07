@@ -41,9 +41,11 @@ class BarcodeScanner extends StatelessWidget {
                 scaleHeight: 200,
                 scaleWidth: 400,
                 onScanned: (code) async {
+                  print(int.parse(code));
                   if(cartController.productIdSet.contains(int.parse(code))) return;
                   print(code);
                   Product? newProduct = await productController.getProductById(code);
+                  print(newProduct?.name);
                   if(newProduct == null) {
                     AwesomeDialog(
                       context: context,

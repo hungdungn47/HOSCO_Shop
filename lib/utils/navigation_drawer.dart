@@ -83,10 +83,10 @@ class MyNavigationDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Image.asset('assets/icons/report_icon.png', height: iconSize, width: iconSize,),
-            title: Text('In hóa đơn', style: whiteMedium,),
+            title: Text('Khách hàng ', style: whiteMedium,),
             onTap: () {
               Navigator.pop(context);
-              Get.offAndToNamed('/pdf-page');
+              Get.offAndToNamed('/customers');
             },
           )
         ],

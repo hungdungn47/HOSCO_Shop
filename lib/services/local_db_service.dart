@@ -1,5 +1,7 @@
+import 'package:hosco_shop_2/models/customer.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
+import 'package:hosco_shop_2/networking/data/default_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -56,8 +58,64 @@ class DatabaseService {
             FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
           );
         ''');
+        // await db.execute('''
+        //   CREATE TABLE customers (
+        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     name TEXT NOT NULL,
+        //     phone TEXT,
+        //     email TEXT,
+        //     address TEXT,
+        //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        //   );
+        // ''');
+        // await db.execute('''
+        //   CREATE TABLE suppliers (
+        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     name TEXT NOT NULL,
+        //     phone TEXT,
+        //     email TEXT,
+        //     address TEXT,
+        //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        //   );
+        // ''');
+        // await db.execute('''
+        //   ALTER TABLE products ADD COLUMN supplierId INTEGER REFERENCES suppliers(id);
+        // ''');
+        // await db.execute('''
+        //   ALTER TABLE transactions ADD COLUMN customerId INTEGER REFERENCES customers(id);
+        // ''');
       },
-      version: 1
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 2) { // Make sure we only upgrade if needed
+            await db.execute('''
+          CREATE TABLE customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT,
+            address TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+        ''');
+            await db.execute('''
+          CREATE TABLE suppliers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT,
+            address TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+        ''');
+            await db.execute('''
+          ALTER TABLE products ADD COLUMN supplierId INTEGER REFERENCES suppliers(id);
+        ''');
+            await db.execute('''
+          ALTER TABLE transactions ADD COLUMN customerId INTEGER REFERENCES customers(id);
+        ''');
+          }
+        },
+      version: 2
     );
     return database;
   }
@@ -184,7 +242,7 @@ class DatabaseService {
         cartItems.add(CartItem.fromJson(cartItem, product));
       }
 
-      transactions.add(CustomTransaction.fromJson(transaction, cartItems));
+      transactions.add(CustomTransaction.fromJson(transaction, cartItems, defaultCustomer));
     }
 
     return transactions;
@@ -216,5 +274,46 @@ class DatabaseService {
       ORDER BY totalSold DESC
       LIMIT ?
     ''', [limit]);
+  }
+
+  Future<int> addCustomer(Customer customer) async {
+    //String name, String phone, String email, String address
+    final db = await database;
+    return await db.insert('customers', {
+      'name': customer.name,
+      'phone': customer.phone,
+      'email': customer.email,
+      'address': customer.address,
+    });
+  }
+
+  Future<int> addSupplier(String name, String phone, String email, String address) async {
+    final db = await database;
+    return await db.insert('suppliers', {
+      'name': name,
+      'phone': phone,
+      'email': email,
+      'address': address,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getAllCustomers() async {
+    final db = await database;
+    return await db.query('customers');
+  }
+
+  Future<List<Map<String, dynamic>>> getAllSuppliers() async {
+    final db = await database;
+    return await db.query('suppliers');
+  }
+
+  Future<int> updateCustomer(Customer customer) async {
+    final db = await database;
+    return await db.update("customers", customer.toMap(), where: "id = ?", whereArgs: [customer.id]);
+  }
+
+  Future<int> deleteCustomer(int id) async {
+    final db = await database;
+    return await db.delete("customers", where: "id = ?", whereArgs: [id]);
   }
 }

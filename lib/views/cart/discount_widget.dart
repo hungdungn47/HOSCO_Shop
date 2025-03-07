@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
+import 'package:hosco_shop_2/views/common_widgets/toggle_button.dart';
 
 class DiscountWidget extends StatefulWidget {
   final CartItem cartItem;
@@ -63,6 +64,17 @@ class _DiscountWidgetState extends State<DiscountWidget> {
               ),
             ),
             const SizedBox(width: 8),
+            // IosToggleButton(leftText: "VND", rightText: "%", initValue: true, onChange: (value) {
+            //   if(value) {
+            //     setState(() {
+            //       selectedDiscountType = DiscountType.fixed;
+            //     });
+            //   } else {
+            //     setState(() {
+            //       selectedDiscountType = DiscountType.percentage;
+            //     });
+            //   }
+            // },)
             DropdownButton<DiscountType>(
               value: selectedDiscountType,
               onChanged: (newValue) {

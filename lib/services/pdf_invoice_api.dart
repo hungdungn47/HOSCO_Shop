@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:hosco_shop_2/services/formatters.dart';
 import 'package:hosco_shop_2/services/pdf_api.dart';
 import 'package:hosco_shop_2/models/customer.dart';
@@ -9,7 +11,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 
 class PdfInvoiceApi {
+
   static Future<Document> generate(Invoice invoice) async {
+
     final pdf = Document();
 
     pdf.addPage(MultiPage(
@@ -62,7 +66,7 @@ class PdfInvoiceApi {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold)),
-      Text(customer.address),
+      Text(customer.address ?? "Unknown"),
     ],
   );
 
@@ -97,7 +101,7 @@ class PdfInvoiceApi {
     children: [
       Text(supplier.name, style: TextStyle(fontWeight: FontWeight.bold)),
       SizedBox(height: 1 * PdfPageFormat.mm),
-      Text(supplier.address),
+      Text(supplier.address ?? "Unknown"),
     ],
   );
 
@@ -209,9 +213,9 @@ class PdfInvoiceApi {
     children: [
       Divider(),
       SizedBox(height: 2 * PdfPageFormat.mm),
-      buildSimpleText(title: 'Address', value: invoice.supplier.address),
-      SizedBox(height: 1 * PdfPageFormat.mm),
-      buildSimpleText(title: 'Paypal', value: invoice.supplier.paymentInfo),
+      buildSimpleText(title: 'Address', value: invoice.supplier.address ?? "Unknown"),
+      // SizedBox(height: 1 * PdfPageFormat.mm),
+      // buildSimpleText(title: 'Paypal', value: invoice.supplier.paymentInfo),
     ],
   );
 

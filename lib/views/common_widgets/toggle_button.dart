@@ -40,8 +40,8 @@ class _IosToggleButtonState extends State<IosToggleButton> {
     return GestureDetector(
       onTap: _toggleSwitch,
       child: Container(
-        width: 120,
-        height: 40,
+        width: 90,
+        height: 30,
         decoration: BoxDecoration(
           color: Colors.grey[300], // Static background color
           borderRadius: BorderRadius.circular(20),
@@ -55,18 +55,11 @@ class _IosToggleButtonState extends State<IosToggleButton> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),
                 child: Container(
-                  width: 65,
-                  height: 40,
+                  width: isOn ? 45 : 55,
+                  height: 30,
                   decoration: BoxDecoration(
                     color: primaryColor,
                     borderRadius: BorderRadius.circular(20),
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.black26,
-                    //     blurRadius: 4,
-                    //     offset: Offset(0, 2),
-                    //   ),
-                    // ],
                   ),
                 ),
               ),
@@ -76,31 +69,23 @@ class _IosToggleButtonState extends State<IosToggleButton> {
             Align(
               alignment: Alignment.center,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Row(
-                    children: [
-                      SizedBox(width: 17,),
-                      Text(
-                        widget.leftText,
-                        style: TextStyle(
-                          fontWeight: isOn ? FontWeight.w300 : FontWeight.bold,
-                          color: isOn ? Colors.grey : Colors.white, // Always visible
-                        ),
-                      ),
-                    ],
+                  Text(
+                    widget.leftText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isOn ? FontWeight.w300 : FontWeight.bold,
+                      color: isOn ? Colors.grey : Colors.white, // Always visible
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        widget.rightText,
-                        style: TextStyle(
-                          fontWeight: isOn ? FontWeight.bold : FontWeight.w300,
-                          color: isOn ? Colors.white : Colors.grey, // Always visible
-                        ),
-                      ),
-                      SizedBox(width: 27),
-                    ],
+                  Text(
+                    " ${widget.rightText} ",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isOn ? FontWeight.bold : FontWeight.w300,
+                      color: isOn ? Colors.white : Colors.grey, // Always visible
+                    ),
                   ),
                 ],
               ),
