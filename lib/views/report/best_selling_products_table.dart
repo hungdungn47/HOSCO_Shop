@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BestSellingProductsTable extends StatelessWidget {
@@ -23,13 +24,20 @@ class BestSellingProductsTable extends StatelessWidget {
         return DataRow(cells: [
           DataCell(Text('$index')), // Số thứ tự
           DataCell(
-            Image.network(
-              product['imageUrl'],
+            CachedNetworkImage(
+              imageUrl: product['imageUrl'],
               width: 50,
               height: 50,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 50, color: Colors.grey),
+              fit: BoxFit.contain,
+              // errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 50, color: Colors.grey),
             ),
+            // Image.network(
+            //   product['imageUrl'],
+            //   width: 50,
+            //   height: 50,
+            //   fit: BoxFit.cover,
+            //   errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            // ),
           ),
           DataCell(Text(product['name'])),
           DataCell(
