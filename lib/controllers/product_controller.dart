@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';
@@ -20,6 +21,7 @@ class ProductController extends GetxController {
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
   List<String>? allCategories;
+  List<Supplier>? allSuppliers;
   final DatabaseService productService = DatabaseService.instance;
   Timer? debouncer;
   // final log = Logger('ProductControllerLogger');
@@ -35,6 +37,7 @@ class ProductController extends GetxController {
     super.onInit();
     await searchProduct('');
     allCategories = await productService.getAllCategories();
+    allSuppliers = await productService.getAllSuppliers();
     // displayedProducts.assignAll(allProducts);
   }
 

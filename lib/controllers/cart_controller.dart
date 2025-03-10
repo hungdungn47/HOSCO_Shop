@@ -9,6 +9,7 @@ import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/customer.dart';
 import '../networking/api/api_service.dart';
 import '../services/local_db_service.dart';
 import '../utils/sl.dart';
@@ -24,6 +25,7 @@ class CartController extends GetxController {
   var isBarcodeOn = true.obs;
   var isShowSuggestion = false.obs;
   Set<int> productIdSet = <int>{}.obs;
+  var customer = Customer(name: "Khách lẻ").obs;
   final DatabaseService databaseService = DatabaseService.instance;
   Timer? debouncer;
   final int pageSize = 6; // Items per page

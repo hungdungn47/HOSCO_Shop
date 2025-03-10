@@ -1,4 +1,5 @@
 import '../../models/product.dart';
+import '../../models/supplier.dart';
 
 List<Product> mockProducts = [
   Product(
@@ -7,7 +8,7 @@ List<Product> mockProducts = [
     category: "Electronics",
     price: 259900,
     stockQuantity: 50,
-    supplier: "Tech Supplies Ltd.",
+    supplier: Supplier(name: "Hung Dung"),
     receivingDate: DateTime(2024, 2, 15),
     imageUrl: "https://tkcomputer.vn/uploads/mouse_dell_ms5320w_2_1692632551.jpg",
     description: "Ergonomic wireless mouse with 1600 DPI.",
@@ -20,7 +21,7 @@ List<Product> mockProducts = [
     category: "Electronics",
     price: 499000,
     stockQuantity: 30,
-    supplier: "Gaming Gear Inc.",
+    supplier: Supplier(name: "Hung Dung"),
     receivingDate: DateTime(2024, 1, 25),
     imageUrl: "https://row.hyperx.com/cdn/shop/files/hyperx_alloy_core_rgb_es_1_top_down_1600x.jpg?v=1734473869",
     description: "RGB mechanical gaming keyboard with blue switches.",
@@ -33,7 +34,7 @@ List<Product> mockProducts = [
     category: "Audio",
     price: 3990000,
     stockQuantity: 20,
-    supplier: "MusicTech Co.",
+    supplier: Supplier(name: "Hung Dung"),
     receivingDate: DateTime(2024, 3, 1),
     imageUrl: "https://www.sencor.com/getmedia/6770caad-d0be-4d0d-b5f0-01bbc4c1c555/35059169.jpg.aspx?width=2100&height=2100&ext=.jpg",
     description: "Portable Bluetooth speaker with 10-hour battery life.",
@@ -45,7 +46,7 @@ List<Product> mockProducts = [
     category: "Accessories",
     price: 59000,
     stockQuantity: 100,
-    supplier: "Gadget World",
+    supplier: Supplier(name: "Hung Dung"),
     receivingDate: DateTime(2024, 2, 10),
     imageUrl: "https://m.media-amazon.com/images/I/61rkmti-6-L._AC_SL1500_.jpg",
     description: "Adjustable aluminum phone stand for desk use.",
@@ -57,7 +58,7 @@ List<Product> mockProducts = [
     category: "Accessories",
     price: 499000,
     stockQuantity: 80,
-    supplier: "FastCharge Tech",
+    supplier: Supplier(name: "Hung Dung"),
     receivingDate: DateTime(2024, 1, 30),
     imageUrl: "https://m.media-amazon.com/images/I/61nYNJ7O1BL.jpg",
     description: "Fast-charging USB-C adapter with 20W power.",

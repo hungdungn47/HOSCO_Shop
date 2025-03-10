@@ -1,5 +1,6 @@
 import 'package:hosco_shop_2/models/customer.dart';
 import 'package:hosco_shop_2/models/product.dart';
+import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/data/default_model.dart';
 import 'package:path/path.dart';
@@ -58,32 +59,6 @@ class DatabaseService {
             FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
           );
         ''');
-        // await db.execute('''
-        //   CREATE TABLE customers (
-        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-        //     name TEXT NOT NULL,
-        //     phone TEXT,
-        //     email TEXT,
-        //     address TEXT,
-        //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        //   );
-        // ''');
-        // await db.execute('''
-        //   CREATE TABLE suppliers (
-        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-        //     name TEXT NOT NULL,
-        //     phone TEXT,
-        //     email TEXT,
-        //     address TEXT,
-        //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        //   );
-        // ''');
-        // await db.execute('''
-        //   ALTER TABLE products ADD COLUMN supplierId INTEGER REFERENCES suppliers(id);
-        // ''');
-        // await db.execute('''
-        //   ALTER TABLE transactions ADD COLUMN customerId INTEGER REFERENCES customers(id);
-        // ''');
       },
         onUpgrade: (db, oldVersion, newVersion) async {
           if (oldVersion < 2) { // Make sure we only upgrade if needed
@@ -113,9 +88,22 @@ class DatabaseService {
             await db.execute('''
           ALTER TABLE transactions ADD COLUMN customerId INTEGER REFERENCES customers(id);
         ''');
+          } else if(oldVersion < 3) {
+            await db.execute('''
+              CREATE TABLE products_new AS 
+              SELECT id, name, category, price, stockQuantity, supplierId,
+                receivingDate,
+                imageUrl,
+                description,
+                isAvailable,
+                discount
+              FROM products;
+            ''');
+            await db.execute('DROP TABLE products;');
+            await db.execute("ALTER TABLE products_new RENAME TO products;");
           }
         },
-      version: 2
+      version: 3
     );
     return database;
   }
@@ -129,12 +117,14 @@ class DatabaseService {
     );
   }
 
-  Future<List<Product>> getAllProducts() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('products');
-
-    return maps.map((map) => Product.fromJson(map)).toList();
-  }
+  // Future<List<Product>> getAllProducts() async {
+  //   final Database db = await database;
+  //   final List<Map<String, dynamic>> maps = await db.query('products');
+  //   List<Product> res = [];
+  //   for(Map<String, dynamic> ma)
+  //
+  //   return maps.map((map) => Product.fromJson(map)).toList();
+  // }
 
   Future<void> deleteProduct(int productId) async {
     final db = await database;
@@ -158,26 +148,26 @@ class DatabaseService {
 
   Future<Product?> getProductById(int id) async {
     final db = await database;
-    List<Map<String, dynamic>> result =
-    await db.query('products', where: "id = ?", whereArgs: [id]);
+    List<Map<String, dynamic>> result = await db.query('products', where: "id = ?", whereArgs: [id]);
 
     if (result.isNotEmpty) {
-      return Product.fromJson(result.first);
+      final supplier = result.first['supplierId'] != null ? await getSupplier(result.first['supplierId']) : Supplier(name: "Unknown");
+      return Product.fromJson(result.first, supplier);
     }
     return null; // Return null if no product found
   }
 
-  Future<List<Product>> searchProducts(String query) async {
-    final db = await database;
-    // print('Search query in model: ${query}');
-    List<Map<String, Object?>> searchResult = await db.rawQuery('''
-      SELECT * FROM products WHERE id LIKE ? or name LIKE ?
-    ''', ["%$query%", "%$query%"]);
-
-    final res = searchResult.map((e) => Product.fromJson(e)).toList();
-    // print('Search result: ${res[0]}');
-    return res;
-  }
+  // Future<List<Product>> searchProducts(String query) async {
+  //   final db = await database;
+  //   // print('Search query in model: ${query}');
+  //   List<Map<String, Object?>> searchResult = await db.rawQuery('''
+  //     SELECT * FROM products WHERE id LIKE ? or name LIKE ?
+  //   ''', ["%$query%", "%$query%"]);
+  //
+  //   final res = searchResult.map((e) => Product.fromJson(e)).toList();
+  //   // print('Search result: ${res[0]}');
+  //   return res;
+  // }
 
   Future<List<Product>> searchProductsPaginated({required String query, required int page, int limit = 5}) async {
     final db = await database;
@@ -186,9 +176,17 @@ class DatabaseService {
     List<Map<String, Object?>> searchResult = await db.rawQuery('''
       SELECT * FROM products WHERE id LIKE ? or name LIKE ? LIMIT ? OFFSET ?
     ''', ["%$query%", "%$query%", limit, offset]);
+    
+    final List<Product> res = [];
+    for(Map<String, dynamic> productJson in searchResult) {
+      final productId = productJson["id"];
+      if(productId == null) {
+        continue;
+      }
+      final productSupplier = productJson['supplierId'] != null ? await getSupplier(productJson['supplierId']) : Supplier(name: "Unknown");
+      res.add(Product.fromJson(productJson, productSupplier));
+    }
 
-    final res = searchResult.map((e) => Product.fromJson(e)).toList();
-    // print('Search result: ${res[0]}');
     return res;
   }
 
@@ -238,11 +236,16 @@ class DatabaseService {
           continue; // Skip the item to avoid errors
         }
 
-        Product product = Product.fromJson(productData.first);
+        Product product = Product.fromJson(productData.first, Supplier(name: "Unknown"));
         cartItems.add(CartItem.fromJson(cartItem, product));
       }
+      if(transaction['customerId'] != null) {
+        final Customer customer = await getCustomer(transaction['customerId']);
+        transactions.add(CustomTransaction.fromJson(transaction, cartItems, customer));
+      } else {
+        transactions.add(CustomTransaction.fromJson(transaction, cartItems, defaultCustomer));
+      }
 
-      transactions.add(CustomTransaction.fromJson(transaction, cartItems, defaultCustomer));
     }
 
     return transactions;
@@ -297,14 +300,32 @@ class DatabaseService {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getAllCustomers() async {
+  Future<Supplier> getSupplier(int supplierId) async {
     final db = await database;
-    return await db.query('customers');
+    final result = await db.query('suppliers', where: "id = ?", whereArgs: [supplierId], limit: 1);
+    return Supplier.fromMap(result.first) ?? Supplier(name: "Unknown");
   }
 
-  Future<List<Map<String, dynamic>>> getAllSuppliers() async {
+  Future<List<Customer>> getAllCustomers() async {
     final db = await database;
-    return await db.query('suppliers');
+    final maps = await db.query('customers');
+    return maps.map((e) => Customer.fromMap(e)).toList();
+  }
+
+  Future<List<Supplier>> getAllSuppliers() async {
+    final db = await database;
+    final maps = await db.query('suppliers');
+    final List<Supplier> res = [];
+    for(Map<String, dynamic> map in maps) {
+      res.add(Supplier.fromMap(map));
+    }
+    return res;
+  }
+
+  Future<Customer> getCustomer(int customerId) async {
+    final db = await database;
+    final result = await db.query('customers', where: "id = ?", whereArgs: [customerId], limit: 1);
+    return Customer.fromMap(result.first);
   }
 
   Future<int> updateCustomer(Customer customer) async {
@@ -315,5 +336,14 @@ class DatabaseService {
   Future<int> deleteCustomer(int id) async {
     final db = await database;
     return await db.delete("customers", where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<List<Customer>> searchCustomers(String searchQuery) async {
+    final db = await database;
+    print("Query: ${searchQuery}");
+    final response = await db.rawQuery('''
+      SELECT * FROM customers WHERE name LIKE ? LIMIT 5
+    ''', ["%$searchQuery%"]);
+    return response.map((e) => Customer.fromMap(e)).toList();
   }
 }

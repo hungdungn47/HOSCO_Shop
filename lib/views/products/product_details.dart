@@ -98,7 +98,7 @@ class ProductDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Nhà cung cấp:", style: TextStyle(fontSize: 18, color: Colors.black54)),
-                  Text(product.supplier, style: TextStyle(fontSize: 18, color: Colors.black54)),
+                  Text(product.supplier.name, style: TextStyle(fontSize: 18, color: Colors.black54)),
                 ],
               ),
               SizedBox(height: 8.0),

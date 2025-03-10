@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/models/product.dart';
+import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/services/image_upload_service.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 
@@ -73,7 +74,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
       category: _selectedCategory!,
       price: double.tryParse(priceController.text) ?? 0.0,
       stockQuantity: int.tryParse(stockController.text) ?? 0,
-      supplier: _selectedSupplier!,
+      supplier: Supplier(name: _selectedSupplier!),
       receivingDate: DateTime.now(),
       imageUrl: _imageUrl!,
       description: descriptionController.text,

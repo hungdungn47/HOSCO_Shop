@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
+import 'package:hosco_shop_2/controllers/customer_controller.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/networking/api/api_service.dart';
 import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
@@ -24,6 +25,7 @@ Future<void> setup() async {
   Get.put(ProductController());
   Get.put(CartController());
   Get.put(ApiServiceImpl());
+  Get.put(CustomerController());
 }
 
 class MyApp extends StatelessWidget {

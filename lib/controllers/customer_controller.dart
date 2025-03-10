@@ -5,6 +5,8 @@ import 'package:hosco_shop_2/services/local_db_service.dart';
 class CustomerController extends GetxController {
   final DatabaseService databaseService = DatabaseService.instance;
   var customers = <Customer>[].obs;
+  var suggestionCustomers = <Customer>[Customer(name: "Khách lẻ")].obs;
+  var isShowSuggestion = false.obs;
 
   @override
   void onInit() {
@@ -14,7 +16,18 @@ class CustomerController extends GetxController {
 
   void fetchCustomers() async {
     final data = await databaseService.getAllCustomers();
-    customers.assignAll(data.map((c) => Customer.fromMap(c)));
+    customers.assignAll(data);
+  }
+
+  void toggleShowSuggestion() {
+    isShowSuggestion.value = !isShowSuggestion.value;
+  }
+
+  void searchCustomers(String searchQuery) async {
+    final res = await databaseService.searchCustomers(searchQuery);
+    res.insert(0, Customer(name: "Khách lẻ"));
+    suggestionCustomers.assignAll(res);
+    res.clear();
   }
 
   void addCustomer(Customer customer) async {

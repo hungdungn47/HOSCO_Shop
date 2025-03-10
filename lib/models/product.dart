@@ -1,10 +1,12 @@
+import 'package:hosco_shop_2/models/supplier.dart';
+
 class Product {
   int id;
   String name;
   String category;
   double price;
   int stockQuantity;
-  String supplier;
+  Supplier supplier; // Store full Supplier object
   DateTime receivingDate;
   String imageUrl;
   String description;
@@ -25,7 +27,7 @@ class Product {
     this.discount = 0.0,
   });
 
-  /// Convert Product to JSON (for API or local storage)
+  /// Convert Product to JSON (Store only supplierId)
   Map<String, dynamic> toJson() {
     return {
       "id": id,
@@ -33,7 +35,7 @@ class Product {
       "category": category,
       "price": price,
       "stockQuantity": stockQuantity,
-      "supplier": supplier,
+      "supplierId": supplier.id, // Store only supplierId
       "receivingDate": receivingDate.toIso8601String(),
       "imageUrl": imageUrl,
       "description": description,
@@ -42,15 +44,15 @@ class Product {
     };
   }
 
-  /// Create Product from JSON (for API or local storage)
-  factory Product.fromJson(Map<String, dynamic> json) {
+  /// Create Product from JSON (Fetch full Supplier separately)
+  factory Product.fromJson(Map<String, dynamic> json, Supplier supplier) {
     return Product(
       id: json["id"],
       name: json["name"],
       category: json["category"],
       price: json["price"].toDouble(),
       stockQuantity: json["stockQuantity"],
-      supplier: json["supplier"],
+      supplier: supplier, // Attach full supplier object
       receivingDate: DateTime.parse(json["receivingDate"]),
       imageUrl: json["imageUrl"],
       description: json["description"] ?? "",

@@ -13,11 +13,11 @@ class ApiServiceImpl implements ApiService {
 
   final DatabaseService _productService = DatabaseService.instance;
 
-  @override
-  Future<List<Product>> getAllProducts() async {
-    final productList = await _productService.getAllProducts();
-    return productList;
-  }
+  // @override
+  // Future<List<Product>> getAllProducts() async {
+  //   final productList = await _productService.getAllProducts();
+  //   return productList;
+  // }
 
   @override
   Future<void> createProduct(Product productData) async {
