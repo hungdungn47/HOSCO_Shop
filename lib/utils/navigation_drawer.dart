@@ -82,7 +82,7 @@ class MyNavigationDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Image.asset('assets/icons/report_icon.png', height: iconSize, width: iconSize,),
+            leading: Image.asset('assets/icons/user_icon.png', height: iconSize, width: iconSize, color: Colors.white,),
             title: Text('Khách hàng ', style: whiteMedium,),
             onTap: () {
               Navigator.pop(context);
