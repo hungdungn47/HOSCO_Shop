@@ -152,7 +152,7 @@ class DatabaseService {
 
     if (result.isNotEmpty) {
       final supplier = result.first['supplierId'] != null ? await getSupplier(result.first['supplierId']) : Supplier(name: "Unknown");
-      return Product.fromJson(result.first, supplier);
+      return Product.fromJson(result.first);
     }
     return null; // Return null if no product found
   }
@@ -176,7 +176,7 @@ class DatabaseService {
     List<Map<String, Object?>> searchResult = await db.rawQuery('''
       SELECT * FROM products WHERE id LIKE ? or name LIKE ? LIMIT ? OFFSET ?
     ''', ["%$query%", "%$query%", limit, offset]);
-    
+
     final List<Product> res = [];
     for(Map<String, dynamic> productJson in searchResult) {
       final productId = productJson["id"];
@@ -184,7 +184,7 @@ class DatabaseService {
         continue;
       }
       final productSupplier = productJson['supplierId'] != null ? await getSupplier(productJson['supplierId']) : Supplier(name: "Unknown");
-      res.add(Product.fromJson(productJson, productSupplier));
+      res.add(Product.fromJson(productJson));
     }
 
     return res;
@@ -236,7 +236,7 @@ class DatabaseService {
           continue; // Skip the item to avoid errors
         }
 
-        Product product = Product.fromJson(productData.first, Supplier(name: "Unknown"));
+        Product product = Product.fromJson(productData.first);
         cartItems.add(CartItem.fromJson(cartItem, product));
       }
       if(transaction['customerId'] != null) {

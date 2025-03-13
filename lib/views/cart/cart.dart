@@ -70,8 +70,8 @@ class Cart extends StatelessWidget {
                         // delayMillis: ,
                         scaleWidth: 400,
                         onScanned: (code) async {
-                          if(cartController.productIdSet.contains(int.parse(code))) return;
-                          cartController.productIdSet.add(int.parse(code));
+                          if(cartController.productIdSet.contains(code)) return;
+                          cartController.productIdSet.add(code);
                           print(code);
                           Product? newProduct = await productController.getProductById(code);
                           if(newProduct == null) {

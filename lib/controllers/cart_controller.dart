@@ -1,21 +1,17 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
-import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
-import 'package:uuid/uuid.dart';
-
 import '../models/customer.dart';
-import '../networking/api/api_service.dart';
+import '../networking/api/product_api_service.dart';
 import '../services/local_db_service.dart';
 import '../utils/sl.dart';
 
 class CartController extends GetxController {
-  final apiService = sl.get<ApiService>();
+  final apiService = sl.get<ProductApiService>();
   var cartItems = <CartItem>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <Map<String, dynamic>>[].obs;
@@ -24,7 +20,7 @@ class CartController extends GetxController {
   var discountAmount = 0.0.obs;
   var isBarcodeOn = true.obs;
   var isShowSuggestion = false.obs;
-  Set<int> productIdSet = <int>{}.obs;
+  Set<String> productIdSet = <String>{}.obs;
   var customer = Customer(name: "Khách lẻ").obs;
   final DatabaseService databaseService = DatabaseService.instance;
   Timer? debouncer;
@@ -53,8 +49,10 @@ class CartController extends GetxController {
         quantity: cartItems[index].quantity + 1,
       );
     } else {
-      productIdSet.add(product.id);
-      cartItems.add(CartItem(product: product, quantity: 1));
+      if(product.id != null) {
+        productIdSet.add(product.id!);
+        cartItems.add(CartItem(product: product, quantity: 1));
+      }
     }
     cartItems.refresh(); // ✅ Notify GetX of the change
   }

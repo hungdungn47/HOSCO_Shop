@@ -74,10 +74,10 @@ class TransactionDetailsScreen extends StatelessWidget {
                         children: [
                           Text(item.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
                           Text("Số lượng: ${item.quantity}", style: TextStyle(fontSize: 16)),
-                          Text("Đơn giá: ${NumberFormat.decimalPattern().format(item.product.price)}", style: TextStyle(fontSize: 16))
+                          Text("Đơn giá: ${NumberFormat.decimalPattern().format(item.product.wholesalePrice)}", style: TextStyle(fontSize: 16))
                         ],
                       ),
-                      Text(NumberFormat.decimalPattern().format(item.product.price * item.quantity), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),)
+                      Text(NumberFormat.decimalPattern().format(item.product.wholesalePrice * item.quantity), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),)
                     ],
                   );
                 },
@@ -116,7 +116,7 @@ class TransactionDetailsScreen extends StatelessWidget {
           date: transaction.date,
           quantity: item.quantity,
           vat: 0,
-          unitPrice: item.product.price);
+          unitPrice: item.product.wholesalePrice);
       }).toList()
     );
     final pdfDocument = await PdfInvoiceApi.generate(invoice);

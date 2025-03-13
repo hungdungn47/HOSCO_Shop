@@ -63,8 +63,8 @@ class CartItemCard extends StatelessWidget {
                 border: Border(right: BorderSide(color: primaryColor, width: 1)),
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              child: CachedNetworkImage(
-                imageUrl: cartItem.product.imageUrl,
+              child: cartItem.product.imageUrl != null ? CachedNetworkImage(
+                imageUrl: cartItem.product.imageUrl!,
                 placeholder: (context, url) => Center(
                   child: SizedBox(
                     height: 50,
@@ -73,7 +73,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                 ),
                 errorWidget: (context, url, error) => Icon(Icons.error),
-              )
+              ) : Icon(Icons.error)
           ),
 
           // Product Details
@@ -88,7 +88,7 @@ class CartItemCard extends StatelessWidget {
                     children: [
                       Text("Sản phẩm", style: fieldNameTextStyle,),
                       Flexible(
-                        child: Text( cartItem.product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                        child: Text( cartItem.product.name!, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                       ),
                     ],
                   ),
@@ -98,7 +98,7 @@ class CartItemCard extends StatelessWidget {
                     children: [
                       Text("Đơn giá", style: fieldNameTextStyle,),
                       Flexible(
-                        child: Text( NumberFormat.decimalPattern().format(cartItem.product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                        child: Text( NumberFormat.decimalPattern().format(cartItem.product.wholesalePrice!), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                       ),
                     ],
                   ),

@@ -69,16 +69,15 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
       return;
     }
 
-    final newProduct = Product( // Unique ID
+    final newProduct = Product(
+      id: "Product123",
       name: nameController.text,
       category: _selectedCategory!,
-      price: double.tryParse(priceController.text) ?? 0.0,
+      retailPrice: double.tryParse(priceController.text) ?? 0.0,
+      wholesalePrice: double.tryParse(priceController.text) ?? 0.0,
       stockQuantity: int.tryParse(stockController.text) ?? 0,
-      supplier: Supplier(name: _selectedSupplier!),
-      receivingDate: DateTime.now(),
       imageUrl: _imageUrl!,
       description: descriptionController.text,
-      isAvailable: (int.tryParse(stockController.text) ?? 0) > 0,
     );
 
     productController.addProduct(newProduct);

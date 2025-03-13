@@ -45,7 +45,7 @@ class ProductDetailScreen extends StatelessWidget {
                   height: size.height * 0.35,
                   width: double.infinity,
                   fit: BoxFit.contain,
-                  imageUrl: product.imageUrl,
+                  imageUrl: product.imageUrl!,
                   placeholder: (context, url) => Center(
                     child: SizedBox(
                       height: 50,
@@ -64,7 +64,7 @@ class ProductDetailScreen extends StatelessWidget {
 
               // Product Price
               Text(
-                "${NumberFormat.decimalPattern().format(product.price)} VND",
+                "${NumberFormat.decimalPattern().format(product.retailPrice)} VND",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
               ),
               SizedBox(height: 8.0),
@@ -88,32 +88,10 @@ class ProductDetailScreen extends StatelessWidget {
               Text("Mô tả", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 4.0),
               Text(
-                product.description.isNotEmpty ? product.description : "No description available.",
+                product.description ?? "No description available.",
                 style: TextStyle(fontSize: 18, color: Colors.black87),
               ),
               SizedBox(height: 16.0),
-
-              // Supplier Info
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Nhà cung cấp:", style: TextStyle(fontSize: 18, color: Colors.black54)),
-                  Text(product.supplier.name, style: TextStyle(fontSize: 18, color: Colors.black54)),
-                ],
-              ),
-              SizedBox(height: 8.0),
-
-              // Receiving Date
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Ngày nhập hàng:", style: TextStyle(fontSize: 18, color: Colors.black54)),
-                  Text(
-                    product.receivingDate.toLocal().toString().split(' ')[0],
-                    style: TextStyle(fontSize: 18, color: Colors.black54),
-                  ),
-                ],
-              ),
             ],
           ),
         );
@@ -137,15 +115,15 @@ class ProductDetailScreen extends StatelessWidget {
                 icon: Icon(Icons.edit, color: Colors.white),
                 label: Text("Chỉnh sửa", style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () async {
-                  final updatedProduct = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProductScreen(),
-                    ),
-                  );
-                  if (updatedProduct != null) {
-                    productController.updateProduct(updatedProduct);
-                  }
+                  // final updatedProduct = await Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => EditProductScreen(),
+                  //   ),
+                  // );
+                  // if (updatedProduct != null) {
+                  //   productController.updateProduct(updatedProduct);
+                  // }
                 },
               ),
             ),

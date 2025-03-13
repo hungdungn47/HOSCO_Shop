@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="hosco_shop_2"
+        android:label="HOSCO Shop"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

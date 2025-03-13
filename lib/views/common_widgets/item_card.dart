@@ -56,7 +56,7 @@ class ItemCard extends StatelessWidget {
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               child: CachedNetworkImage(
-                imageUrl: product.imageUrl,
+                imageUrl: product.imageUrl!,
                 placeholder: (context, url) => Center(
                   child: SizedBox(
                     height: 50,
@@ -74,7 +74,7 @@ class ItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: Text( product.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                      child: Text( product.name!, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,7 +82,7 @@ class ItemCard extends StatelessWidget {
                         Text("Giá", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( NumberFormat.decimalPattern().format(product.price), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                          child: Text( NumberFormat.decimalPattern().format(product.wholesalePrice!), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                         )
                       ],
                     ),
@@ -102,7 +102,7 @@ class ItemCard extends StatelessWidget {
                         Text("Phân loại", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( product.category, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
+                          child: Text( product.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
                         )
                       ],
                     ),

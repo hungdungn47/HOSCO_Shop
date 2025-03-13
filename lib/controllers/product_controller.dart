@@ -1,28 +1,29 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hosco_shop_2/models/supplier.dart';
-import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
-import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
+import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
+// import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';
 import '../models/product.dart';
-import '../networking/api/api_service.dart';
+import '../networking/api/product_api_service.dart';
 import '../utils/sl.dart';
 import 'package:logging/logging.dart';
 
 class ProductController extends GetxController {
-  final apiService = sl.get<ApiService>();
+  final apiService = sl.get<ProductApiService>();
   var allProducts = <Product>[].obs;
   var selectedProduct = Rxn<Product>();
-  var displayedProducts = <Product>[].obs;
+  // var displayedProducts = <Product>[].obs;
   var searchQuery = ''.obs;
   var searchSuggestions = <String>[].obs;
   var selectedCategories = <String>[].obs;
   List<String>? allCategories;
   List<Supplier>? allSuppliers;
-  final DatabaseService productService = DatabaseService.instance;
+  // final DatabaseService productService = DatabaseService.instance;
   Timer? debouncer;
   // final log = Logger('ProductControllerLogger');
 
@@ -36,9 +37,11 @@ class ProductController extends GetxController {
   void onInit() async {
     super.onInit();
     await searchProduct('');
-    allCategories = await productService.getAllCategories();
-    allSuppliers = await productService.getAllSuppliers();
-    // displayedProducts.assignAll(allProducts);
+  }
+
+  Future<void> fetchCategories() async {
+    final categories = await apiService.getAllCategories();
+      allCategories?.assignAll(categories);
   }
 
   void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
@@ -73,13 +76,11 @@ class ProductController extends GetxController {
   }
 
   Future<void> addProduct(Product product) async {
-    for(Product item in mockProducts) {
-      await apiService.createProduct(item);
-    }
     await apiService.createProduct(product);
-    allProducts.add(product);
     _applyFilters();
   }
+
+
 
   Future<void> updateProduct(Product updatedProduct) async {
     int index = allProducts.indexWhere((p) => p.id == updatedProduct.id);
@@ -96,7 +97,7 @@ class ProductController extends GetxController {
     if (product == null || product.id == null) return;
 
     try {
-      await productService.deleteProduct(product.id); // Ensure product is deleted first
+      // await productService.deleteProduct(product.id); // Ensure product is deleted first
       allProducts.removeWhere((p) => p.id == product.id);
       _applyFilters();
       selectedProduct.value = null;
@@ -105,27 +106,14 @@ class ProductController extends GetxController {
     }
   }
 
+  Future<void> refreshProductList() async {
+    print('Refreshing');
+    final data = await apiService.getAllProducts();
+    allProducts.clear();
+    allProducts.assignAll(data);
+    // _applyFilters();
 
-  // Future<void> searchProduct(String query) async {
-  //   debounce(() async {
-  //     searchQuery.value = query;
-  //     final searchResult = await productService.searchProductsPaginated(query: query, page: 1, limit: 4);
-  //     print('result length: ${searchResult.length}');
-  //
-  //     // Generate suggestions based on input
-  //     // if (query.isNotEmpty) {
-  //     //   searchSuggestions.value = searchResult
-  //     //       .map((p) => p.name)
-  //     //       .toSet()
-  //     //       .toList();
-  //     // } else {
-  //     //   searchSuggestions.clear();
-  //     // }
-  //
-  //     allProducts.assignAll(searchResult);
-  //     _applyFilters();
-  //   });
-  // }
+  }
 
   Future<void> searchProduct(String query, {bool resetPage = true}) async {
     debounce(() async {
@@ -140,10 +128,11 @@ class ProductController extends GetxController {
       isLoading.value = true;
       searchQuery.value = query;
 
-      final searchResult = await productService.searchProductsPaginated(
-        query: query,
-        page: page.value,
-        limit: pageSize,
+      final searchResult = await apiService.getAllProducts(
+        query: searchQuery.value,
+        page: page.value.toString(),
+        pageSize: pageSize.toString(),
+          categories: allCategories
       );
 
       if (searchResult.length < pageSize && page.value >= 1) {
@@ -156,11 +145,8 @@ class ProductController extends GetxController {
         allProducts.addAll(searchResult);
       }
 
-      _applyFilters();
+      // _applyFilters();
       isLoading.value = false;
-      // for (var p in allProducts) {
-      //   log.info('Name: ${p.name} - ID: ${p.id}');
-      // }
     });
   }
 
@@ -177,10 +163,8 @@ class ProductController extends GetxController {
   //   searchSuggestions.clear(); // Hide suggestions
   // }
 
-  void _applyFilters() {
-    var filtered = allProducts.where((p) {
-      return selectedCategories.isEmpty || selectedCategories.contains(p.category);
-    }).toList();
-    displayedProducts.assignAll(filtered);
+  void _applyFilters() async {
+    final response = await apiService.getAllProducts(categories: allCategories);
+    allProducts.assignAll(response);
   }
 }

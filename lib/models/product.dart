@@ -1,30 +1,30 @@
 import 'package:hosco_shop_2/models/supplier.dart';
 
 class Product {
-  int id;
+  String id;
   String name;
   String category;
-  double price;
-  int stockQuantity;
-  Supplier supplier; // Store full Supplier object
-  DateTime receivingDate;
-  String imageUrl;
-  String description;
-  bool isAvailable;
+  double wholesalePrice;
+  double retailPrice;
+  int? stockQuantity;
+  String? unit;
+  String? imageUrl;
+  String? description;
   double discount;
+  String discountUnit;
 
   Product({
-    this.id = 1,
+    required this.id,
     required this.name,
     required this.category,
-    required this.price,
-    required this.stockQuantity,
-    required this.supplier,
-    required this.receivingDate,
-    required this.imageUrl,
-    this.description = "",
-    this.isAvailable = true,
+    required this.wholesalePrice,
+    required this.retailPrice,
+    this.stockQuantity,
+    this.imageUrl,
+    this.description,
+    this.discountUnit = "percentage",
     this.discount = 0.0,
+    this.unit
   });
 
   /// Convert Product to JSON (Store only supplierId)
@@ -33,31 +33,30 @@ class Product {
       "id": id,
       "name": name,
       "category": category,
-      "price": price,
       "stockQuantity": stockQuantity,
-      "supplierId": supplier.id, // Store only supplierId
-      "receivingDate": receivingDate.toIso8601String(),
+      "wholesalePrice": wholesalePrice,
+      "retailPrice": retailPrice,
       "imageUrl": imageUrl,
       "description": description,
-      "isAvailable": isAvailable ? 1 : 0,
       "discount": discount,
+      "discountUnit": discountUnit,
+      "unit": unit
     };
   }
 
-  /// Create Product from JSON (Fetch full Supplier separately)
-  factory Product.fromJson(Map<String, dynamic> json, Supplier supplier) {
+  factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json["id"],
-      name: json["name"],
-      category: json["category"],
-      price: json["price"].toDouble(),
-      stockQuantity: json["stockQuantity"],
-      supplier: supplier, // Attach full supplier object
-      receivingDate: DateTime.parse(json["receivingDate"]),
-      imageUrl: json["imageUrl"],
-      description: json["description"] ?? "",
-      isAvailable: json["isAvailable"] == 1 ? true : false,
-      discount: json["discount"]?.toDouble() ?? 0.0,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      category: json['category'] as String,
+      wholesalePrice: (json['wholesalePrice'] as num).toDouble(),
+      retailPrice: (json['retailPrice'] as num).toDouble(),
+      stockQuantity: json['stockQuantity'] as int,
+      imageUrl: json['imageUrl'] as String,
+      description: json['description'] as String,
+      discountUnit: json['discountUnit'] as String,
+      discount: (json['discount'] as num).toDouble(),
+      unit: json['unit'] as String?,
     );
   }
 }

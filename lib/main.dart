@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
 import 'package:hosco_shop_2/controllers/customer_controller.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
-import 'package:hosco_shop_2/networking/api/api_service.dart';
-import 'package:hosco_shop_2/networking/api/api_service_impl.dart';
+import 'package:hosco_shop_2/networking/api/product_api_service.dart';
+import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
 import 'package:hosco_shop_2/views/cart/cart.dart';
 import 'package:hosco_shop_2/views/customers/customer_management.dart';
@@ -13,6 +13,7 @@ import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
 import 'package:hosco_shop_2/utils/sl.dart';
+import 'package:logging/logging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,11 +22,16 @@ void main() async {
 }
 
 Future<void> setup() async {
-  sl.registerSingleton<ApiService>(ApiServiceImpl.instance);
+  sl.registerSingleton<ProductApiService>(ProductApiServiceImpl.instance);
   Get.put(ProductController());
   Get.put(CartController());
-  Get.put(ApiServiceImpl());
+  Get.put(ProductApiServiceImpl());
   Get.put(CustomerController());
+
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -37,11 +43,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
-      initialRoute: '/cart',
+      initialRoute: '/products',
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
-        GetPage(name: '/cart', page: () => Cart()),
+        // GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistoryScreen()),
         GetPage(name: '/report', page: () => SalesReport()),
         GetPage(name: '/customers', page: () => CustomerManagementScreen()),

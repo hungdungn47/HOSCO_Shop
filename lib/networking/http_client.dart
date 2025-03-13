@@ -18,7 +18,7 @@ class HttpClient {
 
   static Future<JSON?> get(
       {required String endPoint, JSON? queryParams}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.get(url);
     print(response.statusCode);
     if (response.statusCode != 204 && response.statusCode != 200) {
@@ -33,7 +33,7 @@ class HttpClient {
 
   static Future<List<dynamic>> getList(
       {required String endPoint, JSON? queryParams}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.get(url);
     if (response.statusCode != 204 && response.statusCode != 200) {
       return [];
@@ -45,7 +45,7 @@ class HttpClient {
 
   static Future<JSON?> post(
       {required String endPoint, JSON? queryParams, Object? body, String contentType = 'application/json'}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     print(body);
     var response = await client.post(
       url,
@@ -74,7 +74,7 @@ class HttpClient {
 
   static Future<List<dynamic>> postList(
       {required String endPoint, JSON? queryParams, Object? body}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.post(url, body: body);
     if (response.statusCode != 204 && response.statusCode != 200) {
       return [];
@@ -98,7 +98,7 @@ class HttpClient {
 
   static Future<JSON?> put(
       {required String endPoint, JSON? queryParams, Object? body, String contentType = 'application/json'}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     print(body);
     var response = await client.put(
       url,
@@ -118,7 +118,7 @@ class HttpClient {
 
   static Future<List<dynamic>> putList(
       {required String endPoint, JSON? queryParams, Object? body}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.put(url, body: body);
     if (response.statusCode != 204 && response.statusCode != 200) {
       return [];
@@ -130,7 +130,7 @@ class HttpClient {
 
   static Future<JSON?> patch(
       {required String endPoint, JSON? queryParams, Object? body}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.patch(url, body: body);
     if (response.statusCode != 204 && response.statusCode != 200) {
       return null;
@@ -142,7 +142,7 @@ class HttpClient {
 
   static Future<List<dynamic>> patchList(
       {required String endPoint, JSON? queryParams, Object? body}) async {
-    final url = Uri.https(baseUrl, endPoint, queryParams);
+    final url = Uri.http(baseUrl, endPoint, queryParams);
     var response = await client.patch(url, body: body);
     if (response.statusCode != 204 && response.statusCode != 200) {
       return [];

@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
-import 'package:hosco_shop_2/networking/data/fake_transactions.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:hosco_shop_2/views/common_widgets/bar_chart.dart';
