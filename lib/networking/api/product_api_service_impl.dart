@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
+import 'package:hosco_shop_2/networking/config.dart';
 // import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';
 import 'package:hosco_shop_2/networking/http_client.dart';
 import 'package:hosco_shop_2/utils/formatters.dart';
+import 'package:http/http.dart' as http;
 
 class ProductApiServiceImpl implements ProductApiService {
   static final ProductApiServiceImpl _instance = ProductApiServiceImpl._internal();
@@ -27,7 +31,7 @@ class ProductApiServiceImpl implements ProductApiService {
     final Map<String, dynamic> queryParams = {};
 
     // Only add non-null parameters
-    if (query != null) queryParams['q'] = query;
+    if (query != null && query.trim() != "") queryParams['q'] = query;
     if (page != null) queryParams['page'] = page;
     if (pageSize != null) queryParams['pageSize'] = pageSize;
 
@@ -36,15 +40,22 @@ class ProductApiServiceImpl implements ProductApiService {
       queryParams['category'] = concatenateAndEncodeStrings(categories);
     }
 
+    print('Query params: ${queryParams}');
+
     // Make the API call with appropriate parameters
-    final response = await HttpClient.get(
-      endPoint: '/api/v1/products',
-      queryParams: queryParams.isEmpty ? null : queryParams,
+    final response = await http.get(
+      Uri.http(Config.baseUrl, '/api/v1/products', queryParams)
+      // queryParams: queryParams.isEmpty ? null : queryParams,
     );
 
+    print(response);
+
+    final result = json.decode(utf8.decode(response.bodyBytes));
+    print('Result: ${result}');
     // Parse the response
-    final productList = response?['products'];
-    if (productList == null || productList is! List) {
+    final productList = result['products'];
+    print(productList);
+    if (productList == null) {
       throw Exception("Invalid response format");
     }
 
@@ -79,9 +90,22 @@ class ProductApiServiceImpl implements ProductApiService {
   }
 
   @override
-  Future<List<String>> getAllCategories() async {
+  Future<List<dynamic>> getAllCategories() async {
     final response = await HttpClient.get(endPoint: '/api/v1/products/category');
-    return response?['products'];
+    return response?['categories'];
   }
 
+  @override
+  Future<List<dynamic>> searchAutocomplete(String query) async {
+    final response = await HttpClient.get(endPoint: '/api/v1/products/autocomplete', queryParams: {"q": query});
+
+    return response?['result'];
+  }
+
+  @override
+  Future<List<dynamic>> searchSuggestion(String query) async {
+    final response = await HttpClient.get(endPoint: '/api/v1/products/search', queryParams: {"q": query});
+
+    return response?['products'];
+  }
 }

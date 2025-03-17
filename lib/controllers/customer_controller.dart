@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/customer.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';
@@ -15,8 +16,12 @@ class CustomerController extends GetxController {
   }
 
   void fetchCustomers() async {
-    final data = await databaseService.getAllCustomers();
-    customers.assignAll(data);
+    try {
+      final data = await databaseService.getAllCustomers();
+      customers.assignAll(data);
+    } catch (e) {
+      print('Error fetching customers');
+    }
   }
 
   void toggleShowSuggestion() {

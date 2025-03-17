@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
@@ -14,6 +15,7 @@ import 'package:hosco_shop_2/views/products/products_management.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
 import 'package:hosco_shop_2/utils/sl.dart';
 import 'package:logging/logging.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +34,25 @@ Future<void> setup() async {
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
-}
 
+  requestStoragePermission();
+}
+void requestStoragePermission() async {
+  // Check if the platform is not web, as web has no permissions
+  if (!kIsWeb) {
+    // Request storage permission
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    // Request camera permission
+    var cameraStatus = await Permission.camera.status;
+    if (!cameraStatus.isGranted) {
+      await Permission.camera.request();
+    }
+  }
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -47,7 +66,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
-        // GetPage(name: '/cart', page: () => Cart()),
+        GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistoryScreen()),
         GetPage(name: '/report', page: () => SalesReport()),
         GetPage(name: '/customers', page: () => CustomerManagementScreen()),
