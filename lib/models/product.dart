@@ -19,12 +19,12 @@ class Product {
     required this.category,
     required this.wholesalePrice,
     required this.retailPrice,
-    this.stockQuantity,
+    this.stockQuantity = 0,
     this.imageUrl,
     this.description,
     this.discountUnit = "percentage",
     this.discount = 0.0,
-    this.unit
+    this.unit = "item"
   });
 
   /// Convert Product to JSON (Store only supplierId)

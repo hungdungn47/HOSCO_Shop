@@ -64,7 +64,11 @@ class ProductController extends GetxController {
   }
 
   Future<void> addProduct(Product product) async {
-    await apiService.createProduct(product);
+    try {
+      await apiService.createProduct(product);
+    } catch (error) {
+      rethrow;
+    }
     refreshProducts();
   }
 

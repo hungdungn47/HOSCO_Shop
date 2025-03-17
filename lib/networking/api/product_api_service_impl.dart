@@ -40,21 +40,16 @@ class ProductApiServiceImpl implements ProductApiService {
       queryParams['category'] = concatenateAndEncodeStrings(categories);
     }
 
-    print('Query params: ${queryParams}');
-
     // Make the API call with appropriate parameters
     final response = await http.get(
       Uri.http(Config.baseUrl, '/api/v1/products', queryParams)
       // queryParams: queryParams.isEmpty ? null : queryParams,
     );
 
-    print(response);
 
     final result = json.decode(utf8.decode(response.bodyBytes));
-    print('Result: ${result}');
     // Parse the response
     final productList = result['products'];
-    print(productList);
     if (productList == null) {
       throw Exception("Invalid response format");
     }
@@ -64,7 +59,11 @@ class ProductApiServiceImpl implements ProductApiService {
   }
   @override
   Future<void> createProduct(Product productData) async {
-    await HttpClient.post(endPoint: '/api/v1/products');
+    final response = await HttpClient.post(endPoint: '/api/v1/products', body: productData);
+    print('Create product response:${jsonEncode(response)}');
+    if(response?["message"] == "Failed to create product") {
+      throw Exception(response?["error"]);
+    }
   }
 
   @override

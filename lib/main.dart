@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/bindings/app_binding.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
 import 'package:hosco_shop_2/controllers/customer_controller.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
@@ -25,18 +26,20 @@ void main() async {
 
 Future<void> setup() async {
   sl.registerSingleton<ProductApiService>(ProductApiServiceImpl.instance);
-  Get.put(ProductController());
-  Get.put(CartController());
-  Get.put(ProductApiServiceImpl());
-  Get.put(CustomerController());
 
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  // Lazy load controllers
+  Get.lazyPut(() => ProductController());
+  Get.lazyPut(() => CartController());
+  Get.lazyPut(() => CustomerController());
+
+  Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
 
   requestStoragePermission();
 }
+
 void requestStoragePermission() async {
   // Check if the platform is not web, as web has no permissions
   if (!kIsWeb) {
@@ -63,6 +66,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
       initialRoute: '/products',
+      initialBinding: AppBinding(),
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),

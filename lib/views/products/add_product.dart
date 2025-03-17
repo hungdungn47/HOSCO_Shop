@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/models/product.dart';
-import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/services/image_upload_service.dart';
-import 'package:hosco_shop_2/utils/constants.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class CreateProductScreen extends StatefulWidget {
   @override
@@ -17,21 +16,23 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   final ImageUploadService _imageService = ImageUploadService();
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  final TextEditingController retailPriceController = TextEditingController();
+  final TextEditingController wholesalePriceController = TextEditingController();
   final TextEditingController stockController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController discountController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
+  final FocusNode categoryFocusNode = FocusNode(); // Handle focus
+
 
   File? _selectedImage;
   String? _imageUrl;
   bool _isUploading = false;
 
   String? _selectedCategory;
-  String? _selectedSupplier;
+  String _discountUnit = "percentage";
 
-  final List<String> categories = ["Electronics", "Fashion", "Home", "Beauty", "Sports"];
-  final List<String> suppliers = ["Supplier A", "Supplier B", "Supplier C"];
-
-
+  final List<String> discountUnits = ["percentage", "vnd"];
 
   // Function to select and upload an image
   Future<void> _selectAndUploadImage() async {
@@ -60,34 +61,42 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   // Function to save the new product
   void _saveProduct() {
     if (nameController.text.isEmpty ||
-        priceController.text.isEmpty ||
-        stockController.text.isEmpty ||
-        _imageUrl == null ||
-        _selectedCategory == null ||
-        _selectedSupplier == null) {
-      Get.snackbar("Error", "Please fill all fields and upload an image", snackPosition: SnackPosition.BOTTOM);
+        retailPriceController.text.isEmpty ||
+        wholesalePriceController.text.isEmpty ||
+        _imageUrl == null) {
+      Get.snackbar("Error", "Please fill all required fields and upload an image",
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     final newProduct = Product(
-      id: "Product123",
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: nameController.text,
-      category: _selectedCategory!,
-      retailPrice: double.tryParse(priceController.text) ?? 0.0,
-      wholesalePrice: double.tryParse(priceController.text) ?? 0.0,
+      category: categoryController.text,
+      retailPrice: double.tryParse(retailPriceController.text) ?? 0.0,
+      wholesalePrice: double.tryParse(wholesalePriceController.text) ?? 0.0,
       stockQuantity: int.tryParse(stockController.text) ?? 0,
       imageUrl: _imageUrl!,
       description: descriptionController.text,
+      discount: double.tryParse(discountController.text) ?? 0.0,
+      discountUnit: _discountUnit,
     );
 
-    productController.addProduct(newProduct);
-    Get.back();
+    try {
+      productController.addProduct(newProduct);
+      Get.back();
+    } catch (error) {
+      Get.snackbar("Error", error.toString(),
+          snackPosition: SnackPosition.BOTTOM);
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Tạo sản phẩm mới")),
+        resizeToAvoidBottomInset: true,
+      appBar: AppBar(title: Text("Create New Product")),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -117,7 +126,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                 : ElevatedButton.icon(
               onPressed: _selectAndUploadImage,
               icon: Icon(Icons.upload, color: Colors.white),
-              label: Text("Chọn ảnh"),
+              label: Text("Choose Image"),
             ),
 
             SizedBox(height: 20),
@@ -125,27 +134,66 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             // Product Name
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: "Tên sản phẩm"),
+              decoration: InputDecoration(labelText: "Product Name"),
             ),
 
             SizedBox(height: 10),
 
-            // Category Selection
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              onChanged: (value) => setState(() => _selectedCategory = value),
-              items: productController.allCategories?.map((category) {
-                return DropdownMenuItem(value: category, child: Text(category));
-              }).toList(),
-              decoration: InputDecoration(labelText: "Chọn danh mục"),
+            TypeAheadField<String>(
+              controller: categoryController,
+              suggestionsCallback: (search) async {
+                return productController.allCategories.where((c) => c.toLowerCase().contains(search)).toList();
+              },
+              focusNode: categoryFocusNode,
+              builder: (context, controller, focusNode) {
+                return TextField(
+                    controller: categoryController,
+                    focusNode: focusNode,
+                    // autofocus: true,
+                    decoration: InputDecoration(
+                      // border: OutlineInputBorder(),
+                      labelText: 'Category',
+                    )
+                );
+              },
+              itemBuilder: (context, category) {
+                return ListTile(
+                  title: Text(category)
+                );
+              },
+              onSelected: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                  categoryController.text = category;
+                  categoryFocusNode.unfocus();
+                });
+              },
+              offset: Offset(0, 12),
+              constraints: BoxConstraints(maxHeight: 500),
             ),
+
+            _selectedCategory != null ? Row(
+              children: [
+                Text('Selected category:'),
+                Text(_selectedCategory!, style: TextStyle(fontWeight: FontWeight.bold),)
+              ],
+            ) : SizedBox.shrink(),
 
             SizedBox(height: 10),
 
-            // Price
+            // Retail Price
             TextField(
-              controller: priceController,
-              decoration: InputDecoration(labelText: "Giá sản phẩm"),
+              controller: retailPriceController,
+              decoration: InputDecoration(labelText: "Retail Price"),
+              keyboardType: TextInputType.number,
+            ),
+
+            SizedBox(height: 10),
+
+            // Wholesale Price
+            TextField(
+              controller: wholesalePriceController,
+              decoration: InputDecoration(labelText: "Wholesale Price"),
               keyboardType: TextInputType.number,
             ),
 
@@ -154,20 +202,33 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             // Stock Quantity
             TextField(
               controller: stockController,
-              decoration: InputDecoration(labelText: "Số lượng tồn kho"),
+              decoration: InputDecoration(labelText: "Stock Quantity (Optional)"),
               keyboardType: TextInputType.number,
             ),
 
             SizedBox(height: 10),
 
-            // Supplier Selection
+            // Discount
+            TextField(
+              controller: discountController,
+              decoration: InputDecoration(labelText: "Discount (Optional)"),
+              keyboardType: TextInputType.number,
+            ),
+
+            SizedBox(height: 10),
+
+            // Discount Unit Dropdown
             DropdownButtonFormField<String>(
-              value: _selectedSupplier,
-              onChanged: (value) => setState(() => _selectedSupplier = value),
-              items: suppliers.map((supplier) {
-                return DropdownMenuItem(value: supplier, child: Text(supplier));
+              value: _discountUnit,
+              onChanged: (value) {
+                setState(() {
+                  _discountUnit = value!;
+                });
+              },
+              items: discountUnits.map((unit) {
+                return DropdownMenuItem(value: unit, child: Text(unit));
               }).toList(),
-              decoration: InputDecoration(labelText: "Chọn nhà cung cấp"),
+              decoration: InputDecoration(labelText: "Discount Unit"),
             ),
 
             SizedBox(height: 10),
@@ -177,7 +238,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
               controller: descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
-                labelText: "Mô tả sản phẩm",
+                labelText: "Product Description (Optional)",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -187,7 +248,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             // Save Product Button
             ElevatedButton(
               onPressed: _saveProduct,
-              child: Text("Lưu sản phẩm"),
+              child: Text("Save Product"),
             ),
           ],
         ),
