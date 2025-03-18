@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +34,7 @@ class ImageUploadService {
         ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
 
       final response = await request.send();
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final responseData = await response.stream.toBytes();
         final responseString = String.fromCharCodes(responseData);
         final jsonMap = jsonDecode(responseString);

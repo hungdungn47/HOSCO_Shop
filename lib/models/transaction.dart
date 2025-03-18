@@ -1,11 +1,6 @@
-
-
 import 'package:hosco_shop_2/models/customer.dart';
-import 'package:hosco_shop_2/models/supplier.dart';
 
-import '../networking/data/default_model.dart';
 import './cart_item.dart';
-import './product.dart';
 
 class CustomTransaction {
   final int? id;
@@ -28,24 +23,24 @@ class CustomTransaction {
 
   // Convert Transaction to JSON (for storage)
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "totalAmount": totalAmount,
-    "date": date.toIso8601String(),
-    "type": type,
-    "paymentMethod": paymentMethod,
-    "customerId": customer?.id
-  };
+        "id": id,
+        "totalAmount": totalAmount,
+        "date": date.toIso8601String(),
+        "type": type,
+        "paymentMethod": paymentMethod,
+        "customerId": customer?.id
+      };
 
   // Convert JSON to Transaction
-  factory CustomTransaction.fromJson(Map<String, dynamic> json, List<CartItem> items, Customer? customer) {
+  factory CustomTransaction.fromJson(
+      Map<String, dynamic> json, List<CartItem> items, Customer? customer) {
     return CustomTransaction(
-      id: json['id'],
-      items: items,
-      totalAmount: json['totalAmount'],
-      date: DateTime.parse(json['date']),
-      type: json['type'],
-      paymentMethod: json['paymentMethod'],
-      customer: customer
-    );
+        id: json['id'],
+        items: items,
+        totalAmount: json['totalAmount'],
+        date: DateTime.parse(json['date']),
+        type: json['type'],
+        paymentMethod: json['paymentMethod'],
+        customer: customer);
   }
 }

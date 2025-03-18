@@ -35,9 +35,9 @@ class CartItem {
 
   double getFinalPrice() {
     if (discountType == DiscountType.percentage) {
-      return product.wholesalePrice! * (1 - discount / 100);
+      return product.wholesalePrice * (1 - discount / 100);
     } else {
-      return product.wholesalePrice! - discount;
+      return product.wholesalePrice - discount;
     }
   }
 }

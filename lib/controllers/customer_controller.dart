@@ -15,8 +15,12 @@ class CustomerController extends GetxController {
   }
 
   void fetchCustomers() async {
-    final data = await databaseService.getAllCustomers();
-    customers.assignAll(data);
+    try {
+      final data = await databaseService.getAllCustomers();
+      customers.assignAll(data);
+    } catch (e) {
+      print('Error fetching customers');
+    }
   }
 
   void toggleShowSuggestion() {

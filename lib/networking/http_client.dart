@@ -1,20 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:http/retry.dart';
-
-// import '../utils/helper_functions.dart';
 import './index.dart';
 
 typedef JSON = Map<String, dynamic>;
 
 class HttpClient {
   static String baseUrl = Config.baseUrl;
-  // static final client = RetryClient(http.Client());
-  // static final client = HttpClientWithInterceptor(RetryClient(http.Client()));
 
   static final client = HttpClientWithInterceptor(http.Client());
-
 
   static Future<JSON?> get(
       {required String endPoint, JSON? queryParams}) async {
@@ -44,7 +38,10 @@ class HttpClient {
   }
 
   static Future<JSON?> post(
-      {required String endPoint, JSON? queryParams, Object? body, String contentType = 'application/json'}) async {
+      {required String endPoint,
+      JSON? queryParams,
+      Object? body,
+      String contentType = 'application/json'}) async {
     final url = Uri.http(baseUrl, endPoint, queryParams);
     print(body);
     var response = await client.post(
@@ -97,7 +94,10 @@ class HttpClient {
   }
 
   static Future<JSON?> put(
-      {required String endPoint, JSON? queryParams, Object? body, String contentType = 'application/json'}) async {
+      {required String endPoint,
+      JSON? queryParams,
+      Object? body,
+      String contentType = 'application/json'}) async {
     final url = Uri.http(baseUrl, endPoint, queryParams);
     print(body);
     var response = await client.put(

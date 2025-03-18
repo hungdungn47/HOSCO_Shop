@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/models/product.dart';
-import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
@@ -22,53 +21,48 @@ class BarcodeScanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Quét mã sản phẩm")
-      ),
+      appBar: AppBar(title: Text("Quét mã sản phẩm")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
             Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1)
-              ),
-
-              child: SimpleBarcodeScanner(
-                scaleHeight: 200,
-                scaleWidth: 400,
-                onScanned: (code) async {
-                  print(int.parse(code));
-                  if(cartController.productIdSet.contains(int.parse(code))) return;
-                  print(code);
-                  Product? newProduct = await productController.getProductById(code);
-                  print(newProduct?.name);
-                  if(newProduct == null) {
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.error,
-                      animType: AnimType.rightSlide,
-                      title: "Lỗi",
-                      desc: 'Không tồn tại sản phẩm với mã này!',
-                      btnCancelOnPress: () {},
-                      btnOkOnPress: () {
-                      },
-                    ).show();
-                  } else {
-                    print('Added new product: ${newProduct.name}');
-                    cartController.addToCart(newProduct);
-                  }
-
-                },
-                continuous: false,
-                onBarcodeViewCreated: (BarcodeViewController controller) {
-                  controller = controller;
-                },
-              )
-            ),
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1)),
+                child: SimpleBarcodeScanner(
+                  scaleHeight: 200,
+                  scaleWidth: 400,
+                  onScanned: (code) async {
+                    print(int.parse(code));
+                    if (cartController.productIdSet.contains(int.parse(code)))
+                      return;
+                    print(code);
+                    Product? newProduct =
+                        await productController.getProductById(code);
+                    print(newProduct?.name);
+                    if (newProduct == null) {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.rightSlide,
+                        title: "Lỗi",
+                        desc: 'Không tồn tại sản phẩm với mã này!',
+                        btnCancelOnPress: () {},
+                        btnOkOnPress: () {},
+                      ).show();
+                    } else {
+                      print('Added new product: ${newProduct.name}');
+                      cartController.addToCart(newProduct);
+                    }
+                  },
+                  continuous: false,
+                  onBarcodeViewCreated: (BarcodeViewController controller) {
+                    controller = controller;
+                  },
+                )),
             const SizedBox(height: 30),
             Expanded(
               child: Obx(() {
@@ -77,21 +71,22 @@ class BarcodeScanner extends StatelessWidget {
                   return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset('assets/icons/cart_empty_icon.png', height: 80, width: 80),
+                        Image.asset('assets/icons/cart_empty_icon.png',
+                            height: 80, width: 80),
                         const SizedBox(height: 30),
-                        Text('Giỏ hàng đang rỗng!', style: TextStyle(fontSize: 18)),
-                      ]
-                  );
+                        Text('Giỏ hàng đang rỗng!',
+                            style: TextStyle(fontSize: 18)),
+                      ]);
                 }
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0, vertical: 8.0),
                   child: ListView.builder(
                       itemCount: cartItems.length,
                       itemBuilder: (context, index) {
                         final CartItem cartItem = cartItems[index];
                         return CartItemCard(cartItem: cartItem);
-                      }
-                  ),
+                      }),
                 );
               }),
             ),
@@ -102,18 +97,22 @@ class BarcodeScanner extends StatelessWidget {
               //   border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
               // ),
               child: Obx(() => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Tổng tiền:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "${NumberFormat.decimalPattern().format(cartController.getTotalPrice())} đ",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),
-                  ),
-                ],
-              )),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Tổng tiền:",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "${NumberFormat.decimalPattern().format(cartController.getTotalPrice())} đ",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor),
+                      ),
+                    ],
+                  )),
             ),
           ],
         ),
@@ -128,18 +127,21 @@ class BarcodeScanner extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Set border radius here
+                    borderRadius:
+                        BorderRadius.circular(8), // Set border radius here
                   ),
                 ),
                 icon: Icon(Icons.delete, color: Colors.white),
-                label: Text("Xóa tất cả", style: TextStyle(fontSize: 18, color: Colors.white)),
+                label: Text("Xóa tất cả",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
                   AwesomeDialog(
                     context: context,
                     dialogType: DialogType.warning,
                     animType: AnimType.rightSlide,
                     title: "Xóa tất cả",
-                    desc: 'Bạn có chắc chắn muốn xóa các sản phẩm khỏi giỏ hàng?',
+                    desc:
+                        'Bạn có chắc chắn muốn xóa các sản phẩm khỏi giỏ hàng?',
                     btnCancelText: 'Hủy',
                     btnCancelOnPress: () {},
                     btnOkText: 'Xóa',
@@ -164,12 +166,14 @@ class BarcodeScanner extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Set border radius here
+                    borderRadius:
+                        BorderRadius.circular(8), // Set border radius here
                   ),
                 ),
-                label: Text("Thanh toán", style: TextStyle(fontSize: 18, color: Colors.white)),
+                label: Text("Thanh toán",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
-                  if(cartController.cartItems.isEmpty) {
+                  if (cartController.cartItems.isEmpty) {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
@@ -177,8 +181,7 @@ class BarcodeScanner extends StatelessWidget {
                       title: "Lỗi",
                       desc: 'Giỏ hàng đang rỗng',
                       btnCancelOnPress: () {},
-                      btnOkOnPress: () {
-                      },
+                      btnOkOnPress: () {},
                     ).show();
                   } else {
                     AwesomeDialog(
