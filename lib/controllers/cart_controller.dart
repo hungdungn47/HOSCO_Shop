@@ -26,15 +26,16 @@ class CartController extends GetxController {
   Timer? debouncer;
   final int pageSize = 6; // Items per page
 
-
   @override
   void onInit() async {
     super.onInit();
     await searchProduct('');
     fetchTransactions();
   }
-  void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 600)}) {
-    if(debouncer != null) {
+
+  void debounce(Callback callback,
+      {Duration duration = const Duration(milliseconds: 600)}) {
+    if (debouncer != null) {
       debouncer!.cancel();
     }
 
@@ -49,10 +50,8 @@ class CartController extends GetxController {
         quantity: cartItems[index].quantity + 1,
       );
     } else {
-      if(product.id != null) {
-        productIdSet.add(product.id!);
-        cartItems.add(CartItem(product: product, quantity: 1));
-      }
+      productIdSet.add(product.id);
+      cartItems.add(CartItem(product: product, quantity: 1));
     }
     cartItems.refresh(); // ✅ Notify GetX of the change
   }
@@ -79,7 +78,7 @@ class CartController extends GetxController {
 
   Future<void> selectSuggestion(Map<String, dynamic> suggestion) async {
     var product = await databaseService.getProductById(suggestion['id']);
-    if(product != null) addToCart(product);
+    if (product != null) addToCart(product);
   }
 
   Future<void> searchProduct(String query, {bool resetPage = true}) async {
@@ -91,10 +90,8 @@ class CartController extends GetxController {
         page: 1,
         limit: pageSize,
       );
-      searchSuggestions.assignAll(searchResult.map((p) => {
-        "name": p.name,
-        "id": p.id
-      }).toList());
+      searchSuggestions.assignAll(
+          searchResult.map((p) => {"name": p.name, "id": p.id}).toList());
     });
   }
 
@@ -104,12 +101,13 @@ class CartController extends GetxController {
   }
 
   double finalPrice() {
-    if(!discountUnitPercentage.value) {
+    if (!discountUnitPercentage.value) {
       return getTotalPrice() - discountAmount.value;
     } else {
-      return getTotalPrice()  - getTotalPrice() * discountAmount.value / 100;
+      return getTotalPrice() - getTotalPrice() * discountAmount.value / 100;
     }
   }
+
   int getQuantity(Product product) {
     int index = cartItems.indexWhere((item) => item.product.id == product.id);
     return index != -1 ? cartItems[index].quantity : 0;
@@ -120,11 +118,10 @@ class CartController extends GetxController {
 
     // Create a new transaction
     var newTransaction = CustomTransaction(
-      items: List.from(cartItems),
-      totalAmount: finalPrice(),
-      date: DateTime.now(),
-      paymentMethod: paymentMethod
-    );
+        items: List.from(cartItems),
+        totalAmount: finalPrice(),
+        date: DateTime.now(),
+        paymentMethod: paymentMethod);
 
     await databaseService.insertTransaction(newTransaction);
     fetchTransactions();
@@ -143,7 +140,8 @@ class CartController extends GetxController {
     isBarcodeOn.value = !isBarcodeOn.value;
   }
 
-  void updateSingleDiscount(Product product, double discount, DiscountType type) {
+  void updateSingleDiscount(
+      Product product, double discount, DiscountType type) {
     int index = cartItems.indexWhere((item) => item.product.id == product.id);
     if (index != -1) {
       cartItems[index] = CartItem(
@@ -163,8 +161,6 @@ class CartController extends GetxController {
 
   double getTotalPrice() {
     return cartItems.fold(
-        0.0,
-            (sum, item) =>
-        sum + (item.getFinalPrice() * item.quantity));
+        0.0, (sum, item) => sum + (item.getFinalPrice() * item.quantity));
   }
 }

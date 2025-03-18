@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
-import 'package:hosco_shop_2/views/common_widgets/toggle_button.dart';
 
 class DiscountWidget extends StatefulWidget {
   final CartItem cartItem;
@@ -21,7 +20,8 @@ class _DiscountWidgetState extends State<DiscountWidget> {
   @override
   void initState() {
     super.initState();
-    discountController = TextEditingController(text: widget.cartItem.discount.toString());
+    discountController =
+        TextEditingController(text: widget.cartItem.discount.toString());
     discountFocusNode = FocusNode();
     selectedDiscountType = widget.cartItem.discountType;
   }
@@ -35,7 +35,8 @@ class _DiscountWidgetState extends State<DiscountWidget> {
 
   void updateDiscount() {
     double discount = double.tryParse(discountController.text) ?? 0;
-    widget.cartController.updateSingleDiscount(widget.cartItem.product, discount, selectedDiscountType);
+    widget.cartController.updateSingleDiscount(
+        widget.cartItem.product, discount, selectedDiscountType);
   }
 
   @override
@@ -43,7 +44,8 @@ class _DiscountWidgetState extends State<DiscountWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Chiết khấu", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+        Text("Chiết khấu",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
         Row(
           children: [
             SizedBox(
@@ -86,8 +88,15 @@ class _DiscountWidgetState extends State<DiscountWidget> {
                 }
               },
               items: [
-                DropdownMenuItem(value: DiscountType.fixed, child: Text("VND", style: TextStyle(fontSize: 14),)),
-                DropdownMenuItem(value: DiscountType.percentage, child: Text("%", style: TextStyle(fontSize: 14))),
+                DropdownMenuItem(
+                    value: DiscountType.fixed,
+                    child: Text(
+                      "VND",
+                      style: TextStyle(fontSize: 14),
+                    )),
+                DropdownMenuItem(
+                    value: DiscountType.percentage,
+                    child: Text("%", style: TextStyle(fontSize: 14))),
               ],
             ),
           ],

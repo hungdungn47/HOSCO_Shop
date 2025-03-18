@@ -4,14 +4,16 @@ import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 
+// ignore: must_be_immutable
 class BarChartBuilder extends StatelessWidget {
   BarChartBuilder({super.key, required this.chartData, this.interval = 1});
   final Map<String, double> chartData;
   late int interval;
-  final SalesReportController salesReportController = Get.find<SalesReportController>();
+  final SalesReportController salesReportController =
+      Get.find<SalesReportController>();
   @override
   Widget build(BuildContext context) {
-    switch(salesReportController.timeRange.value) {
+    switch (salesReportController.timeRange.value) {
       case TimeRange.thisMonth:
         interval = 4;
         break;
@@ -34,7 +36,9 @@ class BarChartBuilder extends StatelessWidget {
       barGroups.add(
         BarChartGroupData(
           x: index,
-          barRods: [BarChartRodData(toY: entry.value, color: Colors.blue, width: 14)],
+          barRods: [
+            BarChartRodData(toY: entry.value, color: Colors.blue, width: 14)
+          ],
         ),
       );
       index++;
@@ -44,31 +48,18 @@ class BarChartBuilder extends StatelessWidget {
       curve: Curves.bounceIn,
       BarChartData(
         // backgroundColor: Color(0xff273b4a),
-        gridData: FlGridData(
-            getDrawingHorizontalLine: (value) {
-              return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5
-              );
-            },
-            getDrawingVerticalLine: (value) {
-              return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5
-              );
-            }
-        ),
+        gridData: FlGridData(getDrawingHorizontalLine: (value) {
+          return FlLine(color: Colors.grey, strokeWidth: 0.5);
+        }, getDrawingVerticalLine: (value) {
+          return FlLine(color: Colors.grey, strokeWidth: 0.5);
+        }),
         barGroups: barGroups,
         borderData: FlBorderData(
             show: true,
-            border: Border(left: BorderSide(width: 1), bottom: BorderSide(width: 1))
-        ),
+            border: Border(
+                left: BorderSide(width: 1), bottom: BorderSide(width: 1))),
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
-              sideTitles: SideTitles(
-                  showTitles: false
-              )
-          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -76,27 +67,25 @@ class BarChartBuilder extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
 
-                if (index % interval == 0 && index >= 0 && index < data.keys.length) {
-                  return Text(data.keys.elementAt(index), style: TextStyle(fontSize: 10));
+                if (index % interval == 0 &&
+                    index >= 0 &&
+                    index < data.keys.length) {
+                  return Text(data.keys.elementAt(index),
+                      style: TextStyle(fontSize: 10));
                 } else {
-                  return SizedBox.shrink(); // Hide labels for non-matching indexes
+                  return SizedBox
+                      .shrink(); // Hide labels for non-matching indexes
                 }
               },
             ),
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 45,
-              maxIncluded: false
-              // interval: 30, // Label interval (100, 200, 300...)
-            ),
+                showTitles: true, reservedSize: 45, maxIncluded: false
+                // interval: 30, // Label interval (100, 200, 300...)
+                ),
           ),
-          rightTitles: AxisTitles(
-              sideTitles: SideTitles(
-                  showTitles: false
-              )
-          ),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
       ),
     );

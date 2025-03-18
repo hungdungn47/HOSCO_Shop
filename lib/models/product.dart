@@ -1,5 +1,3 @@
-import 'package:hosco_shop_2/models/supplier.dart';
-
 class Product {
   String id;
   String name;
@@ -13,19 +11,18 @@ class Product {
   double discount;
   String discountUnit;
 
-  Product({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.wholesalePrice,
-    required this.retailPrice,
-    this.stockQuantity = 0,
-    this.imageUrl,
-    this.description,
-    this.discountUnit = "percentage",
-    this.discount = 0.0,
-    this.unit = "item"
-  });
+  Product(
+      {required this.id,
+      required this.name,
+      required this.category,
+      required this.wholesalePrice,
+      required this.retailPrice,
+      this.stockQuantity = 0,
+      this.imageUrl,
+      this.description,
+      this.discountUnit = "percentage",
+      this.discount = 0.0,
+      this.unit = "item"});
 
   /// Convert Product to JSON (Store only supplierId)
   Map<String, dynamic> toJson() {
@@ -51,12 +48,12 @@ class Product {
       category: json['category'] as String,
       wholesalePrice: (json['wholesalePrice'] as num).toDouble(),
       retailPrice: (json['retailPrice'] as num).toDouble(),
-      stockQuantity: json['stockQuantity'] as int,
+      stockQuantity: json['stockQuantity'] ?? 0,
       imageUrl: json['imageUrl'] as String,
-      description: json['description'] as String,
-      discountUnit: json['discountUnit'] as String,
-      discount: (json['discount'] as num).toDouble(),
-      unit: json['unit'] as String?,
+      description: json['description'] ?? "",
+      discountUnit: json['discountUnit'] ?? 'percentage',
+      discount: (json['discount'] ?? 0.0).toDouble(),
+      unit: json['unit'] ?? 'item',
     );
   }
 }

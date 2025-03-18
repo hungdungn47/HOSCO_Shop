@@ -1,4 +1,3 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/customer.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';

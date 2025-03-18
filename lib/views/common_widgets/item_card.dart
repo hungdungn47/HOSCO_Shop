@@ -10,20 +10,20 @@ class ItemCard extends StatelessWidget {
   final Product product;
 
   final TextStyle fieldNameTextStyle = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w300
   );
   final TextStyle boldText = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.bold
   );
   final TextStyle blueBoldText = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.bold,
     color: primaryColor
   );
   final TextStyle italicLightText = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     fontStyle: FontStyle.italic
   );
@@ -33,7 +33,7 @@ class ItemCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: 140,
+        height: 120,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -50,7 +50,7 @@ class ItemCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(2.0),
               width: 120,
-              height: 140,
+              height: 120,
               decoration: BoxDecoration(
                 border: Border(right: BorderSide(color: primaryColor, width: 1)),
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -74,38 +74,38 @@ class ItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: Text( product.name!, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                      child: Text( product.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: boldText,),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Giá", style: fieldNameTextStyle,),
+                        Text("Giá sỉ", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( NumberFormat.decimalPattern().format(product.wholesalePrice!), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                          child: Text( NumberFormat.decimalPattern().format(product.wholesalePrice), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
                         )
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Số lượng", style: fieldNameTextStyle,),
+                        Text("Giá lẻ", style: fieldNameTextStyle,),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text( '${product.stockQuantity}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,),
+                          child: Text( NumberFormat.decimalPattern().format(product.retailPrice), maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,),
                         )
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Phân loại", style: fieldNameTextStyle,),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text( product.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
-                        )
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text("Phân loại", style: fieldNameTextStyle,),
+                    //     const SizedBox(width: 5),
+                    //     Flexible(
+                    //       child: Text( product.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: italicLightText,),
+                    //     )
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

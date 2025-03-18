@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 /// Concatenates a list of strings into a single comma-separated string with URL encoding
 /// but preserves spaces for use in query parameters
 /// @param stringList - List of strings to concatenate
 /// @returns A single string with all items URL encoded (except spaces) and joined by commas
 String concatenateAndEncodeStrings(List<String> stringList) {
-  if (stringList == null || stringList.isEmpty) {
+  if (stringList.isEmpty) {
     return '';
   }
 

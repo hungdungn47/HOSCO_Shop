@@ -14,24 +14,14 @@ class CartItemCard extends StatelessWidget {
 
   final TextEditingController discountController = TextEditingController();
 
-  final TextStyle fieldNameTextStyle = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w300
-  );
-  final TextStyle boldText = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold
-  );
-  final TextStyle blueBoldText = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      color: primaryColor
-  );
+  final TextStyle fieldNameTextStyle =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w300);
+  final TextStyle boldText =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  final TextStyle blueBoldText =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primaryColor);
   final TextStyle italicLightText = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.italic
-  );
+      fontSize: 16, fontWeight: FontWeight.w400, fontStyle: FontStyle.italic);
 
   CartItemCard({required this.cartItem, this.inCheckout = true}) {
     // discountController.text = "50000";
@@ -44,13 +34,8 @@ class CartItemCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(12)),
           boxShadow: [
-            BoxShadow(
-                color: primaryColor,
-                blurRadius: 3,
-                spreadRadius: 1
-            )
-          ]
-      ),
+            BoxShadow(color: primaryColor, blurRadius: 3, spreadRadius: 1)
+          ]),
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Row(
         children: [
@@ -60,21 +45,23 @@ class CartItemCard extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: primaryColor, width: 1)),
+                border:
+                    Border(right: BorderSide(color: primaryColor, width: 1)),
                 // borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              child: cartItem.product.imageUrl != null ? CachedNetworkImage(
-                imageUrl: cartItem.product.imageUrl!,
-                placeholder: (context, url) => Center(
-                  child: SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ) : Icon(Icons.error)
-          ),
+              child: cartItem.product.imageUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: cartItem.product.imageUrl!,
+                      placeholder: (context, url) => Center(
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    )
+                  : Icon(Icons.error)),
 
           // Product Details
           Expanded(
@@ -86,9 +73,17 @@ class CartItemCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Sản phẩm", style: fieldNameTextStyle,),
+                      Text(
+                        "Sản phẩm",
+                        style: fieldNameTextStyle,
+                      ),
                       Flexible(
-                        child: Text( cartItem.product.name!, maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                        child: Text(
+                          cartItem.product.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: boldText,
+                        ),
                       ),
                     ],
                   ),
@@ -96,22 +91,35 @@ class CartItemCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Đơn giá", style: fieldNameTextStyle,),
+                      Text(
+                        "Đơn giá",
+                        style: fieldNameTextStyle,
+                      ),
                       Flexible(
-                        child: Text( NumberFormat.decimalPattern().format(cartItem.product.wholesalePrice!), maxLines: 1, overflow: TextOverflow.ellipsis, style: boldText,),
+                        child: Text(
+                          NumberFormat.decimalPattern()
+                              .format(cartItem.product.wholesalePrice),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: boldText,
+                        ),
                       ),
                     ],
                   ),
                   // const SizedBox(height: 8),
-                  inCheckout ? _unchangableAmountWidget() : _changableAmountWidget(),
-                  inCheckout ? DiscountWidget(cartItem: cartItem, cartController: cartController) : SizedBox.shrink()
+                  inCheckout
+                      ? _unchangableAmountWidget()
+                      : _changableAmountWidget(),
+                  inCheckout
+                      ? DiscountWidget(
+                          cartItem: cartItem, cartController: cartController)
+                      : SizedBox.shrink()
                 ],
               ),
             ),
           ),
 
           // Quantity Controls
-
         ],
       ),
     );
@@ -121,58 +129,16 @@ class CartItemCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Số lượng", style: fieldNameTextStyle,),
-        Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
-      ],
-    );
-  }
-  Widget _discountWidget() {
-    CartItem item = cartController.getCartItem(cartItem.product);
-    discountController.text = item.discount.toString();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("Chiết khấu", style: fieldNameTextStyle),
-        Row(
-          children: [
-            SizedBox(
-              width: 80,
-              child: TextField(
-                onChanged: (value) {
-                  double discount = double.parse(value);
-                  cartController.updateSingleDiscount(cartItem.product, discount, item.discountType);
-                },
-                textAlign: TextAlign.right,
-                controller: discountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: "Giá trị",
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            DropdownButton<DiscountType>(
-              value: item.discountType,
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  cartController.updateSingleDiscount(cartItem.product, item.discount, newValue);
-                }
-              },
-              items: [
-                DropdownMenuItem(
-                  value: DiscountType.fixed,
-                  child: Text("VND"),
-                ),
-                DropdownMenuItem(
-                  value: DiscountType.percentage,
-                  child: Text("%"),
-                ),
-              ],
-            ),
-          ],
+        Text(
+          "Số lượng",
+          style: fieldNameTextStyle,
         ),
+        Obx(() => Text(
+              '${cartController.getQuantity(cartItem.product)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: blueBoldText,
+            )),
       ],
     );
   }
@@ -181,7 +147,10 @@ class CartItemCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Số lượng", style: fieldNameTextStyle,),
+        Text(
+          "Số lượng",
+          style: fieldNameTextStyle,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -190,23 +159,22 @@ class CartItemCard extends StatelessWidget {
               onTap: () {
                 cartController.removeFromCart(cartItem.product);
               },
-              child: Image.asset(
-                  'assets/icons/red_minus_icon.png',
-                  height: 25
-              ),
+              child: Image.asset('assets/icons/red_minus_icon.png', height: 25),
             ),
             const SizedBox(width: 8),
-            Obx(() => Text( '${cartController.getQuantity(cartItem.product)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: blueBoldText,)),
+            Obx(() => Text(
+                  '${cartController.getQuantity(cartItem.product)}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: blueBoldText,
+                )),
             // Add 1 button
             const SizedBox(width: 8),
             GestureDetector(
               onTap: () {
                 cartController.addToCart(cartItem.product);
               },
-              child: Image.asset(
-                  'assets/icons/blue_add_icon.png',
-                  height: 25
-              ),
+              child: Image.asset('assets/icons/blue_add_icon.png', height: 25),
             )
           ],
         )

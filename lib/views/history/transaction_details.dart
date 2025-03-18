@@ -5,7 +5,6 @@ import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
@@ -22,10 +21,7 @@ class TransactionDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Chi tiết giao dịch'),
         actions: [
-          IconButton(
-            onPressed: onPrintInvoice,
-            icon: Icon(Icons.print)
-          )
+          IconButton(onPressed: onPrintInvoice, icon: Icon(Icons.print))
         ],
       ),
       body: Padding(
@@ -42,7 +38,8 @@ class TransactionDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Thời gian:", style: TextStyle(fontSize: 16)),
-                Text(DateFormat('dd/MM/yyyy HH:mm:ss').format(transaction.date), style: TextStyle(fontSize: 16))
+                Text(DateFormat('dd/MM/yyyy HH:mm:ss').format(transaction.date),
+                    style: TextStyle(fontSize: 16))
               ],
             ),
             const SizedBox(height: 8),
@@ -50,11 +47,16 @@ class TransactionDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Hình thức giao dịch:", style: TextStyle(fontSize: 16)),
-                Text(transaction.paymentMethod == 'bank-transfer' ? "Chuyển khoản" : "Tiền mặt", style: TextStyle(fontSize: 16))
+                Text(
+                    transaction.paymentMethod == 'bank-transfer'
+                        ? "Chuyển khoản"
+                        : "Tiền mặt",
+                    style: TextStyle(fontSize: 16))
               ],
             ),
             SizedBox(height: 16),
-            Text("Danh sách sản phẩm:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Danh sách sản phẩm:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Divider(),
             Expanded(
               child: ListView.builder(
@@ -72,12 +74,26 @@ class TransactionDetailsScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
-                          Text("Số lượng: ${item.quantity}", style: TextStyle(fontSize: 16)),
-                          Text("Đơn giá: ${NumberFormat.decimalPattern().format(item.product.wholesalePrice)}", style: TextStyle(fontSize: 16))
+                          Text(
+                            item.product.name,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w700),
+                          ),
+                          Text("Số lượng: ${item.quantity}",
+                              style: TextStyle(fontSize: 16)),
+                          Text(
+                              "Đơn giá: ${NumberFormat.decimalPattern().format(item.product.wholesalePrice)}",
+                              style: TextStyle(fontSize: 16))
                         ],
                       ),
-                      Text(NumberFormat.decimalPattern().format(item.product.wholesalePrice * item.quantity), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),)
+                      Text(
+                        NumberFormat.decimalPattern().format(
+                            item.product.wholesalePrice * item.quantity),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor),
+                      )
                     ],
                   );
                 },
@@ -97,28 +113,25 @@ class TransactionDetailsScreen extends StatelessWidget {
 
   void onPrintInvoice() async {
     final invoice = Invoice(
-      info: InvoiceInfo(
-        description: transaction.paymentMethod,
-        number: transaction.id.toString(),
-        date: transaction.date,
-        dueDate: transaction.date.add(Duration(days: 7))
-      ),
-      supplier: Supplier(
-        name: "HOSCO Vietnam",
-        address: "58 Luu Huu Phuoc, My Dinh 1, Nam Tu Liem",
-        // paymentInfo: "BIDV"
-      ),
-      customer: Customer(
-        name: "Nguyen Hung Dung", address: "KTX My Dinh"),
-      items: transaction.items.map((item) {
-        return InvoiceItem(
-          description: item.product.name,
-          date: transaction.date,
-          quantity: item.quantity,
-          vat: 0,
-          unitPrice: item.product.wholesalePrice);
-      }).toList()
-    );
+        info: InvoiceInfo(
+            description: transaction.paymentMethod,
+            number: transaction.id.toString(),
+            date: transaction.date,
+            dueDate: transaction.date.add(Duration(days: 7))),
+        supplier: Supplier(
+          name: "HOSCO Vietnam",
+          address: "58 Luu Huu Phuoc, My Dinh 1, Nam Tu Liem",
+          // paymentInfo: "BIDV"
+        ),
+        customer: Customer(name: "Nguyen Hung Dung", address: "KTX My Dinh"),
+        items: transaction.items.map((item) {
+          return InvoiceItem(
+              description: item.product.name,
+              date: transaction.date,
+              quantity: item.quantity,
+              vat: 0,
+              unitPrice: item.product.wholesalePrice);
+        }).toList());
     final pdfDocument = await PdfInvoiceApi.generate(invoice);
 
     await Printing.layoutPdf(

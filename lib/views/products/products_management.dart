@@ -13,7 +13,8 @@ class ProductsManagement extends StatelessWidget {
 
   ProductsManagement({super.key}) {
     scrollController.addListener(() {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
         productController.loadNextPage();
       }
     });
@@ -38,14 +39,16 @@ class ProductsManagement extends StatelessWidget {
         actions: [
           IconButton(
             icon: Obx(() => Badge(
-              isLabelVisible: productController.selectedCategories.isNotEmpty,
-              label: Text(productController.selectedCategories.length.toString()),
-              child: const Icon(Icons.filter_list),
-            )),
+                  isLabelVisible:
+                      productController.selectedCategories.isNotEmpty,
+                  label: Text(
+                      productController.selectedCategories.length.toString()),
+                  child: const Icon(Icons.filter_list),
+                )),
             onPressed: () {
               context.showCategoryFilterBottomSheet(
-                availableCategories: productController.allCategories ?? [],
-                selectedCategories: productController.selectedCategories ?? [],
+                availableCategories: productController.allCategories,
+                selectedCategories: productController.selectedCategories,
                 onApplyFilters: (categories) {
                   productController.selectedCategories.assignAll(categories);
                   productController.refreshProducts();
@@ -80,23 +83,25 @@ class ProductsManagement extends StatelessWidget {
                   child: InkWell(
                     onTap: _openSearchScreen,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       child: Row(
                         children: [
                           Icon(Icons.search, color: Colors.grey.shade600),
                           SizedBox(width: 8),
                           Expanded(
                             child: Obx(() => Text(
-                              productController.searchQuery.value.isNotEmpty
-                                  ? productController.searchQuery.value
-                                  : "Tìm kiếm sản phẩm...",
-                              style: TextStyle(
-                                color: productController.searchQuery.value.isNotEmpty
-                                    ? Colors.black
-                                    : Colors.grey.shade600,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )),
+                                  productController.searchQuery.value.isNotEmpty
+                                      ? productController.searchQuery.value
+                                      : "Tìm kiếm sản phẩm...",
+                                  style: TextStyle(
+                                    color: productController
+                                            .searchQuery.value.isNotEmpty
+                                        ? Colors.black
+                                        : Colors.grey.shade600,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )),
                           ),
                         ],
                       ),
@@ -107,14 +112,13 @@ class ProductsManagement extends StatelessWidget {
                 // Clear button - only visible when there's a search query
                 Obx(() => productController.searchQuery.value.isNotEmpty
                     ? InkWell(
-                  onTap: _clearSearch,
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Icon(Icons.clear, color: Colors.grey.shade600),
-                  ),
-                )
-                    : SizedBox.shrink()
-                ),
+                        onTap: _clearSearch,
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Icon(Icons.clear, color: Colors.grey.shade600),
+                        ),
+                      )
+                    : SizedBox.shrink()),
               ],
             ),
           ),
@@ -133,33 +137,37 @@ class ProductsManagement extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/icons/not_found_icon.png', height: 80),
+                      Image.asset('assets/icons/not_found_icon.png',
+                          height: 80),
                       const SizedBox(height: 30),
-                      Text('Không tìm thấy sản phẩm phù hợp', style: TextStyle(fontSize: 18)),
+                      Text('Không tìm thấy sản phẩm phù hợp',
+                          style: TextStyle(fontSize: 18)),
                     ],
                   ),
                 );
               }
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
                 child: RefreshIndicator(
                   onRefresh: () async {
                     productController.refreshProducts();
                   },
                   child: ListView.builder(
                       controller: scrollController,
-                      itemCount: products.length + (productController.hasMoreData.value ? 1 : 0),
+                      itemCount: products.length +
+                          (productController.hasMoreData.value ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index < products.length) {
                           final Product product = products[index];
                           return GestureDetector(
                               onTap: () {
                                 productController.setSelectedProduct(product);
+                                productController.getProductDetails(product.id);
                                 Get.to(() => ProductDetailScreen());
                               },
-                              child: ItemCard(product: product)
-                          );
+                              child: ItemCard(product: product));
                         } else if (productController.hasMoreData.value) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -167,8 +175,7 @@ class ProductsManagement extends StatelessWidget {
                           );
                         }
                         return null;
-                      }
-                  ),
+                      }),
                 ),
               );
             }),
@@ -190,11 +197,13 @@ class ProductsManagement extends StatelessWidget {
     );
   }
 }
+
 // Dedicated search screen
 class ProductSearchScreen extends StatefulWidget {
   final ProductController productController;
 
-  const ProductSearchScreen({Key? key, required this.productController}) : super(key: key);
+  const ProductSearchScreen({Key? key, required this.productController})
+      : super(key: key);
 
   @override
   _ProductSearchScreenState createState() => _ProductSearchScreenState();
@@ -208,9 +217,8 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
   void initState() {
     super.initState();
     // Initialize with the current search query
-    searchQueryController = TextEditingController(
-        text: widget.productController.searchQuery.value
-    );
+    searchQueryController =
+        TextEditingController(text: widget.productController.searchQuery.value);
 
     // Focus the search field automatically
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -242,7 +250,8 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
           elevation: 0.5,
           flexibleSpace: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               child: Row(
                 children: [
                   IconButton(
@@ -267,13 +276,16 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                         },
                         style: TextStyle(fontSize: 16),
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           hintText: "Tìm kiếm sản phẩm...",
                           hintStyle: TextStyle(color: Colors.grey.shade500),
-                          prefixIcon: Icon(Icons.search, color: Colors.grey.shade600),
+                          prefixIcon:
+                              Icon(Icons.search, color: Colors.grey.shade600),
                           suffixIcon: IconButton(
                             onPressed: _clearSearch,
-                            icon: Icon(Icons.clear, color: Colors.grey.shade600, size: 18),
+                            icon: Icon(Icons.clear,
+                                color: Colors.grey.shade600, size: 18),
                           ),
                           border: InputBorder.none,
                         ),
@@ -317,7 +329,8 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                 itemCount: widget.productController.searchSuggestions.length,
                 separatorBuilder: (context, index) => Divider(height: 1),
                 itemBuilder: (context, index) {
-                  final suggestion = widget.productController.searchSuggestions[index];
+                  final suggestion =
+                      widget.productController.searchSuggestions[index];
                   return ListTile(
                     leading: Icon(Icons.search),
                     title: Text(suggestion),

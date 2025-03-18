@@ -1,17 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hosco_shop_2/models/supplier.dart';
-import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
-// import 'package:hosco_shop_2/networking/data/fakeProducts.dart';
-import 'package:hosco_shop_2/services/local_db_service.dart';
 import '../models/product.dart';
 import '../networking/api/product_api_service.dart';
 import '../utils/sl.dart';
-import 'package:logging/logging.dart';
 
 class ProductController extends GetxController {
   final apiService = sl.get<ProductApiService>();
@@ -47,8 +41,9 @@ class ProductController extends GetxController {
     allCategories.assignAll(categories.map((c) => c.toString()));
   }
 
-  void debounce(Callback callback, {Duration duration = const Duration(milliseconds: 300)}) {
-    if(debouncer != null) {
+  void debounce(Callback callback,
+      {Duration duration = const Duration(milliseconds: 300)}) {
+    if (debouncer != null) {
       debouncer!.cancel();
     }
     debouncer = Timer(duration, callback);
@@ -84,7 +79,7 @@ class ProductController extends GetxController {
 
   void deleteProduct() async {
     final product = selectedProduct.value;
-    if (product == null || product.id == null) return;
+    if (product == null) return;
 
     try {
       // await productService.deleteProduct(product.id); // Ensure product is deleted first
@@ -105,6 +100,7 @@ class ProductController extends GetxController {
   }
 
   Future<void> getProducts(String query, {bool resetPage = true}) async {
+    print('Controller - getting products');
     if (resetPage) {
       page.value = 1; // Reset to first page
       hasMoreData.value = true; // Reset data flag
@@ -114,7 +110,7 @@ class ProductController extends GetxController {
     if (!hasMoreData.value || isLoading.value) return;
 
     isLoading.value = true;
-    if(page.value == 1) {
+    if (page.value == 1) {
       isFetching.value = true;
     }
 
@@ -124,8 +120,7 @@ class ProductController extends GetxController {
         query: searchQuery.value,
         page: page.value.toString(),
         pageSize: pageSize.toString(),
-        categories: selectedCategories
-    );
+        categories: selectedCategories);
 
     if (searchResult.length < pageSize && page.value >= 1) {
       hasMoreData.value = false;
@@ -140,6 +135,11 @@ class ProductController extends GetxController {
     // refreshProducts();
     isLoading.value = false;
     isFetching.value = false;
+  }
+
+  Future<void> getProductDetails(String productId) async {
+    final tmp = await apiService.getProductById(productId);
+    selectedProduct.value = tmp;
   }
 
   void loadNextPage() {
@@ -157,7 +157,8 @@ class ProductController extends GetxController {
 
   void refreshProducts() async {
     isFetching.value = true;
-    final response = await apiService.getAllProducts(categories: selectedCategories);
+    final response =
+        await apiService.getAllProducts(categories: selectedCategories);
     allProducts.assignAll(response);
     isFetching.value = false;
   }

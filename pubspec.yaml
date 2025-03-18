@@ -97,11 +97,11 @@ flutter:
         - asset: assets/Open_Sans/OpenSans-VariableFont.ttf
 
 flutter_native_splash:
-  color: "#2F98F5" # Background color of splash screen
-  image: assets/masterpro_logo.png # Your app logo (must be inside assets folder)
-  android_12:
-    color: "#2F98F5"
-    image: assets/masterpro_logo.png
+#  color: "#2F98F5" # Background color of splash screen
+  background_image: assets/splash_screen/splash_screen.png # Your app logo (must be inside assets folder)
+#  android_12:
+#    color: "#2F98F5"
+#    image: assets/masterpro_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

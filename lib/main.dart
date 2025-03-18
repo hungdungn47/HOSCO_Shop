@@ -2,9 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/bindings/app_binding.dart';
-import 'package:hosco_shop_2/controllers/cart_controller.dart';
-import 'package:hosco_shop_2/controllers/customer_controller.dart';
-import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
@@ -13,6 +10,7 @@ import 'package:hosco_shop_2/views/customers/customer_management.dart';
 import 'package:hosco_shop_2/views/history/transaction_history.dart';
 import 'package:hosco_shop_2/views/products/add_product.dart';
 import 'package:hosco_shop_2/views/products/products_management.dart';
+import 'package:hosco_shop_2/views/products/purchase_screen.dart';
 import 'package:hosco_shop_2/views/report/sales_report.dart';
 import 'package:hosco_shop_2/utils/sl.dart';
 import 'package:logging/logging.dart';
@@ -28,9 +26,9 @@ Future<void> setup() async {
   sl.registerSingleton<ProductApiService>(ProductApiServiceImpl.instance);
 
   // Lazy load controllers
-  Get.lazyPut(() => ProductController());
-  Get.lazyPut(() => CartController());
-  Get.lazyPut(() => CustomerController());
+  // Get.lazyPut(() => ProductController());
+  // Get.lazyPut(() => CartController());
+  // Get.lazyPut(() => CustomerController());
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
@@ -56,6 +54,7 @@ void requestStoragePermission() async {
     }
   }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -70,6 +69,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
+        GetPage(name: '/purchase', page: () => PurchasingProductScreen()),
         GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistoryScreen()),
         GetPage(name: '/report', page: () => SalesReport()),
