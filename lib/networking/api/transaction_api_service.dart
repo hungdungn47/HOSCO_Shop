@@ -18,4 +18,11 @@ class TransactionApiService {
         .toList();
     // return [];
   }
+
+  Future<bool> createSaleTransaction(Map<String, dynamic> requestBody) async {
+    final response = await HttpClient.post(
+        endPoint: '/api/v1/transactions/sale', body: requestBody);
+    print("Selling products: ${response}");
+    return response?['success'];
+  }
 }

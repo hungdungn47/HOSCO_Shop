@@ -5,6 +5,7 @@ import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
+import 'package:hosco_shop_2/networking/api/transaction_api_service.dart';
 // import 'package:hosco_shop_2/networking/api/transaction_api_service.dart';
 import '../models/customer.dart';
 import '../networking/api/product_api_service.dart';
@@ -27,6 +28,8 @@ class CartController extends GetxController {
   // final DatabaseService databaseService = DatabaseService.instance;
   Timer? debouncer;
   final int pageSize = 6; // Items per page
+  final TransactionApiService transactionApiService =
+      TransactionApiService.instance;
 
   @override
   void onInit() async {
@@ -86,22 +89,17 @@ class CartController extends GetxController {
   }
 
   Future<void> selectSuggestion(Map<String, dynamic> suggestion) async {
-    // var product = await databaseService.getProductById(suggestion['id']);
-    // if (product != null) addToCart(product);
+    var product = await apiService.getProductById(suggestion['id']);
+    if (product != null) addToCart(product);
   }
 
   Future<void> searchProduct(String query, {bool resetPage = true}) async {
     debounce(() async {
       searchQuery.value = query;
 
-      // final searchResult = await databaseService.searchProductsPaginated(
-      //   query: query,
-      //   page: 1,
-      //   limit: pageSize,
-      // );
-      final searchResult = [];
-      searchSuggestions.assignAll(
-          searchResult.map((p) => {"name": p.name, "id": p.id}).toList());
+      final searchResult = await apiService.searchProducts(query);
+      // final searchResult = [];
+      searchSuggestions.assignAll(searchResult);
     });
   }
 
@@ -123,8 +121,8 @@ class CartController extends GetxController {
     return index != -1 ? cartItems[index].quantity : 0;
   }
 
-  Future<void> completeTransaction(String paymentMethod) async {
-    if (cartItems.isEmpty) return;
+  Future<bool> completeTransaction(String paymentMethod) async {
+    if (cartItems.isEmpty) return false;
 
     // Create a new transaction
     // var newTransaction = CustomTransaction(
@@ -136,9 +134,41 @@ class CartController extends GetxController {
     // await databaseService.insertTransaction(newTransaction);
 
     // Clear cart after payment
-    cartItems.clear();
-    productIdSet.clear();
-    discountAmount.value = 0.0;
+
+    // Prepare sale items list
+    List<Map<String, dynamic>> saleItems = cartItems
+        .map((item) => {
+              "productId": item.product.id,
+              "quantity": item.quantity,
+              "unitPrice": item.unitPrice
+            })
+        .toList();
+
+    // Prepare request body
+    Map<String, dynamic> requestBody = {
+      "customerId": customer.value.id ?? 2, // Default to 0 if no customer ID
+      "warehouseId": "my-dinh-02",
+      "paymentMethod": paymentMethod,
+      "saleItems": saleItems,
+      "discount": discountAmount.value,
+      "discountUnit": discountUnitPercentage.value ? "percentage" : "vnd",
+      "vat": 7.5, // Assuming VAT is fixed at 7.5%
+      "saleNote": "Priority customer, expedited shipping requested"
+    };
+
+    print(requestBody);
+
+    final result =
+        await transactionApiService.createSaleTransaction(requestBody);
+
+    if (result) {
+      cartItems.clear();
+      productIdSet.clear();
+      discountAmount.value = 0.0;
+    } else {
+      Get.snackbar("Error", "Transaction failed");
+    }
+    return result;
   }
 
   void toggleBarcode() {

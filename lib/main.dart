@@ -5,6 +5,7 @@ import 'package:hosco_shop_2/bindings/app_binding.dart';
 import 'package:hosco_shop_2/bindings/customer_binding.dart';
 import 'package:hosco_shop_2/bindings/purchase_binding.dart';
 import 'package:hosco_shop_2/bindings/sales_report_binding.dart';
+import 'package:hosco_shop_2/controllers/customer_controller.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
@@ -31,7 +32,7 @@ Future<void> setup() async {
   // Lazy load controllers
   // Get.lazyPut(() => ProductController());
   // Get.lazyPut(() => CartController());
-  // Get.lazyPut(() => CustomerController());
+  Get.put<CustomerController>(CustomerController());
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
             name: '/purchase',
             page: () => PurchasingProductScreen(),
             binding: PurchaseBinding()),
-        GetPage(name: '/cart', page: () => Cart()),
+        GetPage(name: '/cart', page: () => Cart(), binding: CustomerBinding()),
         GetPage(
             name: '/history',
             page: () => TransactionHistoryScreen(),

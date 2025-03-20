@@ -11,7 +11,6 @@ import '../../utils/constants.dart';
 import '../common_widgets/cart_item_card.dart';
 
 class CheckoutScreen extends StatelessWidget {
-
   final CartController cartController = Get.find<CartController>();
   final CustomerController customerController = Get.find<CustomerController>();
   final TextEditingController discountController = TextEditingController();
@@ -23,11 +22,12 @@ class CheckoutScreen extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Thanh toán"),
-        leading: IconButton(onPressed: () => Get.offAndToNamed('/cart'), icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+            onPressed: () => Get.offAndToNamed('/cart'),
+            icon: Icon(Icons.arrow_back)),
       ),
       body: Stack(
         children: [
@@ -38,33 +38,35 @@ class CheckoutScreen extends StatelessWidget {
                 child: Obx(() {
                   List<CartItem> cartItems = cartController.cartItems;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6.0, vertical: 8.0),
                     child: ListView.builder(
                         itemCount: cartItems.length,
                         itemBuilder: (context, index) {
                           final CartItem cartItem = cartItems[index];
 
                           return CartItemCard(cartItem: cartItem);
-                        }
-                    ),
+                        }),
                   );
                 }),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Tổng giá trị:",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "${NumberFormat.decimalPattern().format(cartController.getTotalPrice())} đ",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                )),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Tổng giá trị:",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${NumberFormat.decimalPattern().format(cartController.getTotalPrice())} đ",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )),
               ),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -73,18 +75,24 @@ class CheckoutScreen extends StatelessWidget {
                     children: [
                       Text(
                         "Chiết khấu",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       // Init value = false: Choose unit VND
-                      IosToggleButton(leftText: "VND", rightText: "%", initValue: false, onChange: (value) {
-                        cartController.discountUnitPercentage.value = value;
-                        cartController.discountAmount.value = 0;
-                        discountController.text = "0";
-                      }),
+                      IosToggleButton(
+                          leftText: "VND",
+                          rightText: "%",
+                          initValue: false,
+                          onChange: (value) {
+                            cartController.discountUnitPercentage.value = value;
+                            cartController.discountAmount.value = 0;
+                            discountController.text = "0";
+                          }),
                       SizedBox(
                         width: 100,
                         child: TextField(
-                          onChanged: (value) => cartController.discountAmount.value = double.parse(value),
+                          onChanged: (value) => cartController
+                              .discountAmount.value = double.parse(value),
                           textAlign: TextAlign.right,
                           controller: discountController,
                           keyboardType: TextInputType.number,
@@ -92,28 +100,31 @@ class CheckoutScreen extends StatelessWidget {
                               hintText: "Giá trị",
                               hintStyle: TextStyle(
                                 color: Colors.grey,
-                              )
-                          ),
+                              )),
                         ),
                       ),
                     ],
-                  )
-              ),
+                  )),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 16),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 16),
                 child: Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Thành tiền:",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "${NumberFormat.decimalPattern().format(cartController.finalPrice())} đ",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor),
-                    ),
-                  ],
-                )),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Thành tiền:",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${NumberFormat.decimalPattern().format(cartController.finalPrice())} đ",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor),
+                        ),
+                      ],
+                    )),
               ),
             ],
           ),
@@ -150,9 +161,9 @@ class CheckoutScreen extends StatelessWidget {
                           // Hide suggestion list
                           customerController.isShowSuggestion.value = false;
                         },
-                        icon: Icon(Icons.clear)
-                    ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        icon: Icon(Icons.clear)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
 
@@ -160,25 +171,27 @@ class CheckoutScreen extends StatelessWidget {
                 Obx(() => !customerController.isShowSuggestion.value
                     ? SizedBox.shrink()
                     : Container(
-                  margin: EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: customerController.suggestionCustomers
-                        .map((suggestion) => ListTile(
-                      title: Text(suggestion.name),
-                      onTap: () {
-                        searchQueryController.text = suggestion.name;
-                        customerController.isShowSuggestion.value = false;
-                        // productController.selectSuggestion(suggestion);
-                      },
-                    ))
-                        .toList(),
-                  ),
-                )),
+                        margin: EdgeInsets.symmetric(vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: customerController.suggestionCustomers
+                              .map((suggestion) => ListTile(
+                                    title: Text(suggestion.name),
+                                    onTap: () {
+                                      searchQueryController.text =
+                                          suggestion.name;
+                                      customerController
+                                          .isShowSuggestion.value = false;
+                                      // productController.selectSuggestion(suggestion);
+                                    },
+                                  ))
+                              .toList(),
+                        ),
+                      )),
               ],
             ),
           ),
@@ -194,11 +207,13 @@ class CheckoutScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Set border radius here
+                    borderRadius:
+                        BorderRadius.circular(8), // Set border radius here
                   ),
                 ),
                 icon: Icon(Icons.delete, color: Colors.white),
-                label: Text("Hủy đơn", style: TextStyle(fontSize: 18, color: Colors.white)),
+                label: Text("Hủy đơn",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
                   AwesomeDialog(
                     context: context,
@@ -234,12 +249,14 @@ class CheckoutScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Set border radius here
+                    borderRadius:
+                        BorderRadius.circular(8), // Set border radius here
                   ),
                 ),
-                label: Text("Xác nhận", style: TextStyle(fontSize: 18, color: Colors.white)),
+                label: Text("Xác nhận",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
                 onPressed: () {
-                  if(cartController.cartItems.isEmpty) {
+                  if (cartController.cartItems.isEmpty) {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
@@ -247,8 +264,7 @@ class CheckoutScreen extends StatelessWidget {
                       title: "Lỗi",
                       desc: 'Giỏ hàng đang rỗng',
                       btnCancelOnPress: () {},
-                      btnOkOnPress: () {
-                      },
+                      btnOkOnPress: () {},
                     ).show();
                   } else {
                     AwesomeDialog(
@@ -274,7 +290,7 @@ class CheckoutScreen extends StatelessWidget {
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',
                       btnOkOnPress: () async {
-                        cartController.completeTransaction("bank-transfer");
+                        cartController.completeTransaction("bank_transfer");
                         discountController.text = "0";
                         AwesomeDialog(
                           context: context,

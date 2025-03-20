@@ -91,7 +91,16 @@ class ProductApiServiceImpl implements ProductApiService {
   Future<List<Map<String, dynamic>>> searchProducts(String searchQuery) async {
     final response = await HttpClient.get(
         endPoint: '/api/v1/products', queryParams: {"q": searchQuery});
-    return response?['products'];
+
+    if (response == null || response['products'] == null) return [];
+
+    return List<Map<String, dynamic>>.from(
+        response['products'].take(5).map((product) {
+      return {
+        "id": product["id"],
+        "name": product["name"],
+      };
+    }));
   }
 
   @override
