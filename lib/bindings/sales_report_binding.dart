@@ -5,6 +5,6 @@ class SalesReportBinding extends Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.lazyPut<SalesReportController>(() => SalesReportController());
+    Get.put(() => SalesReportController());
   }
 }

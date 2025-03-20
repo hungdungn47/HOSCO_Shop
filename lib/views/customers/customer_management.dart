@@ -39,8 +39,11 @@ class CustomerManagementScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ListTile(
-                title: Text(customer.name),
-                subtitle: Text(customer.phone ?? "No phone"),
+                title: Text(
+                    '${customer.name} - ${customer.role == 'wholesale_customer' ? 'Khách buôn' : 'Khách lẻ'}'),
+                subtitle: Text(
+                  '${customer.phone} - ${customer.address}',
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

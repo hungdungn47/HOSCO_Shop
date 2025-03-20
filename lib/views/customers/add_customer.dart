@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/customer_controller.dart';
 import 'package:hosco_shop_2/models/customer.dart';
+import 'package:hosco_shop_2/models/partner.dart';
 
 class AddCustomerScreen extends StatefulWidget {
-  final Customer? customer;
+  final Partner? customer;
 
   AddCustomerScreen({this.customer});
 
@@ -26,23 +27,23 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     nameController = TextEditingController(text: widget.customer?.name ?? '');
     phoneController = TextEditingController(text: widget.customer?.phone ?? '');
     emailController = TextEditingController(text: widget.customer?.email ?? '');
-    addressController = TextEditingController(text: widget.customer?.address ?? '');
+    addressController =
+        TextEditingController(text: widget.customer?.address ?? '');
   }
 
   void _saveCustomer() {
     if (nameController.text.isEmpty || phoneController.text.isEmpty) {
-      Get.snackbar("Lỗi", "Vui lòng nhập đầy đủ thông tin", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar("Lỗi", "Vui lòng nhập đầy đủ thông tin",
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     final newCustomer = Customer(
-      id: widget.customer?.id,
-      name: nameController.text,
-      phone: phoneController.text,
-      email: emailController.text,
-      address: addressController.text,
-      createdAt: widget.customer?.createdAt ?? DateTime.now(),
-    );
+        id: widget.customer?.id,
+        name: nameController.text,
+        phone: phoneController.text,
+        email: emailController.text,
+        address: addressController.text);
 
     if (widget.customer == null) {
       customerController.addCustomer(newCustomer);
@@ -56,7 +57,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.customer == null ? "Thêm khách hàng" : "Chỉnh sửa khách hàng")),
+      appBar: AppBar(
+          title: Text(widget.customer == null
+              ? "Thêm khách hàng"
+              : "Chỉnh sửa khách hàng")),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -87,7 +91,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: _saveCustomer,
-                child: Text(widget.customer == null ? "Lưu khách hàng" : "Cập nhật khách hàng"),
+                child: Text(widget.customer == null
+                    ? "Lưu khách hàng"
+                    : "Cập nhật khách hàng"),
               ),
             ),
           ],

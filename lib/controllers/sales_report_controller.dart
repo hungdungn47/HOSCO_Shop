@@ -1,16 +1,19 @@
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/api/transaction_api_service.dart';
-import 'package:hosco_shop_2/services/local_db_service.dart';
+// import 'package:hosco_shop_2/services/local_db_service.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
 
 class SalesReportController extends GetxController {
   var timeRange = TimeRange.thisWeek.obs;
   // var transactions = <CustomTransaction>[].obs;
-  var transactionsValue = <Map<String, dynamic>>[].obs;
-  // List<Map<String, dynamic>>? transactionsValue;
+  var saleTransactionsValue = <Map<String, dynamic>>[].obs;
+  var purchaseTransactionsValue = <Map<String, dynamic>>[].obs;
+  // List<Map<String, dynamic>>? saleTransactionsValue;
   var transactionsList = <CustomTransaction>[].obs;
+  var saleTransactionList = <CustomTransaction>[].obs;
+  var purchaseTransactionList = <CustomTransaction>[].obs;
   var bestSellingProducts = <Map<String, dynamic>>[].obs;
   final TransactionApiService transactionApiService =
       TransactionApiService.instance;
@@ -20,19 +23,23 @@ class SalesReportController extends GetxController {
   void onInit() {
     super.onInit();
     // databaseService.getTransactions().then((res) => transactions.assignAll(res));
-    // databaseService.getTransactionsValue().then((res) => transactionsValue = res);
+    // databaseService.getsaleTransactionsValue().then((res) => saleTransactionsValue = res);
     loadData();
   }
 
   void loadData() async {
     // await loadTransactions();
     await fetchTransactions();
+    saleTransactionsValue.value =
+        convertTransactionsToList(saleTransactionList);
+    purchaseTransactionsValue.value =
+        convertTransactionsToList(purchaseTransactionList);
     loadBestSellingProducts();
   }
 
   // Future<void> loadTransactions() async {
-  //   final transactions = await databaseService.getTransactionsValue();
-  //   transactionsValue.assignAll(transactions); // Assign data to reactive list
+  //   final transactions = await databaseService.getsaleTransactionsValue();
+  //   saleTransactionsValue.assignAll(transactions); // Assign data to reactive list
   // }
 
   Future<void> fetchTransactions() async {
@@ -42,6 +49,19 @@ class SalesReportController extends GetxController {
           'Transaction amount ${t.totalAmount} with ${t.items.length} items one date ${DateFormat('dd/MM/yyyy').format(t.transactionDate!)}');
     }
     transactionsList.assignAll(res);
+    saleTransactionList.assignAll(res.where((t) => t.type == 'sale'));
+    purchaseTransactionList.assignAll(res.where((t) => t.type == 'purchase'));
+  }
+
+  List<Map<String, dynamic>> convertTransactionsToList(
+      List<CustomTransaction> transactions) {
+    return transactions.map((transaction) {
+      return {
+        "date": transaction.transactionDate!.toIso8601String(),
+        "totalAmount": transaction.totalAmount,
+        "paymentMethod": transaction.paymentMethod,
+      };
+    }).toList();
   }
 
   Map<String, double> getRevenueData() {
@@ -76,7 +96,7 @@ class SalesReportController extends GetxController {
     }
 
     // Sum transaction amounts
-    for (var transaction in transactionsValue) {
+    for (var transaction in saleTransactionsValue) {
       if (DateTime.parse(transaction['date']).isAfter(pastTime)) {
         String dateKey =
             DateFormat(format).format(DateTime.parse(transaction['date']));
@@ -102,7 +122,7 @@ class SalesReportController extends GetxController {
   // Calculate revenue distribution by payment method
   Map<String, double> getPaymentDistribution() {
     Map<String, double> paymentDistribution = {"bank-transfer": 0, "cash": 0};
-    for (var transaction in transactionsValue) {
+    for (var transaction in saleTransactionsValue) {
       paymentDistribution[transaction['paymentMethod']] =
           (paymentDistribution[transaction['paymentMethod']] ?? 0) +
               transaction['totalAmount'];
@@ -132,7 +152,7 @@ class SalesReportController extends GetxController {
     }
 
     // Sum totalAmount of transactions within the selected time range
-    return transactionsValue
+    return saleTransactionsValue
         .where((transaction) =>
             DateTime.parse(transaction['date']).isAfter(startTime))
         .fold(0.0, (sum, transaction) => sum! + transaction['totalAmount']);

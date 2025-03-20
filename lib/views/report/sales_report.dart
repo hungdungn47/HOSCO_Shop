@@ -3,7 +3,7 @@ import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
 import 'package:hosco_shop_2/views/common_widgets/bar_chart.dart';
-import 'package:hosco_shop_2/views/common_widgets/pie_chart.dart';
+// import 'package:hosco_shop_2/views/common_widgets/pie_chart.dart';
 import 'package:hosco_shop_2/views/report/best_selling_products_table.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -60,24 +60,27 @@ class SalesReport extends StatelessWidget {
                   Text('Tổng doanh thu:',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Obx(() => Text(
+                  Obx(
+                    () => Text(
                       '${NumberFormat.decimalPattern().format(salesReportController.getTotalRevenue())} đ',
                       style: TextStyle(
                           fontSize: 18,
                           color: primaryColor,
-                          fontWeight: FontWeight.bold)))
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
                 ],
               ),
               SizedBox(height: 20),
-              Text("Phương thức thanh toán",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              SizedBox(
-                  height: 200,
-                  child: Obx(() => PieChartBuilder(
-                      chartData:
-                          salesReportController.getPaymentDistribution()))),
-              SizedBox(height: 20),
+              // Text("Phương thức thanh toán",
+              //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              // SizedBox(height: 20),
+              // SizedBox(
+              //     height: 200,
+              //     child: Obx(() => PieChartBuilder(
+              //         chartData:
+              //             salesReportController.getPaymentDistribution()))),
+              // SizedBox(height: 20),
               Text("Sản phẩm bán chạy",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 20),

@@ -49,12 +49,12 @@ class PurchaseController extends GetxController {
 
   Future<void> fetchAllSuppliers() async {
     supplierList.assignAll(await partnerApiService.getAllSuppliers());
-    print(supplierList.value);
+    print(supplierList);
   }
 
   Future<void> fetchAllWarehouses() async {
     warehouseList.assignAll(await warehouseApiService.getAllWarehouses());
-    print(warehouseList.value);
+    print(warehouseList);
   }
 
   Future<List<Product>> getProductSuggestions(String query) async {

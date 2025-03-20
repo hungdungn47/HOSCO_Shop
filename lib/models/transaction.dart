@@ -1,4 +1,4 @@
-import 'package:hosco_shop_2/models/customer.dart';
+// import 'package:hosco_shop_2/models/customer.dart';
 import 'package:hosco_shop_2/models/partner.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/networking/api/partner_api_service.dart';

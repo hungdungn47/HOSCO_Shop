@@ -25,6 +25,14 @@ class PartnerApiService {
         .toList();
   }
 
+  Future<List<Partner>> getAllCustomers() async {
+    final response = await getAllPartners();
+    return response
+        .where((p) =>
+            p.role == 'wholesale_customer' || p.role == 'retail_customer')
+        .toList();
+  }
+
   Future<Partner> getPartnerById(int partnerId) async {
     final partners = await getAllPartners();
     return partners.firstWhere((p) => p.id == partnerId);

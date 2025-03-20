@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/bindings/app_binding.dart';
+import 'package:hosco_shop_2/bindings/customer_binding.dart';
 import 'package:hosco_shop_2/bindings/purchase_binding.dart';
 import 'package:hosco_shop_2/bindings/sales_report_binding.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
@@ -84,7 +85,10 @@ class MyApp extends StatelessWidget {
             name: '/report',
             page: () => SalesReport(),
             binding: SalesReportBinding()),
-        GetPage(name: '/customers', page: () => CustomerManagementScreen()),
+        GetPage(
+            name: '/customers',
+            page: () => CustomerManagementScreen(),
+            binding: CustomerBinding()),
         // GetPage(name: '/pdf-page', page: () => PdfPage())
       ],
     );
