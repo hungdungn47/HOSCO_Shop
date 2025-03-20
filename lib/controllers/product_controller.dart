@@ -32,7 +32,11 @@ class ProductController extends GetxController {
   void onInit() async {
     super.onInit();
     await getProducts('');
-    await fetchCategories();
+    try {
+      await fetchCategories();
+    } catch (error) {
+      Get.snackbar("Network error while getting categories", error.toString());
+    }
     selectedCategories.assignAll(allCategories);
   }
 
@@ -116,25 +120,32 @@ class ProductController extends GetxController {
 
     searchQuery.value = query;
 
-    final searchResult = await apiService.getAllProducts(
-        query: searchQuery.value,
-        page: page.value.toString(),
-        pageSize: pageSize.toString(),
-        categories: selectedCategories);
+    try {
+      final searchResult = await apiService.getAllProducts(
+          query: searchQuery.value,
+          page: page.value.toString(),
+          pageSize: pageSize.toString(),
+          categories: selectedCategories);
 
-    if (searchResult.length < pageSize && page.value >= 1) {
-      hasMoreData.value = false;
-    }
+      if (searchResult.length < pageSize && page.value >= 1) {
+        hasMoreData.value = false;
+      }
 
-    if (page.value == 1) {
-      allProducts.assignAll(searchResult);
-    } else {
-      allProducts.addAll(searchResult);
+      if (page.value == 1) {
+        allProducts.assignAll(searchResult);
+      } else {
+        allProducts.addAll(searchResult);
+      }
+    } catch (error) {
+      print('error');
+      // Get.snackbar("Network error while getting products", error.toString());
+    } finally {
+      print('finally');
+      isLoading.value = false;
+      isFetching.value = false;
     }
 
     // refreshProducts();
-    isLoading.value = false;
-    isFetching.value = false;
   }
 
   Future<void> getProductDetails(String productId) async {

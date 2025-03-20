@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:hosco_shop_2/models/transaction.dart';
+import 'package:hosco_shop_2/networking/api/transaction_api_service.dart';
 import 'package:hosco_shop_2/services/local_db_service.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:intl/intl.dart';
@@ -8,21 +10,37 @@ class SalesReportController extends GetxController {
   // var transactions = <CustomTransaction>[].obs;
   var transactionsValue = <Map<String, dynamic>>[].obs;
   // List<Map<String, dynamic>>? transactionsValue;
+  var transactionsList = <CustomTransaction>[].obs;
   var bestSellingProducts = <Map<String, dynamic>>[].obs;
-  final DatabaseService databaseService = DatabaseService.instance;
+  final TransactionApiService transactionApiService =
+      TransactionApiService.instance;
+  // final DatabaseService databaseService = DatabaseService.instance;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
     // databaseService.getTransactions().then((res) => transactions.assignAll(res));
     // databaseService.getTransactionsValue().then((res) => transactionsValue = res);
-    await loadTransactions();
+    loadData();
+  }
+
+  void loadData() async {
+    // await loadTransactions();
+    await fetchTransactions();
     loadBestSellingProducts();
   }
 
-  Future<void> loadTransactions() async {
-    final transactions = await databaseService.getTransactionsValue();
-    transactionsValue.assignAll(transactions); // Assign data to reactive list
+  // Future<void> loadTransactions() async {
+  //   final transactions = await databaseService.getTransactionsValue();
+  //   transactionsValue.assignAll(transactions); // Assign data to reactive list
+  // }
+
+  Future<void> fetchTransactions() async {
+    final res = await transactionApiService.getAllTransactions();
+    for (CustomTransaction t in res) {
+      print('Transaction amount ${t.totalAmount} with ${t.items.length} items');
+    }
+    transactionsList.assignAll(res);
   }
 
   Map<String, double> getRevenueData() {
@@ -120,7 +138,7 @@ class SalesReportController extends GetxController {
   }
 
   void loadBestSellingProducts() async {
-    final products = await databaseService.getBestSellingProducts();
-    bestSellingProducts.assignAll(products);
+    // final products = await databaseService.getBestSellingProducts();
+    // bestSellingProducts.assignAll(products);
   }
 }

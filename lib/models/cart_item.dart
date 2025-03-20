@@ -1,40 +1,41 @@
 import './product.dart';
 
-enum DiscountType { percentage, fixed }
-
+// enum DiscountType { percentage, fixed }
+// discountType: vnd / percentage
 class CartItem {
   final Product product;
   int quantity;
   double discount;
-  DiscountType discountType;
+  String discountUnit;
+  double unitPrice;
 
-  CartItem({
-    required this.product,
-    this.quantity = 1,
-    this.discount = 0.0,
-    this.discountType = DiscountType.fixed, // Default to fixed discount
-  });
+  CartItem(
+      {required this.product,
+      this.quantity = 1,
+      this.discount = 0.0,
+      this.discountUnit = 'vnd', // Default to fixed discount
+      required this.unitPrice});
 
   Map<String, dynamic> toJson() {
     return {
       'product': product.toJson(),
       'quantity': quantity,
       'discount': discount,
-      'discountType': discountType.index, // Store as int
+      'discountUnit': discountUnit
     };
   }
 
   factory CartItem.fromJson(Map<String, dynamic> json, Product product) {
     return CartItem(
-      product: product,
-      quantity: json['quantity'],
-      discount: json['discount'] ?? 0.0,
-      discountType: DiscountType.values[json['discountType'] ?? 0],
-    );
+        unitPrice: json['unitPrice'],
+        product: product,
+        quantity: json['quantity'],
+        discount: json['discount'] != null ? json['discount'] as double : 0.0,
+        discountUnit: json['discountUnit']);
   }
 
   double getFinalPrice() {
-    if (discountType == DiscountType.percentage) {
+    if (discountUnit == 'percentage') {
       return product.wholesalePrice * (1 - discount / 100);
     } else {
       return product.wholesalePrice - discount;

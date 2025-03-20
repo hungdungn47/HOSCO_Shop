@@ -10,19 +10,24 @@ class HttpClient {
 
   static final client = HttpClientWithInterceptor(http.Client());
 
+  static const Duration timeoutDuration = Duration(seconds: 5);
+
   static Future<JSON?> get(
       {required String endPoint, JSON? queryParams}) async {
-    final url = Uri.http(baseUrl, endPoint, queryParams);
-    var response = await client.get(url);
-    print(response.statusCode);
-    if (response.statusCode != 204 && response.statusCode != 200) {
-      return null;
+    try {
+      final url = Uri.http(baseUrl, endPoint, queryParams);
+      var response = await client.get(url).timeout(timeoutDuration);
+
+      print(response.statusCode);
+      if (response.statusCode != 204 && response.statusCode != 200) {
+        return null;
+      }
+      await handleJwt(response);
+      final JSON parsed = json.decode(utf8.decode(response.bodyBytes));
+      return parsed;
+    } catch (e) {
+      throw Exception("Request failed or timed out: $e");
     }
-    // final JSON parsed = json.decode(response.body);
-    // return parsed;
-    await handleJwt(response);
-    final JSON parsed = json.decode(utf8.decode(response.bodyBytes));
-    return parsed;
   }
 
   static Future<List<dynamic>> getList(

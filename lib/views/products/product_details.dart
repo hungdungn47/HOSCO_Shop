@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hosco_shop_2/controllers/purchase_controller.dart';
+// import 'package:hosco_shop_2/controllers/purchase_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:hosco_shop_2/controllers/product_controller.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
@@ -10,7 +10,7 @@ class ProductDetailScreen extends StatelessWidget {
   ProductDetailScreen({Key? key}) : super(key: key);
 
   final ProductController productController = Get.find<ProductController>();
-  final PurchaseController purchaseController = Get.find<PurchaseController>();
+  // final PurchaseController purchaseController = Get.find<PurchaseController>();
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +88,15 @@ class ProductDetailScreen extends StatelessWidget {
                 icon: Icon(Icons.add_circle_sharp, color: Colors.white),
                 label: Text("Nhập hàng",
                     style: TextStyle(fontSize: 16, color: Colors.white)),
-                onPressed: () {
+                onPressed: () async {
                   final selectedProduct =
                       productController.selectedProduct.value;
                   if (selectedProduct != null) {
-                    purchaseController.selectedProduct.value = selectedProduct;
-                    Get.toNamed('/purchase');
+                    // purchaseController.selectedProduct.value = selectedProduct;
+                    // await purchaseController.fetchAllSuppliers();
+                    // await purchaseController.fetchAllWarehouses();
+                    Get.toNamed('/purchase',
+                        arguments: {'selectedProduct': selectedProduct});
                   }
                 },
               ),

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/bindings/app_binding.dart';
+import 'package:hosco_shop_2/bindings/purchase_binding.dart';
+import 'package:hosco_shop_2/bindings/sales_report_binding.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
@@ -69,10 +71,16 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/products', page: () => ProductsManagement()),
         GetPage(name: '/add-product', page: () => CreateProductScreen()),
-        GetPage(name: '/purchase', page: () => PurchasingProductScreen()),
+        GetPage(
+            name: '/purchase',
+            page: () => PurchasingProductScreen(),
+            binding: PurchaseBinding()),
         GetPage(name: '/cart', page: () => Cart()),
         GetPage(name: '/history', page: () => TransactionHistoryScreen()),
-        GetPage(name: '/report', page: () => SalesReport()),
+        GetPage(
+            name: '/report',
+            page: () => SalesReport(),
+            binding: SalesReportBinding()),
         GetPage(name: '/customers', page: () => CustomerManagementScreen()),
         // GetPage(name: '/pdf-page', page: () => PdfPage())
       ],

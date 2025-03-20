@@ -15,7 +15,8 @@ class DiscountWidget extends StatefulWidget {
 class _DiscountWidgetState extends State<DiscountWidget> {
   late TextEditingController discountController;
   late FocusNode discountFocusNode;
-  late DiscountType selectedDiscountType;
+  // late DiscountType selectedDiscountType;
+  late String selectedDiscountType;
 
   @override
   void initState() {
@@ -23,7 +24,7 @@ class _DiscountWidgetState extends State<DiscountWidget> {
     discountController =
         TextEditingController(text: widget.cartItem.discount.toString());
     discountFocusNode = FocusNode();
-    selectedDiscountType = widget.cartItem.discountType;
+    selectedDiscountType = widget.cartItem.discountUnit;
   }
 
   @override
@@ -77,7 +78,7 @@ class _DiscountWidgetState extends State<DiscountWidget> {
             //     });
             //   }
             // },)
-            DropdownButton<DiscountType>(
+            DropdownButton<String>(
               value: selectedDiscountType,
               onChanged: (newValue) {
                 if (newValue != null) {
@@ -89,13 +90,13 @@ class _DiscountWidgetState extends State<DiscountWidget> {
               },
               items: [
                 DropdownMenuItem(
-                    value: DiscountType.fixed,
+                    value: 'vnd',
                     child: Text(
                       "VND",
                       style: TextStyle(fontSize: 14),
                     )),
                 DropdownMenuItem(
-                    value: DiscountType.percentage,
+                    value: 'percentage',
                     child: Text("%", style: TextStyle(fontSize: 14))),
               ],
             ),

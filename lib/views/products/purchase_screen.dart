@@ -64,7 +64,7 @@ class PurchasingProductScreen extends StatelessWidget {
                   )),
               _buildTextField(
                   "Purchase Note", purchaseController.purchaseNoteController,
-                  maxLines: 3),
+                  keyboardType: TextInputType.text, maxLines: 3),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: purchaseController.submitPurchase,
@@ -127,12 +127,12 @@ class PurchasingProductScreen extends StatelessWidget {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {int maxLines = 1}) {
+      {TextInputType keyboardType = TextInputType.number, int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         controller: controller,
-        keyboardType: TextInputType.number,
+        keyboardType: keyboardType,
         decoration:
             InputDecoration(labelText: label, border: OutlineInputBorder()),
         maxLines: maxLines,

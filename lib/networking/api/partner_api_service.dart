@@ -16,4 +16,17 @@ class PartnerApiService {
         .map<Partner>((json) => Partner.fromJson(json))
         .toList();
   }
+
+  Future<List<Partner>> getAllPartners() async {
+    final response = await HttpClient.get(endPoint: '/api/v1/partners');
+    print(response?['partners']);
+    return response?['partners']
+        .map<Partner>((json) => Partner.fromJson(json))
+        .toList();
+  }
+
+  Future<Partner> getPartnerById(int partnerId) async {
+    final partners = await getAllPartners();
+    return partners.firstWhere((p) => p.id == partnerId);
+  }
 }

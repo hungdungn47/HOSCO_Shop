@@ -38,7 +38,9 @@ class TransactionDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Thời gian:", style: TextStyle(fontSize: 16)),
-                Text(DateFormat('dd/MM/yyyy HH:mm:ss').format(transaction.date),
+                Text(
+                    DateFormat('dd/MM/yyyy HH:mm:ss')
+                        .format(transaction.transactionDate!),
                     style: TextStyle(fontSize: 16))
               ],
             ),
@@ -114,10 +116,10 @@ class TransactionDetailsScreen extends StatelessWidget {
   void onPrintInvoice() async {
     final invoice = Invoice(
         info: InvoiceInfo(
-            description: transaction.paymentMethod,
+            description: transaction.paymentMethod ?? "cash",
             number: transaction.id.toString(),
-            date: transaction.date,
-            dueDate: transaction.date.add(Duration(days: 7))),
+            date: transaction.transactionDate!,
+            dueDate: transaction.transactionDate!.add(Duration(days: 7))),
         supplier: Supplier(
           name: "HOSCO Vietnam",
           address: "58 Luu Huu Phuoc, My Dinh 1, Nam Tu Liem",
@@ -127,7 +129,7 @@ class TransactionDetailsScreen extends StatelessWidget {
         items: transaction.items.map((item) {
           return InvoiceItem(
               description: item.product.name,
-              date: transaction.date,
+              date: transaction.transactionDate!,
               quantity: item.quantity,
               vat: 0,
               unitPrice: item.product.wholesalePrice);

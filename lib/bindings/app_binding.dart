@@ -10,9 +10,9 @@ class AppBinding extends Bindings {
   @override
   void dependencies() {
     Get.put<ProductApiService>(ProductApiServiceImpl.instance);
-    Get.put<ProductController>(ProductController()); // Always available
+    Get.put<ProductController>(ProductController());
     Get.put<CartController>(CartController());
     Get.put<CustomerController>(CustomerController());
-    Get.put<PurchaseController>(PurchaseController());
+    // Get.put<PurchaseController>(PurchaseController());
   }
 }

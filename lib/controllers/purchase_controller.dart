@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/partner.dart';
+// import 'package:hosco_shop_2/models/supplier.dart';
 import 'package:hosco_shop_2/networking/api/index.dart';
 import 'package:hosco_shop_2/networking/api/partner_api_service.dart';
 import 'package:hosco_shop_2/networking/api/warehouse_api_service.dart';
@@ -12,6 +15,9 @@ class PurchaseController extends GetxController {
   var selectedProduct = Rxn<Product>();
   var selectedSupplier = Rxn<Partner>();
   var selectedWarehouse = Rxn<Warehouse>();
+
+  var warehouseList = RxList<Warehouse>();
+  var supplierList = RxList<Partner>();
 
   TextEditingController productNameController = TextEditingController();
   TextEditingController supplierIdController = TextEditingController();
@@ -28,19 +34,47 @@ class PurchaseController extends GetxController {
   var discountUnit = "VND".obs;
   var expiryDate = "".obs;
 
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    selectedProduct.value = Get.arguments?['selectedProduct'];
+    fetchAllData();
+  }
+
+  void fetchAllData() async {
+    await fetchAllSuppliers();
+    await fetchAllWarehouses();
+  }
+
+  Future<void> fetchAllSuppliers() async {
+    supplierList.assignAll(await partnerApiService.getAllSuppliers());
+    print(supplierList.value);
+  }
+
+  Future<void> fetchAllWarehouses() async {
+    warehouseList.assignAll(await warehouseApiService.getAllWarehouses());
+    print(warehouseList.value);
+  }
+
   Future<List<Product>> getProductSuggestions(String query) async {
-    final productList =
-        await apiService.getAllProducts(query: query, pageSize: '15');
-    return productList; // Replace with API call
+    List<Product> res =
+        await apiService.getAllProducts(query: query, pageSize: '5');
+    return res;
   }
 
   Future<List<Partner>> getSupplierSuggestions(String query) async {
-    return await partnerApiService.getAllSuppliers(); // Replace with API call
+    List<Partner> res = supplierList
+        .where((s) => s.name.toLowerCase().contains(query))
+        .toList();
+    return res;
   }
 
   Future<List<Warehouse>> getWarehouseSuggestions(String query) async {
-    return await warehouseApiService
-        .getAllWarehouses(); // Replace with API call
+    List<Warehouse> res = warehouseList
+        .where((s) => s.name.toLowerCase().contains(query))
+        .toList();
+    return res;
   }
 
   Future<void> pickExpiryDate(BuildContext context) async {
@@ -94,6 +128,7 @@ class PurchaseController extends GetxController {
             : 0.0,
         "discountUnit": discountUnit.value == "VND" ? 'vnd' : 'percentage'
       });
+      Get.back();
     } catch (error) {
       Get.snackbar("Error", error.toString(),
           backgroundColor: Colors.red, colorText: Colors.white);
