@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/controllers/cart_controller.dart';
+import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/utils/constants.dart';
 import 'package:hosco_shop_2/utils/navigation_drawer.dart';
@@ -9,6 +10,8 @@ import 'package:intl/intl.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   final CartController cartController = Get.find<CartController>();
+  final SalesReportController salesReportController =
+      Get.find<SalesReportController>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class TransactionHistoryScreen extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.all(16),
         child: Obx(() {
-          if (cartController.transactions.isEmpty) {
+          if (salesReportController.transactionsList.isEmpty) {
             return Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -30,10 +33,10 @@ class TransactionHistoryScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemCount: cartController.transactions.length,
+            itemCount: salesReportController.transactionsList.length,
             itemBuilder: (context, index) {
               CustomTransaction transaction =
-                  cartController.transactions[index];
+                  salesReportController.transactionsList[index];
               return GestureDetector(
                 onTap: () =>
                     Get.to(TransactionDetailsScreen(transaction: transaction)),

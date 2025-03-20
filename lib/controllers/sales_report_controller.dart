@@ -38,7 +38,8 @@ class SalesReportController extends GetxController {
   Future<void> fetchTransactions() async {
     final res = await transactionApiService.getAllTransactions();
     for (CustomTransaction t in res) {
-      print('Transaction amount ${t.totalAmount} with ${t.items.length} items');
+      print(
+          'Transaction amount ${t.totalAmount} with ${t.items.length} items one date ${DateFormat('dd/MM/yyyy').format(t.transactionDate!)}');
     }
     transactionsList.assignAll(res);
   }

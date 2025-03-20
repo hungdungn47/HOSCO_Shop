@@ -48,6 +48,45 @@ class TransactionDetailsScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text("Loại giao dịch:", style: TextStyle(fontSize: 16)),
+                Text(transaction.type == 'sale' ? "Bán hàng" : "Nhập hàng",
+                    style: TextStyle(fontSize: 16, color: Colors.red))
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                    transaction.type == 'sale'
+                        ? "Khách hàng:"
+                        : "Nhà cung cấp:",
+                    style: TextStyle(fontSize: 16)),
+                Text(transaction.partner!.name,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // SizedBox.expand(),
+                SizedBox.shrink(),
+                Text(transaction.partner!.address,
+                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic))
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Thuế VAT:", style: TextStyle(fontSize: 16)),
+                Text('${transaction.vat ?? 0}', style: TextStyle(fontSize: 16))
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text("Hình thức giao dịch:", style: TextStyle(fontSize: 16)),
                 Text(
                     transaction.paymentMethod == 'bank-transfer'
@@ -61,7 +100,8 @@ class TransactionDetailsScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Divider(),
             Expanded(
-              child: ListView.builder(
+              child: ListView.separated(
+                separatorBuilder: (context, index) => Divider(),
                 itemCount: transaction.items.length,
                 itemBuilder: (context, index) {
                   final item = transaction.items[index];
@@ -73,29 +113,47 @@ class TransactionDetailsScreen extends StatelessWidget {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.product.name,
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w700),
-                          ),
-                          Text("Số lượng: ${item.quantity}",
-                              style: TextStyle(fontSize: 16)),
-                          Text(
-                              "Đơn giá: ${NumberFormat.decimalPattern().format(item.product.wholesalePrice)}",
-                              style: TextStyle(fontSize: 16))
-                        ],
+                      // Use Flexible to allow dynamic width
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.product.name,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w700),
+                              softWrap: true, // Enable text wrapping
+                            ),
+                            Text(
+                              "Số lượng: ${item.quantity}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              "Đơn giá: ${NumberFormat.decimalPattern().format(item.unitPrice)}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        NumberFormat.decimalPattern().format(
-                            item.product.wholesalePrice * item.quantity),
-                        style: TextStyle(
+                      SizedBox(width: 10), // Add spacing between text and price
+                      // Ensure price text doesn't shrink too much
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                            minWidth: 80,
+                            maxWidth: 120), // Set a fixed width range
+                        child: Text(
+                          NumberFormat.decimalPattern().format(
+                            item.unitPrice * item.quantity,
+                          ),
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: primaryColor),
-                      )
+                            color: primaryColor,
+                          ),
+                          textAlign: TextAlign
+                              .right, // Align to right for a cleaner look
+                        ),
+                      ),
                     ],
                   );
                 },
@@ -132,7 +190,7 @@ class TransactionDetailsScreen extends StatelessWidget {
               date: transaction.transactionDate!,
               quantity: item.quantity,
               vat: 0,
-              unitPrice: item.product.wholesalePrice);
+              unitPrice: item.unitPrice);
         }).toList());
     final pdfDocument = await PdfInvoiceApi.generate(invoice);
 

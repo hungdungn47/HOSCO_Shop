@@ -76,7 +76,10 @@ class MyApp extends StatelessWidget {
             page: () => PurchasingProductScreen(),
             binding: PurchaseBinding()),
         GetPage(name: '/cart', page: () => Cart()),
-        GetPage(name: '/history', page: () => TransactionHistoryScreen()),
+        GetPage(
+            name: '/history',
+            page: () => TransactionHistoryScreen(),
+            binding: SalesReportBinding()),
         GetPage(
             name: '/report',
             page: () => SalesReport(),

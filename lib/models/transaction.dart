@@ -48,8 +48,8 @@ class CustomTransaction {
     return CustomTransaction(
         id: json['id'],
         items: items,
-        totalAmount: json['totalAmount'],
-        transactionDate: DateTime.parse(json['date']),
+        totalAmount: json['totalAmount'].toDouble(),
+        transactionDate: DateTime.parse(json['transactionDate']),
         type: json['type'],
         paymentMethod: json['paymentMethod'],
         partner: Partner.fromJson(json['partner']));

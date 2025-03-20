@@ -27,10 +27,10 @@ class CartItem {
 
   factory CartItem.fromJson(Map<String, dynamic> json, Product product) {
     return CartItem(
-        unitPrice: json['unitPrice'],
+        unitPrice: json['unitPrice'].toDouble(),
         product: product,
         quantity: json['quantity'],
-        discount: json['discount'] != null ? json['discount'] as double : 0.0,
+        discount: json['discount'] != null ? json['discount'].toDouble() : 0.0,
         discountUnit: json['discountUnit']);
   }
 
