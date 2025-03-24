@@ -44,6 +44,7 @@ class PurchaseController extends GetxController {
 
   void fetchAllData() async {
     await fetchAllSuppliers();
+    // Future.delayed(Duration(milliseconds: 200));
     await fetchAllWarehouses();
   }
 
@@ -58,9 +59,10 @@ class PurchaseController extends GetxController {
   }
 
   Future<List<Product>> getProductSuggestions(String query) async {
-    List<Product> res =
-        await apiService.getAllProducts(query: query, pageSize: '5');
-    return res;
+    // List<Product> res =
+        // await apiService.getAllProducts(query: query, pageSize: '5');
+    // return res;
+    return [];
   }
 
   Future<List<Partner>> getSupplierSuggestions(String query) async {

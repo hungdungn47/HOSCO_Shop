@@ -149,8 +149,36 @@ class ProductController extends GetxController {
   }
 
   Future<void> getProductDetails(String productId) async {
-    final tmp = await apiService.getProductById(productId);
+    var tmp = await apiService.getProductById(productId);
+    final stockQuantity = await getProductStock(productId);
+    tmp?.stockQuantity = stockQuantity;
     selectedProduct.value = tmp;
+  }
+
+  Future<int> getProductStock(String productId) async {
+    final productStock = await apiService.getProductStock(productId);
+    return productStock['totalQuantity'];
+  }
+
+  List<dynamic> transformWarehouseStocks(List<Map<String, dynamic>> warehouseStocks) {
+    return warehouseStocks.map((stock) {
+      return {
+        "warehouse": stock["warehouse"]["id"],
+        "quantity": stock["totalQuantity"]
+      };
+    }).toList();
+  }
+
+  Future<List<dynamic>> getProductAvailableWarehouses(String productId) async {
+    // sample result
+    // [
+    //   {
+    //      "warehouse": "quynh-coi-01",
+    //      "quantity": 100
+    //   }
+    // [
+    final productStock = await apiService.getProductStock(productId);
+    return transformWarehouseStocks(productStock['warehouseStocks']);
   }
 
   void loadNextPage() {

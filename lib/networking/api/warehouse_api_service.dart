@@ -16,4 +16,11 @@ class WarehouseApiService {
         .toList();
     // return [];
   }
+
+  Future<List<Map<String, dynamic>>> getWarehouseDetails(String warehouseId) async {
+    final response = await HttpClient.get(endPoint: '/api/v1/warehouses/$warehouseId');
+    print(response?['warehouse']);
+    return response?['warehouse'];
+    // return [];
+  }
 }

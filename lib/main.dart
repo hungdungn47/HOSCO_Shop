@@ -6,6 +6,7 @@ import 'package:hosco_shop_2/bindings/customer_binding.dart';
 import 'package:hosco_shop_2/bindings/purchase_binding.dart';
 import 'package:hosco_shop_2/bindings/sales_report_binding.dart';
 import 'package:hosco_shop_2/controllers/customer_controller.dart';
+import 'package:hosco_shop_2/controllers/sales_report_controller.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service.dart';
 import 'package:hosco_shop_2/networking/api/product_api_service_impl.dart';
 import 'package:hosco_shop_2/utils/theme.dart';
@@ -33,6 +34,7 @@ Future<void> setup() async {
   // Get.lazyPut(() => ProductController());
   // Get.lazyPut(() => CartController());
   Get.put<CustomerController>(CustomerController());
+  Get.lazyPut<SalesReportController>(() => SalesReportController());
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {

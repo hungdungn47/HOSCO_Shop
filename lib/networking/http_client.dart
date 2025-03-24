@@ -57,9 +57,9 @@ class HttpClient {
       body: json.encode(body),
     );
     print(response);
-    // if (response.statusCode != 204 && response.statusCode != 200) {
-    //   return null;
-    // }
+    if (response.statusCode != 204 && response.statusCode != 200 && response.statusCode != 201) {
+      throw new Exception(json.decode(response.body)['error']);
+    }
 
     final JSON parsed = json.decode(response.body);
     return parsed;

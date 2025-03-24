@@ -121,8 +121,8 @@ class CartController extends GetxController {
     return index != -1 ? cartItems[index].quantity : 0;
   }
 
-  Future<bool> completeTransaction(String paymentMethod) async {
-    if (cartItems.isEmpty) return false;
+  Future<Map<String, dynamic>> completeTransaction(String paymentMethod) async {
+    if (cartItems.isEmpty) return {"success": false, "error": "Cart is empty!"};
 
     // Create a new transaction
     // var newTransaction = CustomTransaction(
@@ -161,12 +161,10 @@ class CartController extends GetxController {
     final result =
         await transactionApiService.createSaleTransaction(requestBody);
 
-    if (result) {
+    if (result['success']) {
       cartItems.clear();
       productIdSet.clear();
       discountAmount.value = 0.0;
-    } else {
-      Get.snackbar("Error", "Transaction failed");
     }
     return result;
   }

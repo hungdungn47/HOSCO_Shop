@@ -329,8 +329,20 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                 itemCount: widget.productController.searchSuggestions.length,
                 separatorBuilder: (context, index) => Divider(height: 1),
                 itemBuilder: (context, index) {
+                  if(index == 0) {
+                    return ListTile(
+                      leading: Icon(Icons.search),
+                      title: Text(widget.productController.searchQuery.value),
+                      onTap: () {
+                        // Update the controller's searchQuery value
+                        // widget.productController.searchQuery.value = suggestion;
+                        widget.productController.selectSuggestion(widget.productController.searchQuery.value);
+                        Get.back(); // Return to main screen after selecting
+                      },
+                    );
+                  }
                   final suggestion =
-                      widget.productController.searchSuggestions[index];
+                      widget.productController.searchSuggestions[index - 1];
                   return ListTile(
                     leading: Icon(Icons.search),
                     title: Text(suggestion),

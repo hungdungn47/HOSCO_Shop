@@ -16,4 +16,5 @@ abstract class ProductApiService {
   Future<List<dynamic>> searchAutocomplete(String query);
   Future<List<dynamic>> searchSuggestion(String query);
   Future<void> purchaseProduct(Map<String, dynamic> requestBody);
+  Future<Map<String, dynamic>> getProductStock(String productId);
 }

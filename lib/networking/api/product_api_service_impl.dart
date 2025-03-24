@@ -128,8 +128,18 @@ class ProductApiServiceImpl implements ProductApiService {
 
   @override
   Future<void> purchaseProduct(Map<String, dynamic> requestBody) async {
-    final response = await HttpClient.post(
-        endPoint: '/api/v1/transactions/purchase', body: requestBody);
-    print("Purchasing product: ${response}");
+    try {
+      final response = await HttpClient.post(
+          endPoint: '/api/v1/transactions/purchase', body: requestBody);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getProductStock(String productId) async {
+    final response = await HttpClient.get(endPoint: '/api/v1/products/stock/${productId}');
+    print('Get product stock: ${response?['message']}');
+    return response?['productStock'];
   }
 }

@@ -276,16 +276,26 @@ class CheckoutScreen extends StatelessWidget {
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
                       btnCancelOnPress: () async {
-                        cartController.completeTransaction("cash");
-                        discountController.text = "0";
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          title: "Thành công",
-                          desc: "Xác nhận thanh toán thành công!",
-                        ).show();
-                        await Future.delayed(const Duration(seconds: 2));
-                        Get.offAndToNamed('/cart');
+                        final result = await cartController.completeTransaction("cash");
+                        if(result['success']) {
+                          discountController.text = "0";
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.success,
+                            title: "Thành công",
+                            desc: "Xác nhận thanh toán thành công!",
+                          ).show();
+                          await Future.delayed(const Duration(seconds: 2));
+                          Get.offAndToNamed('/cart');
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            title: "Lỗi!",
+                            desc: result['error'],
+                          ).show();
+                        }
+
                       },
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',
