@@ -5,6 +5,6 @@ class SalesReportBinding extends Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.put(() => SalesReportController());
+    Get.put<SalesReportController>(SalesReportController());
   }
 }

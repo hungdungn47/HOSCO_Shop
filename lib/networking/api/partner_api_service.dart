@@ -33,6 +33,16 @@ class PartnerApiService {
         .toList();
   }
 
+  Future<List<Partner>> searchCustomers(String searchQuery) async {
+    final response = await HttpClient.get(
+        endPoint: '/api/v1/partners', queryParams: {"q": searchQuery});
+    return response?['partners']
+        .map<Partner>((json) => Partner.fromJson(json))
+        .where((p) =>
+            p.role == 'wholesale_customer' || p.role == 'retail_customer')
+        .toList();
+  }
+
   Future<Partner> getPartnerById(int partnerId) async {
     final partners = await getAllPartners();
     return partners.firstWhere((p) => p.id == partnerId);

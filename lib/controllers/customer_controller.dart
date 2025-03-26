@@ -40,10 +40,17 @@ class CustomerController extends GetxController {
   }
 
   void searchCustomers(String searchQuery) async {
-    // final res = await databaseService.searchCustomers(searchQuery);
-    // res.insert(0, Customer(name: "Khách lẻ"));
-    // suggestionCustomers.assignAll(res);
-    // res.clear();
+    final res = await partnerApiService.searchCustomers(searchQuery);
+    res.insert(
+        0,
+        Partner(
+            name: "Khách lẻ",
+            phone: '039392',
+            email: '123@gmail.com',
+            role: 'retail_customer',
+            address: 'Quynh Coi'));
+    suggestionCustomers.assignAll(res);
+    res.clear();
   }
 
   void addCustomer(Customer customer) async {

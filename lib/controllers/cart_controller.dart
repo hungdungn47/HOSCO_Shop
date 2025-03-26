@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:hosco_shop_2/models/cart_item.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
+import 'package:hosco_shop_2/models/partner.dart';
 import 'package:hosco_shop_2/models/product.dart';
 import 'package:hosco_shop_2/models/transaction.dart';
 import 'package:hosco_shop_2/networking/api/transaction_api_service.dart';
@@ -24,7 +25,13 @@ class CartController extends GetxController {
   var isBarcodeOn = true.obs;
   var isShowSuggestion = false.obs;
   Set<String> productIdSet = <String>{}.obs;
-  var customer = Customer(name: "Khách lẻ").obs;
+  var customer = Partner(
+          name: "Khách lẻ",
+          phone: '039392',
+          email: '123@gmail.com',
+          role: 'retail_customer',
+          address: 'Quynh Coi')
+      .obs;
   // final DatabaseService databaseService = DatabaseService.instance;
   Timer? debouncer;
   final int pageSize = 6; // Items per page
@@ -138,6 +145,7 @@ class CartController extends GetxController {
     // Prepare sale items list
     List<Map<String, dynamic>> saleItems = cartItems
         .map((item) => {
+              "warehouseId": item.warehouseId,
               "productId": item.product.id,
               "quantity": item.quantity,
               "unitPrice": item.unitPrice
@@ -147,7 +155,6 @@ class CartController extends GetxController {
     // Prepare request body
     Map<String, dynamic> requestBody = {
       "customerId": customer.value.id ?? 2, // Default to 0 if no customer ID
-      "warehouseId": "my-dinh-02",
       "paymentMethod": paymentMethod,
       "saleItems": saleItems,
       "discount": discountAmount.value,
@@ -158,15 +165,19 @@ class CartController extends GetxController {
 
     print(requestBody);
 
-    final result =
-        await transactionApiService.createSaleTransaction(requestBody);
+    try {
+      final result =
+          await transactionApiService.createSaleTransaction(requestBody);
 
-    if (result['success']) {
-      cartItems.clear();
-      productIdSet.clear();
-      discountAmount.value = 0.0;
+      if (result['success']) {
+        cartItems.clear();
+        productIdSet.clear();
+        discountAmount.value = 0.0;
+      }
+      return result;
+    } catch (error) {
+      return {"success": false, "error": error.toString()};
     }
-    return result;
   }
 
   void toggleBarcode() {
@@ -196,5 +207,11 @@ class CartController extends GetxController {
   double getTotalPrice() {
     return cartItems.fold(
         0.0, (sum, item) => sum + (item.getFinalPrice() * item.quantity));
+  }
+
+  Future<dynamic> getProductAvailableWarehouses(String productId) async {
+    final response = await apiService.getProductStock(productId);
+    print(response['productStock']);
+    return response;
   }
 }

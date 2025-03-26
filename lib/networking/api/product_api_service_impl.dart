@@ -138,8 +138,17 @@ class ProductApiServiceImpl implements ProductApiService {
 
   @override
   Future<Map<String, dynamic>> getProductStock(String productId) async {
-    final response = await HttpClient.get(endPoint: '/api/v1/products/stock/${productId}');
+    final response =
+        await HttpClient.get(endPoint: '/api/v1/products/stock/${productId}');
     print('Get product stock: ${response?['message']}');
     return response?['productStock'];
+  }
+
+  @override
+  Future<List<String>> getProductAvailableWarehouses(String productId) async {
+    final response =
+        await HttpClient.get(endPoint: '/api/v1/products/stock/${productId}');
+    return response?['warehouseStocks'].map((w) => w['warehouse']['id']);
+    // print('Get product stock: ${response?['message']}');
   }
 }

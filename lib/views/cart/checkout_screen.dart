@@ -186,6 +186,8 @@ class CheckoutScreen extends StatelessWidget {
                                           suggestion.name;
                                       customerController
                                           .isShowSuggestion.value = false;
+                                      cartController.customer.value =
+                                          suggestion;
                                       // productController.selectSuggestion(suggestion);
                                     },
                                   ))
@@ -276,8 +278,9 @@ class CheckoutScreen extends StatelessWidget {
                       btnCancelColor: Colors.green,
                       btnCancelText: 'Tiền mặt',
                       btnCancelOnPress: () async {
-                        final result = await cartController.completeTransaction("cash");
-                        if(result['success']) {
+                        final result =
+                            await cartController.completeTransaction("cash");
+                        if (result['success']) {
                           discountController.text = "0";
                           AwesomeDialog(
                             context: context,
@@ -295,7 +298,6 @@ class CheckoutScreen extends StatelessWidget {
                             desc: result['error'],
                           ).show();
                         }
-
                       },
                       btnOkColor: primaryColor,
                       btnOkText: 'Chuyển khoản',

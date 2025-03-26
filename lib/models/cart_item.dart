@@ -8,11 +8,13 @@ class CartItem {
   double discount;
   String discountUnit;
   double unitPrice;
+  String? warehouseId;
 
   CartItem(
       {required this.product,
       this.quantity = 1,
       this.discount = 0.0,
+      this.warehouseId,
       this.discountUnit = 'vnd', // Default to fixed discount
       required this.unitPrice});
 
@@ -21,7 +23,8 @@ class CartItem {
       'product': product.toJson(),
       'quantity': quantity,
       'discount': discount,
-      'discountUnit': discountUnit
+      'discountUnit': discountUnit,
+      'warehouseId': warehouseId
     };
   }
 
